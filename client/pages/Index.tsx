@@ -140,6 +140,10 @@ export default function Index() {
     null,
   );
   const [editingTitleValue, setEditingTitleValue] = useState("");
+  const [editingBlockerTitle, setEditingBlockerTitle] = useState<string | null>(
+    null,
+  );
+  const [editingBlockerTitleValue, setEditingBlockerTitleValue] = useState("");
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
@@ -368,6 +372,39 @@ export default function Index() {
     }
   };
 
+  const handleBlockerTitleClick = (blockerId: string, currentTitle: string) => {
+    setEditingBlockerTitle(blockerId);
+    setEditingBlockerTitleValue(currentTitle);
+  };
+
+  const handleBlockerTitleSave = () => {
+    if (!editingBlockerTitle) return;
+
+    setBlockers((prev) =>
+      prev.map((blocker) =>
+        blocker.id === editingBlockerTitle
+          ? { ...blocker, title: editingBlockerTitleValue }
+          : blocker,
+      ),
+    );
+
+    setEditingBlockerTitle(null);
+    setEditingBlockerTitleValue("");
+  };
+
+  const handleBlockerTitleCancel = () => {
+    setEditingBlockerTitle(null);
+    setEditingBlockerTitleValue("");
+  };
+
+  const handleBlockerTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleBlockerTitleSave();
+    } else if (e.key === "Escape") {
+      handleBlockerTitleCancel();
+    }
+  };
+
   const removeActionItem = (id: string) => {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
   };
@@ -382,6 +419,9 @@ export default function Index() {
       description: "Describe the issue or blocker",
     };
     setBlockers((prev) => [newItem, ...prev]);
+    // Auto-focus on the new item's title for editing
+    setEditingBlockerTitle(newId);
+    setEditingBlockerTitleValue("New blocker");
   };
 
   const removeBlocker = (id: string) => {
@@ -713,7 +753,27 @@ export default function Index() {
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
-                      <h4 className="font-medium">{blocker.title}</h4>
+                      {editingBlockerTitle === blocker.id ? (
+                        <Input
+                          value={editingBlockerTitleValue}
+                          onChange={(e) =>
+                            setEditingBlockerTitleValue(e.target.value)
+                          }
+                          onBlur={handleBlockerTitleSave}
+                          onKeyDown={handleBlockerTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className="font-medium cursor-pointer hover:text-primary transition-colors"
+                          onClick={() =>
+                            handleBlockerTitleClick(blocker.id, blocker.title)
+                          }
+                        >
+                          {blocker.title}
+                        </h4>
+                      )}
                       <p className="text-sm text-muted-foreground mt-1">
                         {blocker.description}
                       </p>
