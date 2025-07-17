@@ -1580,6 +1580,33 @@ export default function Index() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Confirmation Dialog for adding blocker item to agenda */}
+        <AlertDialog
+          open={!!pendingBlockerToAgenda}
+          onOpenChange={() => setPendingBlockerToAgenda(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add Blocker to Agenda</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to add "
+                {pendingBlockerToAgenda?.blockerTitle}" to the agenda?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={cancelAddBlockerToAgenda}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmAddBlockerToAgenda}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Yes, Add to Agenda
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
