@@ -843,6 +843,7 @@ export default function Index() {
         item.id === id ? { ...item, completed: true } : item,
       ),
     );
+    showSaveToast();
   };
 
   const toggleFocusMode = (moduleId: string) => {
