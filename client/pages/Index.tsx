@@ -268,48 +268,52 @@ export default function Index() {
     month3: "Dec 2024",
   });
 
-  const [goalsData, setGoalsData] = useState<GoalRecord[]>([
-    {
-      id: "1",
-      goal: "Increase Monthly Revenue",
-      targetMetric: "$25,000",
-      month1: "$18,500",
-      month2: "$21,200",
-      month3: "$23,800",
-    },
-    {
-      id: "2",
-      goal: "Acquire New Customers",
-      targetMetric: "50 customers",
-      month1: "28 customers",
-      month2: "34 customers",
-      month3: "42 customers",
-    },
-    {
-      id: "3",
-      goal: "Improve Conversion Rate",
-      targetMetric: "5.0%",
-      month1: "3.2%",
-      month2: "3.8%",
-      month3: "4.3%",
-    },
-    {
-      id: "4",
-      goal: "Reduce Customer Churn",
-      targetMetric: "< 2.0%",
-      month1: "4.1%",
-      month2: "3.2%",
-      month3: "2.8%",
-    },
-    {
-      id: "5",
-      goal: "Increase User Engagement",
-      targetMetric: "85% weekly active",
-      month1: "72% weekly active",
-      month2: "78% weekly active",
-      month3: "81% weekly active",
-    },
-  ]);
+  const [goalsData, goalsDataActions] = usePersistentArray<GoalRecord>(
+    STORAGE_KEYS.GOALS_DATA,
+    [
+      {
+        id: "1",
+        goal: "Increase Monthly Revenue",
+        targetMetric: "$25,000",
+        month1: "$18,500",
+        month2: "$21,200",
+        month3: "$23,800",
+      },
+      {
+        id: "2",
+        goal: "Acquire New Customers",
+        targetMetric: "50 customers",
+        month1: "28 customers",
+        month2: "34 customers",
+        month3: "42 customers",
+      },
+      {
+        id: "3",
+        goal: "Improve Conversion Rate",
+        targetMetric: "5.0%",
+        month1: "3.2%",
+        month2: "3.8%",
+        month3: "4.3%",
+      },
+      {
+        id: "4",
+        goal: "Reduce Customer Churn",
+        targetMetric: "< 2.0%",
+        month1: "4.1%",
+        month2: "3.2%",
+        month3: "2.8%",
+      },
+      {
+        id: "5",
+        goal: "Increase User Engagement",
+        targetMetric: "85% weekly active",
+        month1: "72% weekly active",
+        month2: "78% weekly active",
+        month3: "81% weekly active",
+      },
+    ],
+  );
+  const setGoalsData = goalsDataActions.set;
 
   const handleCellClick = (
     goalId: string,
