@@ -29,7 +29,6 @@ import {
   importAllData,
   clearAllStoredData,
 } from "@/lib/storage";
-import { useToast } from "@/hooks/use-toast";
 
 export function DataManager() {
   const [isOpen, setIsOpen] = useState(false);
