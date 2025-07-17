@@ -153,6 +153,11 @@ export default function Index() {
     null,
   );
   const [editingBlockerTitleValue, setEditingBlockerTitleValue] = useState("");
+  const [editingBlockerDescription, setEditingBlockerDescription] = useState<
+    string | null
+  >(null);
+  const [editingBlockerDescriptionValue, setEditingBlockerDescriptionValue] =
+    useState("");
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
     {
       id: "1",
@@ -463,6 +468,42 @@ export default function Index() {
       handleBlockerTitleSave();
     } else if (e.key === "Escape") {
       handleBlockerTitleCancel();
+    }
+  };
+
+  const handleBlockerDescriptionClick = (
+    blockerId: string,
+    currentDescription: string,
+  ) => {
+    setEditingBlockerDescription(blockerId);
+    setEditingBlockerDescriptionValue(currentDescription);
+  };
+
+  const handleBlockerDescriptionSave = () => {
+    if (!editingBlockerDescription) return;
+
+    setBlockers((prev) =>
+      prev.map((blocker) =>
+        blocker.id === editingBlockerDescription
+          ? { ...blocker, description: editingBlockerDescriptionValue }
+          : blocker,
+      ),
+    );
+
+    setEditingBlockerDescription(null);
+    setEditingBlockerDescriptionValue("");
+  };
+
+  const handleBlockerDescriptionCancel = () => {
+    setEditingBlockerDescription(null);
+    setEditingBlockerDescriptionValue("");
+  };
+
+  const handleBlockerDescriptionKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleBlockerDescriptionSave();
+    } else if (e.key === "Escape") {
+      handleBlockerDescriptionCancel();
     }
   };
 
@@ -1126,9 +1167,30 @@ export default function Index() {
                         {blocker.title}
                       </h4>
                     )}
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {blocker.description}
-                    </p>
+                    {editingBlockerDescription === blocker.id ? (
+                      <Input
+                        value={editingBlockerDescriptionValue}
+                        onChange={(e) =>
+                          setEditingBlockerDescriptionValue(e.target.value)
+                        }
+                        onBlur={handleBlockerDescriptionSave}
+                        onKeyDown={handleBlockerDescriptionKeyDown}
+                        className="text-sm mt-1"
+                        autoFocus
+                      />
+                    ) : (
+                      <p
+                        className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
+                        onClick={() =>
+                          handleBlockerDescriptionClick(
+                            blocker.id,
+                            blocker.description,
+                          )
+                        }
+                      >
+                        {blocker.description}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     <AlertDialog>
