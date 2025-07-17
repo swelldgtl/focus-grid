@@ -95,14 +95,13 @@ export function DataManager() {
   };
 
   return (
-    <Button
+    <button
       onClick={handleMenuClick}
-      variant="ghost"
-      size="sm"
-      className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+      className="flex items-center gap-2 text-gray-600 hover:text-gray-800 transition-colors"
       title="Data Management - Click to backup, restore, or clear data"
     >
       <Settings className="h-4 w-4" />
-    </Button>
+      <span className="text-sm">Data Management</span>
+    </button>
   );
 }
