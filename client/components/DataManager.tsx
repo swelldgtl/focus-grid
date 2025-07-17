@@ -47,16 +47,9 @@ export function DataManager() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
 
-      toast({
-        title: "Export Successful",
-        description: "Your Focus Grid data has been exported to a file.",
-      });
+      alert("Export successful! Your Focus Grid data has been downloaded.");
     } catch (error) {
-      toast({
-        title: "Export Failed",
-        description: "Failed to export data. Please try again.",
-        variant: "destructive",
-      });
+      alert("Export failed. Please try again.");
     }
   };
 
