@@ -1268,6 +1268,17 @@ export default function Index() {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    <Button
+                      onClick={() =>
+                        handleBlockerToAgendaClick(blocker.id, blocker.title)
+                      }
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                      title="Add to Agenda"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
