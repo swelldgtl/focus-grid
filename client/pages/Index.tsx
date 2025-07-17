@@ -826,7 +826,11 @@ export default function Index() {
         </div>
 
         {/* Sales Data Table */}
-        <Card>
+        <Card
+          className={
+            isModuleInactive("goals") ? "opacity-20 pointer-events-none" : ""
+          }
+        >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
