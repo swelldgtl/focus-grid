@@ -934,6 +934,19 @@ export default function Index() {
                     <TableCell>
                       {renderEditableCell(goal.id, "month3", goal.month3)}
                     </TableCell>
+                    <TableCell className="text-center">
+                      <Button
+                        onClick={() =>
+                          handleGoalToAgendaClick(goal.id, goal.goal)
+                        }
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                        title="Add to Agenda"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
