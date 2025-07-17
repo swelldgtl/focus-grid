@@ -1654,7 +1654,7 @@ export default function Index() {
               </AlertDialogCancel>
               <AlertDialogAction
                 onClick={confirmAddGoalToAgenda}
-                className="bg-primary text-primary-foreground hover:bg-primary/90"
+                className="bg-green-600 text-white hover:bg-green-700"
               >
                 Yes, Add to Agenda
               </AlertDialogAction>
