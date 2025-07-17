@@ -913,9 +913,7 @@ export default function Index() {
         {/* Blockers & Issues */}
         <Card
           className={
-            isModuleInactive("action-plan")
-              ? "opacity-20 pointer-events-none"
-              : ""
+            isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
           }
         >
           <CardHeader>
