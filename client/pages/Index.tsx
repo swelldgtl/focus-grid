@@ -183,7 +183,10 @@ export default function Index() {
       <div className="container mx-auto py-8 px-4 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div>
+          <div className="flex items-center gap-4">
+            <div className="w-10 h-10 bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg flex items-center justify-center border-2 border-primary/20">
+              <div className="w-6 h-6 bg-primary/30 rounded-sm"></div>
+            </div>
             <h1 className="text-4xl font-bold tracking-tight">Focus Grid</h1>
           </div>
         </div>
