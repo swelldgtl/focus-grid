@@ -4,6 +4,7 @@ import {
   usePersistentArray,
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
+import { DataManager } from "@/components/DataManager";
 import { Input } from "@/components/ui/input";
 import {
   Select,
