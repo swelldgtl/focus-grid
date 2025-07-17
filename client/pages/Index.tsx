@@ -966,9 +966,7 @@ export default function Index() {
           </CardContent>
         </Card>
 
-        {/* Two-Column Task Management Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Action Plan */}
+                {/* Action Plan */}
           <Card>
             <CardHeader>
               <CardTitle>Action Plan</CardTitle>
