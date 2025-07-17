@@ -1192,7 +1192,7 @@ export default function Index() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Compass className="h-5 w-5 text-primary" />
+                  <Compass className="h-5 w-5 text-gray-600" />
                   Action Plan
                 </CardTitle>
                 <CardDescription>
