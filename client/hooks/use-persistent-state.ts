@@ -50,6 +50,11 @@ export function usePersistentState<T>(
 
   // Debounced localStorage update
   useEffect(() => {
+    // Only run on client side
+    if (typeof window === "undefined") {
+      return;
+    }
+
     const timeoutId = setTimeout(() => {
       if (serialize) {
         try {
