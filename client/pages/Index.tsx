@@ -900,6 +900,7 @@ export default function Index() {
                   <TableHead>Oct 2024</TableHead>
                   <TableHead>Nov 2024</TableHead>
                   <TableHead>Dec 2024</TableHead>
+                  <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
