@@ -183,44 +183,49 @@ export default function Index() {
 
   // Initialize timers for all modules
   const modules = ["goals", "agenda", "action-plan", "blockers"];
-  const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
-    {
-      id: "1",
-      title: "Review quarterly objectives",
-      description: "Analyze Q4 performance and set goals for next quarter",
-      owner: "Sarah Johnson",
-      completed: false,
-    },
-    {
-      id: "2",
-      title: "Discuss team resource allocation",
-      description: "Review current workload and upcoming project assignments",
-      owner: "Mike Chen",
-      completed: false,
-    },
-    {
-      id: "3",
-      title: "Budget planning for next quarter",
-      description:
-        "Finalize budget allocations and approve department requests",
-      owner: "Jennifer Liu",
-      completed: false,
-    },
-    {
-      id: "4",
-      title: "Client feedback review",
-      description: "Address recent client concerns and improvement suggestions",
-      owner: "David Martinez",
-      completed: false,
-    },
-    {
-      id: "5",
-      title: "Next steps and action items",
-      description: "Document decisions and assign follow-up tasks",
-      owner: "Team Lead",
-      completed: false,
-    },
-  ]);
+  const [agendaItems, agendaItemsActions] = usePersistentArray<AgendaItem>(
+    STORAGE_KEYS.AGENDA_ITEMS,
+    [
+      {
+        id: "1",
+        title: "Review quarterly objectives",
+        description: "Analyze Q4 performance and set goals for next quarter",
+        owner: "Sarah Johnson",
+        completed: false,
+      },
+      {
+        id: "2",
+        title: "Discuss team resource allocation",
+        description: "Review current workload and upcoming project assignments",
+        owner: "Mike Chen",
+        completed: false,
+      },
+      {
+        id: "3",
+        title: "Budget planning for next quarter",
+        description:
+          "Finalize budget allocations and approve department requests",
+        owner: "Jennifer Liu",
+        completed: false,
+      },
+      {
+        id: "4",
+        title: "Client feedback review",
+        description:
+          "Address recent client concerns and improvement suggestions",
+        owner: "David Martinez",
+        completed: false,
+      },
+      {
+        id: "5",
+        title: "Next steps and action items",
+        description: "Document decisions and assign follow-up tasks",
+        owner: "Team Lead",
+        completed: false,
+      },
+    ],
+  );
+  const setAgendaItems = agendaItemsActions.set;
   const [draggedAgenda, setDraggedAgenda] = useState<string | null>(null);
   const [editingAgendaTitle, setEditingAgendaTitle] = useState<string | null>(
     null,
