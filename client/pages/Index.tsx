@@ -586,6 +586,7 @@ export default function Index() {
     // Auto-focus on the new item's title for editing
     setEditingAgendaTitle(newId);
     setEditingAgendaTitleValue("New agenda item");
+    showSaveToast();
   };
 
   const removeAgendaItem = (id: string) => {
