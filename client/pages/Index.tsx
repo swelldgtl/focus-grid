@@ -1080,6 +1080,17 @@ export default function Index() {
                         <SelectItem value="off-track">Off Track</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Button
+                      onClick={() =>
+                        handleActionToAgendaClick(action.id, action.title)
+                      }
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                      title="Add to Agenda"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
