@@ -1487,10 +1487,6 @@ export default function Index() {
                   <List className="h-5 w-5 text-gray-600" />
                   Agenda
                 </CardTitle>
-                <CardDescription>
-                  Meeting agenda items in order of discussion. Drag and drop to
-                  reorder.
-                </CardDescription>
               </div>
               <div className="flex items-center gap-3">
                 {activeFocusModule === "agenda" && (
