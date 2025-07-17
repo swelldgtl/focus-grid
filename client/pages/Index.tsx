@@ -1018,7 +1018,10 @@ export default function Index() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Goals & Progress</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" />
+                  Goals & Progress
+                </CardTitle>
                 <CardDescription>
                   Track your key business objectives and monitor progress over
                   the past three months.
