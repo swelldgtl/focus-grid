@@ -32,13 +32,13 @@ interface Task {
   priority: "low" | "medium" | "high";
 }
 
-interface SaleRecord {
+interface GoalRecord {
   id: string;
-  product: string;
-  customer: string;
-  amount: number;
-  status: "paid" | "pending" | "overdue";
-  date: string;
+  goal: string;
+  targetMetric: string;
+  month1: string;
+  month2: string;
+  month3: string;
 }
 
 export default function Index() {
@@ -77,46 +77,46 @@ export default function Index() {
 
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
 
-  const salesData: SaleRecord[] = [
+  const goalsData: GoalRecord[] = [
     {
       id: "1",
-      product: "Pro Subscription",
-      customer: "Acme Corp",
-      amount: 2500,
-      status: "paid",
-      date: "2024-01-15",
+      goal: "Increase Monthly Revenue",
+      targetMetric: "$25,000",
+      month1: "$18,500",
+      month2: "$21,200",
+      month3: "$23,800",
     },
     {
       id: "2",
-      product: "Starter Plan",
-      customer: "TechStart Inc",
-      amount: 500,
-      status: "pending",
-      date: "2024-01-14",
+      goal: "Acquire New Customers",
+      targetMetric: "50 customers",
+      month1: "28 customers",
+      month2: "34 customers",
+      month3: "42 customers",
     },
     {
       id: "3",
-      product: "Enterprise License",
-      customer: "Global Systems",
-      amount: 10000,
-      status: "paid",
-      date: "2024-01-13",
+      goal: "Improve Conversion Rate",
+      targetMetric: "5.0%",
+      month1: "3.2%",
+      month2: "3.8%",
+      month3: "4.3%",
     },
     {
       id: "4",
-      product: "Premium Support",
-      customer: "DevCorp",
-      amount: 1200,
-      status: "overdue",
-      date: "2024-01-10",
+      goal: "Reduce Customer Churn",
+      targetMetric: "< 2.0%",
+      month1: "4.1%",
+      month2: "3.2%",
+      month3: "2.8%",
     },
     {
       id: "5",
-      product: "Custom Integration",
-      customer: "DataFlow Ltd",
-      amount: 7500,
-      status: "paid",
-      date: "2024-01-12",
+      goal: "Increase User Engagement",
+      targetMetric: "85% weekly active",
+      month1: "72% weekly active",
+      month2: "78% weekly active",
+      month3: "81% weekly active",
     },
   ];
 
@@ -260,45 +260,36 @@ export default function Index() {
         {/* Sales Data Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Recent Sales</CardTitle>
+            <CardTitle>Goals & Progress</CardTitle>
             <CardDescription>
-              A summary of your recent sales transactions and their current
-              status.
+              Track your key business objectives and monitor progress over the
+              past three months.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Product</TableHead>
-                  <TableHead>Customer</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableHead>Goal</TableHead>
+                  <TableHead>Target Metric</TableHead>
+                  <TableHead>Oct 2024</TableHead>
+                  <TableHead>Nov 2024</TableHead>
+                  <TableHead>Dec 2024</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {salesData.map((sale) => (
-                  <TableRow key={sale.id}>
+                {goalsData.map((goal, index) => (
+                  <TableRow
+                    key={goal.id}
+                    className={index % 2 === 1 ? "bg-muted/30" : ""}
+                  >
+                    <TableCell className="font-medium">{goal.goal}</TableCell>
                     <TableCell className="font-medium">
-                      {sale.product}
+                      {goal.targetMetric}
                     </TableCell>
-                    <TableCell>{sale.customer}</TableCell>
-                    <TableCell>
-                      {new Date(sale.date).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Badge
-                        className={getStatusBadge(sale.status)}
-                        variant="secondary"
-                      >
-                        {sale.status.charAt(0).toUpperCase() +
-                          sale.status.slice(1)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right font-medium">
-                      ${sale.amount.toLocaleString()}
-                    </TableCell>
+                    <TableCell>{goal.month1}</TableCell>
+                    <TableCell>{goal.month2}</TableCell>
+                    <TableCell>{goal.month3}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
