@@ -293,6 +293,12 @@ export default function Index() {
     );
   };
 
+  const getActionItemBackground = (status: "on-track" | "off-track") => {
+    return status === "on-track"
+      ? "bg-green-50 border-green-200 hover:bg-green-100"
+      : "bg-red-50 border-red-200 hover:bg-red-100";
+  };
+
   const handleDrop2 = (
     e: React.DragEvent<HTMLDivElement>,
     dropIndex: number,
@@ -495,7 +501,7 @@ export default function Index() {
                     onDragStart={(e) => handleActionDragStart(e, action.id)}
                     onDragOver={handleDragOver}
                     onDrop={(e) => handleActionDrop(e, index)}
-                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                    className={`flex items-center gap-3 p-4 border rounded-lg transition-colors cursor-move group ${getActionItemBackground(action.status)}`}
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
