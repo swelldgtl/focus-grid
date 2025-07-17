@@ -1443,6 +1443,33 @@ export default function Index() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Confirmation Dialog for adding goal to agenda */}
+        <AlertDialog
+          open={!!pendingGoalToAgenda}
+          onOpenChange={() => setPendingGoalToAgenda(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add Goal to Agenda</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to add "{pendingGoalToAgenda?.goalName}"
+                to the agenda?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={cancelAddGoalToAgenda}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmAddGoalToAgenda}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Yes, Add to Agenda
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
