@@ -1510,6 +1510,33 @@ export default function Index() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Confirmation Dialog for adding action item to agenda */}
+        <AlertDialog
+          open={!!pendingActionToAgenda}
+          onOpenChange={() => setPendingActionToAgenda(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add Action Item to Agenda</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to add "
+                {pendingActionToAgenda?.actionTitle}" to the agenda?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={cancelAddActionToAgenda}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmAddActionToAgenda}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                Yes, Add to Agenda
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
