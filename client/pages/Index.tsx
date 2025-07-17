@@ -234,6 +234,10 @@ export default function Index() {
     actionId: string;
     actionTitle: string;
   } | null>(null);
+  const [pendingBlockerToAgenda, setPendingBlockerToAgenda] = useState<{
+    blockerId: string;
+    blockerTitle: string;
+  } | null>(null);
 
   const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
