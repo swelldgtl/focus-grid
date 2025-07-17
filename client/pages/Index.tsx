@@ -1399,6 +1399,218 @@ export default function Index() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Agenda */}
+        <Card
+          className={
+            isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
+          }
+        >
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Agenda</CardTitle>
+                <CardDescription>
+                  Meeting agenda items in order of discussion. Drag and drop to
+                  reorder.
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3">
+                {activeFocusModule === "agenda" && (
+                  <div className="text-sm font-mono text-muted-foreground">
+                    {formatTime(timers["agenda"]?.seconds || 0)}
+                  </div>
+                )}
+                <Button
+                  onClick={() => toggleFocusMode("agenda")}
+                  variant="ghost"
+                  size="sm"
+                  className={`h-10 w-10 p-0 transition-colors ${
+                    activeFocusModule === "agenda"
+                      ? "text-primary bg-primary/10 hover:bg-primary/20"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Grid3X3 className="h-8 w-8" />
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={addNewAgendaItem}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {agendaItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleAgendaDragStart(e, item.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleAgendaDrop(e, index)}
+                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                >
+                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 font-medium text-sm rounded-full flex-shrink-0">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    {editingAgendaTitle === item.id ? (
+                      <Input
+                        value={editingAgendaTitleValue}
+                        onChange={(e) =>
+                          setEditingAgendaTitleValue(e.target.value)
+                        }
+                        onBlur={handleAgendaTitleSave}
+                        onKeyDown={handleAgendaTitleKeyDown}
+                        className="font-medium"
+                        autoFocus
+                      />
+                    ) : (
+                      <h4
+                        className={`font-medium cursor-pointer hover:text-primary transition-colors ${
+                          item.completed
+                            ? "line-through text-muted-foreground"
+                            : ""
+                        }`}
+                        onClick={() =>
+                          handleAgendaTitleClick(item.id, item.title)
+                        }
+                      >
+                        {item.title}
+                      </h4>
+                    )}
+                    {editingAgendaDescription === item.id ? (
+                      <Input
+                        value={editingAgendaDescriptionValue}
+                        onChange={(e) =>
+                          setEditingAgendaDescriptionValue(e.target.value)
+                        }
+                        onBlur={handleAgendaDescriptionSave}
+                        onKeyDown={handleAgendaDescriptionKeyDown}
+                        className="text-sm mt-1"
+                        autoFocus
+                      />
+                    ) : (
+                      <p
+                        className={`text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors ${
+                          item.completed ? "line-through" : ""
+                        }`}
+                        onClick={() =>
+                          handleAgendaDescriptionClick(
+                            item.id,
+                            item.description || "",
+                          )
+                        }
+                      >
+                        {item.description || "Add description..."}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    {editingAgendaOwner === item.id ? (
+                      <Input
+                        value={editingAgendaOwnerValue}
+                        onChange={(e) =>
+                          setEditingAgendaOwnerValue(e.target.value)
+                        }
+                        onBlur={handleAgendaOwnerSave}
+                        onKeyDown={handleAgendaOwnerKeyDown}
+                        className="text-sm w-32"
+                        autoFocus
+                      />
+                    ) : (
+                      <p
+                        className={`text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors text-right ${
+                          item.completed ? "line-through" : ""
+                        }`}
+                        onClick={() =>
+                          handleAgendaOwnerClick(item.id, item.owner || "")
+                        }
+                      >
+                        {item.owner || "No Owner"}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete Agenda Item
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{item.title}"? This
+                            action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeAgendaItem(item.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                    {!item.completed && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Mark as Complete
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to mark "{item.title}" as
+                              complete?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => markAgendaItemComplete(item.id)}
+                              className="bg-green-600 text-white hover:bg-green-700"
+                            >
+                              Yes, Mark as Complete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
