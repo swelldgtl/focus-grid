@@ -904,7 +904,10 @@ export default function Index() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
+    >
       <div className="container mx-auto py-8 px-4 space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
