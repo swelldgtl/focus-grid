@@ -1171,9 +1171,9 @@ export default function Index() {
 
         {/* Blockers & Issues */}
         <Card
-          className={
+          className={`transition-all duration-500 ${
             isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
-          }
+          }`}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
