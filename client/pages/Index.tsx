@@ -1,6 +1,13 @@
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -33,6 +40,12 @@ interface Task {
   priority: "low" | "medium" | "high";
 }
 
+interface ActionItem {
+  id: string;
+  title: string;
+  status: "on-track" | "off-track";
+}
+
 interface GoalRecord {
   id: string;
   goal: string;
@@ -43,36 +56,31 @@ interface GoalRecord {
 }
 
 export default function Index() {
-  const [tasks, setTasks] = useState<Task[]>([
+  const [actionItems, setActionItems] = useState<ActionItem[]>([
     {
       id: "1",
       title: "Review Q4 performance metrics",
-      status: "pending",
-      priority: "high",
+      status: "on-track",
     },
     {
       id: "2",
       title: "Update client documentation",
-      status: "in_progress",
-      priority: "medium",
+      status: "on-track",
     },
     {
       id: "3",
       title: "Prepare monthly newsletter",
-      status: "completed",
-      priority: "low",
+      status: "off-track",
     },
     {
       id: "4",
       title: "Analyze user feedback",
-      status: "pending",
-      priority: "medium",
+      status: "on-track",
     },
     {
       id: "5",
       title: "Optimize database queries",
-      status: "in_progress",
-      priority: "high",
+      status: "off-track",
     },
   ]);
 
@@ -109,7 +117,7 @@ export default function Index() {
     },
   ]);
 
-  const [draggedTask, setDraggedTask] = useState<string | null>(null);
+  const [draggedAction, setDraggedAction] = useState<string | null>(null);
   const [draggedTask2, setDraggedTask2] = useState<string | null>(null);
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
@@ -233,11 +241,11 @@ export default function Index() {
     );
   };
 
-  const handleDragStart = (
+  const handleActionDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    taskId: string,
+    actionId: string,
   ) => {
-    setDraggedTask(taskId);
+    setDraggedAction(actionId);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -254,22 +262,35 @@ export default function Index() {
     e.dataTransfer.dropEffect = "move";
   };
 
-  const handleDrop = (
+  const handleActionDrop = (
     e: React.DragEvent<HTMLDivElement>,
     dropIndex: number,
   ) => {
     e.preventDefault();
-    if (!draggedTask) return;
+    if (!draggedAction) return;
 
-    const draggedIndex = tasks.findIndex((task) => task.id === draggedTask);
+    const draggedIndex = actionItems.findIndex(
+      (action) => action.id === draggedAction,
+    );
     if (draggedIndex === -1) return;
 
-    const newTasks = [...tasks];
-    const [draggedItem] = newTasks.splice(draggedIndex, 1);
-    newTasks.splice(dropIndex, 0, draggedItem);
+    const newActions = [...actionItems];
+    const [draggedItem] = newActions.splice(draggedIndex, 1);
+    newActions.splice(dropIndex, 0, draggedItem);
 
-    setTasks(newTasks);
-    setDraggedTask(null);
+    setActionItems(newActions);
+    setDraggedAction(null);
+  };
+
+  const handleStatusChange = (
+    actionId: string,
+    newStatus: "on-track" | "off-track",
+  ) => {
+    setActionItems((prev) =>
+      prev.map((action) =>
+        action.id === actionId ? { ...action, status: newStatus } : action,
+      ),
+    );
   };
 
   const handleDrop2 = (
@@ -456,43 +477,45 @@ export default function Index() {
 
         {/* Two-Column Task Management Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Task Management */}
+          {/* Left Column - Action Plan */}
           <Card>
             <CardHeader>
-              <CardTitle>Task Management</CardTitle>
+              <CardTitle>Action Plan</CardTitle>
               <CardDescription>
-                Drag and drop to reorder tasks by priority. Stay organized and
-                focused.
+                Drag and drop to reorder action items. Track progress and stay
+                focused on your goals.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {tasks.map((task, index) => (
+                {actionItems.map((action, index) => (
                   <div
-                    key={task.id}
+                    key={action.id}
                     draggable
-                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    onDragStart={(e) => handleActionDragStart(e, action.id)}
                     onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop(e, index)}
+                    onDrop={(e) => handleActionDrop(e, index)}
                     className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
-                      <h4 className="font-medium">{task.title}</h4>
+                      <h4 className="font-medium">{action.title}</h4>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge
-                        className={getPriorityBadge(task.priority)}
-                        variant="secondary"
+                      <Select
+                        value={action.status}
+                        onValueChange={(value: "on-track" | "off-track") =>
+                          handleStatusChange(action.id, value)
+                        }
                       >
-                        {task.priority}
-                      </Badge>
-                      <Badge
-                        className={getTaskStatusBadge(task.status)}
-                        variant="secondary"
-                      >
-                        {task.status.replace("_", " ")}
-                      </Badge>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="on-track">On Track</SelectItem>
+                          <SelectItem value="off-track">Off Track</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                 ))}
