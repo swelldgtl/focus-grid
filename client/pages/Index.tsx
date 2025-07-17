@@ -1196,7 +1196,7 @@ export default function Index() {
                       />
                     ) : (
                       <h4
-                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
                         onClick={() =>
                           handleTitleClick(action.id, action.title)
                         }
