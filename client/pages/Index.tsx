@@ -53,6 +53,12 @@ interface Task {
   priority: "low" | "medium" | "high";
 }
 
+interface BlockerIssue {
+  id: string;
+  title: string;
+  description: string;
+}
+
 interface ActionItem {
   id: string;
   title: string;
@@ -97,41 +103,39 @@ export default function Index() {
     },
   ]);
 
-  const [tasks2, setTasks2] = useState<Task[]>([
+  const [blockers, setBlockers] = useState<BlockerIssue[]>([
     {
       id: "6",
-      title: "Design new landing page",
-      status: "in_progress",
-      priority: "high",
+      title: "API Rate Limiting",
+      description:
+        "Third-party service imposing unexpected rate limits on our requests",
     },
     {
       id: "7",
-      title: "Implement user authentication",
-      status: "pending",
-      priority: "high",
+      title: "Database Performance",
+      description:
+        "Slow query performance affecting user experience during peak hours",
     },
     {
       id: "8",
-      title: "Write API documentation",
-      status: "completed",
-      priority: "medium",
+      title: "SSL Certificate Renewal",
+      description:
+        "Certificate expires next week, need to coordinate with DevOps team",
     },
     {
       id: "9",
-      title: "Set up monitoring dashboards",
-      status: "pending",
-      priority: "low",
+      title: "Browser Compatibility",
+      description: "Feature not working correctly in older versions of Safari",
     },
     {
       id: "10",
-      title: "Conduct user interviews",
-      status: "in_progress",
-      priority: "medium",
+      title: "Vendor Integration",
+      description: "Payment processor API changes breaking checkout flow",
     },
   ]);
 
   const [draggedAction, setDraggedAction] = useState<string | null>(null);
-  const [draggedTask2, setDraggedTask2] = useState<string | null>(null);
+  const [draggedBlocker, setDraggedBlocker] = useState<string | null>(null);
   const [editingActionTitle, setEditingActionTitle] = useState<string | null>(
     null,
   );
@@ -266,11 +270,11 @@ export default function Index() {
     e.dataTransfer.effectAllowed = "move";
   };
 
-  const handleDragStart2 = (
+  const handleBlockerDragStart = (
     e: React.DragEvent<HTMLDivElement>,
-    taskId: string,
+    blockerId: string,
   ) => {
-    setDraggedTask2(taskId);
+    setDraggedBlocker(blockerId);
     e.dataTransfer.effectAllowed = "move";
   };
 
@@ -368,22 +372,24 @@ export default function Index() {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const handleDrop2 = (
+  const handleBlockerDrop = (
     e: React.DragEvent<HTMLDivElement>,
     dropIndex: number,
   ) => {
     e.preventDefault();
-    if (!draggedTask2) return;
+    if (!draggedBlocker) return;
 
-    const draggedIndex = tasks2.findIndex((task) => task.id === draggedTask2);
+    const draggedIndex = blockers.findIndex(
+      (blocker) => blocker.id === draggedBlocker,
+    );
     if (draggedIndex === -1) return;
 
-    const newTasks = [...tasks2];
-    const [draggedItem] = newTasks.splice(draggedIndex, 1);
-    newTasks.splice(dropIndex, 0, draggedItem);
+    const newBlockers = [...blockers];
+    const [draggedItem] = newBlockers.splice(draggedIndex, 1);
+    newBlockers.splice(dropIndex, 0, draggedItem);
 
-    setTasks2(newTasks);
-    setDraggedTask2(null);
+    setBlockers(newBlockers);
+    setDraggedBlocker(null);
   };
 
   const getStatusBadge = (status: SaleRecord["status"]) => {
@@ -658,43 +664,32 @@ export default function Index() {
             </CardContent>
           </Card>
 
-          {/* Right Column - Task Management */}
+          {/* Right Column - Blockers & Issues */}
           <Card>
             <CardHeader>
-              <CardTitle>Task Management</CardTitle>
+              <CardTitle>Blockers & Issues</CardTitle>
               <CardDescription>
-                Drag and drop to reorder tasks by priority. Stay organized and
-                focused.
+                Track and prioritize current blockers and issues affecting
+                progress.
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {tasks2.map((task, index) => (
+                {blockers.map((blocker, index) => (
                   <div
-                    key={task.id}
+                    key={blocker.id}
                     draggable
-                    onDragStart={(e) => handleDragStart2(e, task.id)}
+                    onDragStart={(e) => handleBlockerDragStart(e, blocker.id)}
                     onDragOver={handleDragOver}
-                    onDrop={(e) => handleDrop2(e, index)}
+                    onDrop={(e) => handleBlockerDrop(e, index)}
                     className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
-                      <h4 className="font-medium">{task.title}</h4>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Badge
-                        className={getPriorityBadge(task.priority)}
-                        variant="secondary"
-                      >
-                        {task.priority}
-                      </Badge>
-                      <Badge
-                        className={getTaskStatusBadge(task.status)}
-                        variant="secondary"
-                      >
-                        {task.status.replace("_", " ")}
-                      </Badge>
+                      <h4 className="font-medium">{blocker.title}</h4>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        {blocker.description}
+                      </p>
                     </div>
                   </div>
                 ))}
