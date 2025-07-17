@@ -104,3 +104,36 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom toast animations for exact 0.5s fade transitions */
+@layer components {
+  [data-state="open"][data-radix-toast-root] {
+    animation: toast-slide-in 0.5s ease-out;
+  }
+
+  [data-state="closed"][data-radix-toast-root] {
+    animation: toast-slide-out 0.5s ease-in;
+  }
+
+  @keyframes toast-slide-in {
+    from {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes toast-slide-out {
+    from {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(100%);
+    }
+  }
+}
