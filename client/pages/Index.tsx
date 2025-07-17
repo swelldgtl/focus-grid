@@ -486,6 +486,7 @@ export default function Index() {
 
     setEditingActionTitle(null);
     setEditingTitleValue("");
+    showSaveToast();
   };
 
   const handleTitleCancel = () => {
