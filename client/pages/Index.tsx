@@ -464,6 +464,7 @@ export default function Index() {
     // Auto-focus on the new item's title for editing
     setEditingActionTitle(newId);
     setEditingTitleValue("New action item");
+    showSaveToast();
   };
 
   const handleTitleClick = (actionId: string, currentTitle: string) => {
