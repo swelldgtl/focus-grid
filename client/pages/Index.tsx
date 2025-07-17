@@ -230,6 +230,10 @@ export default function Index() {
     goalId: string;
     goalName: string;
   } | null>(null);
+  const [pendingActionToAgenda, setPendingActionToAgenda] = useState<{
+    actionId: string;
+    actionTitle: string;
+  } | null>(null);
 
   const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
