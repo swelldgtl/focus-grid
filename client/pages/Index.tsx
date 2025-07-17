@@ -910,7 +910,7 @@ export default function Index() {
           </CardContent>
         </Card>
 
-        {/* Action Plan */}
+        {/* Blockers & Issues */}
         <Card
           className={
             isModuleInactive("action-plan")
