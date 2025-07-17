@@ -238,6 +238,7 @@ export default function Index() {
     blockerId: string;
     blockerTitle: string;
   } | null>(null);
+  const [isFocusModeActive, setIsFocusModeActive] = useState(false);
 
   const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
