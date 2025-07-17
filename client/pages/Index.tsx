@@ -185,9 +185,6 @@ export default function Index() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-4xl font-bold tracking-tight">Focus Grid</h1>
-            <p className="text-muted-foreground mt-2">
-              Welcome back! Here's your business overview.
-            </p>
           </div>
         </div>
 
