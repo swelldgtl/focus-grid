@@ -1110,7 +1110,7 @@ export default function Index() {
                         }
                         variant="ghost"
                         size="sm"
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-primary"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
                         title="Add to Agenda"
                       >
                         <Send className="h-4 w-4" />
