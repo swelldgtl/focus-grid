@@ -44,6 +44,7 @@ import {
   Activity,
   Plus,
   Trash2,
+  Check,
 } from "lucide-react";
 
 interface Task {
@@ -62,6 +63,9 @@ interface BlockerIssue {
 interface AgendaItem {
   id: string;
   title: string;
+  description?: string;
+  owner?: string;
+  completed?: boolean;
 }
 
 interface ActionItem {
@@ -153,22 +157,38 @@ export default function Index() {
     {
       id: "1",
       title: "Review quarterly objectives",
+      description: "Analyze Q4 performance and set goals for next quarter",
+      owner: "Sarah Johnson",
+      completed: false,
     },
     {
       id: "2",
       title: "Discuss team resource allocation",
+      description: "Review current workload and upcoming project assignments",
+      owner: "Mike Chen",
+      completed: false,
     },
     {
       id: "3",
       title: "Budget planning for next quarter",
+      description:
+        "Finalize budget allocations and approve department requests",
+      owner: "Jennifer Liu",
+      completed: false,
     },
     {
       id: "4",
       title: "Client feedback review",
+      description: "Address recent client concerns and improvement suggestions",
+      owner: "David Martinez",
+      completed: false,
     },
     {
       id: "5",
       title: "Next steps and action items",
+      description: "Document decisions and assign follow-up tasks",
+      owner: "Team Lead",
+      completed: false,
     },
   ]);
   const [draggedAgenda, setDraggedAgenda] = useState<string | null>(null);
@@ -176,6 +196,15 @@ export default function Index() {
     null,
   );
   const [editingAgendaTitleValue, setEditingAgendaTitleValue] = useState("");
+  const [editingAgendaDescription, setEditingAgendaDescription] = useState<
+    string | null
+  >(null);
+  const [editingAgendaDescriptionValue, setEditingAgendaDescriptionValue] =
+    useState("");
+  const [editingAgendaOwner, setEditingAgendaOwner] = useState<string | null>(
+    null,
+  );
+  const [editingAgendaOwnerValue, setEditingAgendaOwnerValue] = useState("");
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
@@ -444,6 +473,9 @@ export default function Index() {
     const newItem: AgendaItem = {
       id: newId,
       title: "New agenda item",
+      description: "Add description here",
+      owner: "Assign owner",
+      completed: false,
     };
     setAgendaItems((prev) => [newItem, ...prev]);
     // Auto-focus on the new item's title for editing
@@ -514,6 +546,83 @@ export default function Index() {
     } else if (e.key === "Escape") {
       handleAgendaTitleCancel();
     }
+  };
+
+  const handleAgendaDescriptionClick = (
+    agendaId: string,
+    currentDescription: string,
+  ) => {
+    setEditingAgendaDescription(agendaId);
+    setEditingAgendaDescriptionValue(currentDescription || "");
+  };
+
+  const handleAgendaDescriptionSave = () => {
+    if (!editingAgendaDescription) return;
+
+    setAgendaItems((prev) =>
+      prev.map((item) =>
+        item.id === editingAgendaDescription
+          ? { ...item, description: editingAgendaDescriptionValue }
+          : item,
+      ),
+    );
+
+    setEditingAgendaDescription(null);
+    setEditingAgendaDescriptionValue("");
+  };
+
+  const handleAgendaDescriptionCancel = () => {
+    setEditingAgendaDescription(null);
+    setEditingAgendaDescriptionValue("");
+  };
+
+  const handleAgendaDescriptionKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleAgendaDescriptionSave();
+    } else if (e.key === "Escape") {
+      handleAgendaDescriptionCancel();
+    }
+  };
+
+  const handleAgendaOwnerClick = (agendaId: string, currentOwner: string) => {
+    setEditingAgendaOwner(agendaId);
+    setEditingAgendaOwnerValue(currentOwner || "");
+  };
+
+  const handleAgendaOwnerSave = () => {
+    if (!editingAgendaOwner) return;
+
+    setAgendaItems((prev) =>
+      prev.map((item) =>
+        item.id === editingAgendaOwner
+          ? { ...item, owner: editingAgendaOwnerValue }
+          : item,
+      ),
+    );
+
+    setEditingAgendaOwner(null);
+    setEditingAgendaOwnerValue("");
+  };
+
+  const handleAgendaOwnerCancel = () => {
+    setEditingAgendaOwner(null);
+    setEditingAgendaOwnerValue("");
+  };
+
+  const handleAgendaOwnerKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleAgendaOwnerSave();
+    } else if (e.key === "Escape") {
+      handleAgendaOwnerCancel();
+    }
+  };
+
+  const markAgendaItemComplete = (id: string) => {
+    setAgendaItems((prev) =>
+      prev.map((item) =>
+        item.id === id ? { ...item, completed: true } : item,
+      ),
+    );
   };
 
   const removeActionItem = (id: string) => {
@@ -704,7 +813,7 @@ export default function Index() {
                   className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
                 >
                   <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <div className="flex items-center justify-center w-8 h-8 bg-primary/10 text-primary font-medium text-sm rounded-full flex-shrink-0">
+                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 font-medium text-sm rounded-full flex-shrink-0">
                     {index + 1}
                   </div>
                   <div className="flex-1">
@@ -721,7 +830,11 @@ export default function Index() {
                       />
                     ) : (
                       <h4
-                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        className={`font-medium cursor-pointer hover:text-primary transition-colors ${
+                          item.completed
+                            ? "line-through text-muted-foreground"
+                            : ""
+                        }`}
                         onClick={() =>
                           handleAgendaTitleClick(item.id, item.title)
                         }
@@ -729,8 +842,92 @@ export default function Index() {
                         {item.title}
                       </h4>
                     )}
+                    {editingAgendaDescription === item.id ? (
+                      <Input
+                        value={editingAgendaDescriptionValue}
+                        onChange={(e) =>
+                          setEditingAgendaDescriptionValue(e.target.value)
+                        }
+                        onBlur={handleAgendaDescriptionSave}
+                        onKeyDown={handleAgendaDescriptionKeyDown}
+                        className="text-sm mt-1"
+                        autoFocus
+                      />
+                    ) : (
+                      <p
+                        className={`text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors ${
+                          item.completed ? "line-through" : ""
+                        }`}
+                        onClick={() =>
+                          handleAgendaDescriptionClick(
+                            item.id,
+                            item.description || "",
+                          )
+                        }
+                      >
+                        {item.description || "Add description..."}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    {editingAgendaOwner === item.id ? (
+                      <Input
+                        value={editingAgendaOwnerValue}
+                        onChange={(e) =>
+                          setEditingAgendaOwnerValue(e.target.value)
+                        }
+                        onBlur={handleAgendaOwnerSave}
+                        onKeyDown={handleAgendaOwnerKeyDown}
+                        className="text-sm w-32"
+                        autoFocus
+                      />
+                    ) : (
+                      <p
+                        className={`text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors text-right ${
+                          item.completed ? "line-through" : ""
+                        }`}
+                        onClick={() =>
+                          handleAgendaOwnerClick(item.id, item.owner || "")
+                        }
+                      >
+                        {item.owner || "Assign owner..."}
+                      </p>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
+                    {!item.completed && (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Mark as Complete
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to mark "{item.title}" as
+                              complete?
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => markAgendaItemComplete(item.id)}
+                              className="bg-green-600 text-white hover:bg-green-700"
+                            >
+                              Yes, Mark as Complete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    )}
                     <AlertDialog>
                       <AlertDialogTrigger asChild>
                         <Button
