@@ -432,6 +432,7 @@ export default function Index() {
 
     setActionItems(newActions);
     setDraggedAction(null);
+    showSaveToast();
   };
 
   const handleStatusChange = (
