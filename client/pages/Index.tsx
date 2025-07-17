@@ -920,10 +920,12 @@ export default function Index() {
     // Auto-focus on the new item's title for editing
     setEditingBlockerTitle(newId);
     setEditingBlockerTitleValue("New blocker");
+    showSaveToast();
   };
 
   const removeBlocker = (id: string) => {
     setBlockers((prev) => prev.filter((item) => item.id !== id));
+    showSaveToast();
   };
 
   const handleBlockerDrop = (
