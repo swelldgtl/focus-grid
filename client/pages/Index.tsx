@@ -1000,9 +1000,75 @@ export default function Index() {
                 <TableRow>
                   <TableHead>Goal</TableHead>
                   <TableHead>Target Metric</TableHead>
-                  <TableHead>Oct 2024</TableHead>
-                  <TableHead>Nov 2024</TableHead>
-                  <TableHead>Dec 2024</TableHead>
+                  <TableHead>
+                    {editingTimeHeader === "month1" ? (
+                      <Input
+                        value={editingTimeHeaderValue}
+                        onChange={(e) =>
+                          setEditingTimeHeaderValue(e.target.value)
+                        }
+                        onBlur={handleTimeHeaderSave}
+                        onKeyDown={handleTimeHeaderKeyDown}
+                        className="font-semibold h-8"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className="cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleTimeHeaderClick("month1", timeHeaders.month1)
+                        }
+                      >
+                        {timeHeaders.month1}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead>
+                    {editingTimeHeader === "month2" ? (
+                      <Input
+                        value={editingTimeHeaderValue}
+                        onChange={(e) =>
+                          setEditingTimeHeaderValue(e.target.value)
+                        }
+                        onBlur={handleTimeHeaderSave}
+                        onKeyDown={handleTimeHeaderKeyDown}
+                        className="font-semibold h-8"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className="cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleTimeHeaderClick("month2", timeHeaders.month2)
+                        }
+                      >
+                        {timeHeaders.month2}
+                      </span>
+                    )}
+                  </TableHead>
+                  <TableHead>
+                    {editingTimeHeader === "month3" ? (
+                      <Input
+                        value={editingTimeHeaderValue}
+                        onChange={(e) =>
+                          setEditingTimeHeaderValue(e.target.value)
+                        }
+                        onBlur={handleTimeHeaderSave}
+                        onKeyDown={handleTimeHeaderKeyDown}
+                        className="font-semibold h-8"
+                        autoFocus
+                      />
+                    ) : (
+                      <span
+                        className="cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleTimeHeaderClick("month3", timeHeaders.month3)
+                        }
+                      >
+                        {timeHeaders.month3}
+                      </span>
+                    )}
+                  </TableHead>
                   <TableHead className="text-center">Actions</TableHead>
                 </TableRow>
               </TableHeader>
