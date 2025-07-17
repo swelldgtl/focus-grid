@@ -572,6 +572,31 @@ export default function Index() {
     setPendingGoalToAgenda(null);
   };
 
+  const handleActionToAgendaClick = (actionId: string, actionTitle: string) => {
+    setPendingActionToAgenda({ actionId, actionTitle });
+  };
+
+  const confirmAddActionToAgenda = () => {
+    if (!pendingActionToAgenda) return;
+
+    const newId = (
+      Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: AgendaItem = {
+      id: newId,
+      title: pendingActionToAgenda.actionTitle,
+      description: "Add description here",
+      owner: "No Owner",
+      completed: false,
+    };
+    setAgendaItems((prev) => [...prev, newItem]);
+    setPendingActionToAgenda(null);
+  };
+
+  const cancelAddActionToAgenda = () => {
+    setPendingActionToAgenda(null);
+  };
+
   const handleAgendaDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     agendaId: string,
