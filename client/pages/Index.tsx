@@ -1339,7 +1339,7 @@ export default function Index() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <TriangleAlert className="h-5 w-5 text-primary" />
+                  <TriangleAlert className="h-5 w-5 text-gray-600" />
                   Blockers & Issues
                 </CardTitle>
                 <CardDescription>
