@@ -59,6 +59,11 @@ interface BlockerIssue {
   description: string;
 }
 
+interface AgendaItem {
+  id: string;
+  title: string;
+}
+
 interface ActionItem {
   id: string;
   title: string;
@@ -144,6 +149,33 @@ export default function Index() {
     null,
   );
   const [editingBlockerTitleValue, setEditingBlockerTitleValue] = useState("");
+  const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
+    {
+      id: "1",
+      title: "Review quarterly objectives",
+    },
+    {
+      id: "2",
+      title: "Discuss team resource allocation",
+    },
+    {
+      id: "3",
+      title: "Budget planning for next quarter",
+    },
+    {
+      id: "4",
+      title: "Client feedback review",
+    },
+    {
+      id: "5",
+      title: "Next steps and action items",
+    },
+  ]);
+  const [draggedAgenda, setDraggedAgenda] = useState<string | null>(null);
+  const [editingAgendaTitle, setEditingAgendaTitle] = useState<string | null>(
+    null,
+  );
+  const [editingAgendaTitleValue, setEditingAgendaTitleValue] = useState("");
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
@@ -405,6 +437,85 @@ export default function Index() {
     }
   };
 
+  const addNewAgendaItem = () => {
+    const newId = (
+      Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: AgendaItem = {
+      id: newId,
+      title: "New agenda item",
+    };
+    setAgendaItems((prev) => [newItem, ...prev]);
+    // Auto-focus on the new item's title for editing
+    setEditingAgendaTitle(newId);
+    setEditingAgendaTitleValue("New agenda item");
+  };
+
+  const removeAgendaItem = (id: string) => {
+    setAgendaItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
+  const handleAgendaDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    agendaId: string,
+  ) => {
+    setDraggedAgenda(agendaId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleAgendaDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    dropIndex: number,
+  ) => {
+    e.preventDefault();
+    if (!draggedAgenda) return;
+
+    const draggedIndex = agendaItems.findIndex(
+      (item) => item.id === draggedAgenda,
+    );
+    if (draggedIndex === -1) return;
+
+    const newItems = [...agendaItems];
+    const [draggedItem] = newItems.splice(draggedIndex, 1);
+    newItems.splice(dropIndex, 0, draggedItem);
+
+    setAgendaItems(newItems);
+    setDraggedAgenda(null);
+  };
+
+  const handleAgendaTitleClick = (agendaId: string, currentTitle: string) => {
+    setEditingAgendaTitle(agendaId);
+    setEditingAgendaTitleValue(currentTitle);
+  };
+
+  const handleAgendaTitleSave = () => {
+    if (!editingAgendaTitle) return;
+
+    setAgendaItems((prev) =>
+      prev.map((item) =>
+        item.id === editingAgendaTitle
+          ? { ...item, title: editingAgendaTitleValue }
+          : item,
+      ),
+    );
+
+    setEditingAgendaTitle(null);
+    setEditingAgendaTitleValue("");
+  };
+
+  const handleAgendaTitleCancel = () => {
+    setEditingAgendaTitle(null);
+    setEditingAgendaTitleValue("");
+  };
+
+  const handleAgendaTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleAgendaTitleSave();
+    } else if (e.key === "Escape") {
+      handleAgendaTitleCancel();
+    }
+  };
+
   const removeActionItem = (id: string) => {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
   };
@@ -558,6 +669,103 @@ export default function Index() {
                 ))}
               </TableBody>
             </Table>
+          </CardContent>
+        </Card>
+
+        {/* Agenda */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Agenda</CardTitle>
+            <CardDescription>
+              Meeting agenda items in order of discussion. Drag and drop to
+              reorder.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={addNewAgendaItem}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {agendaItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  draggable
+                  onDragStart={(e) => handleAgendaDragStart(e, item.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleAgendaDrop(e, index)}
+                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                >
+                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <div className="flex items-center justify-center w-8 h-8 bg-primary/10 text-primary font-medium text-sm rounded-full flex-shrink-0">
+                    {index + 1}
+                  </div>
+                  <div className="flex-1">
+                    {editingAgendaTitle === item.id ? (
+                      <Input
+                        value={editingAgendaTitleValue}
+                        onChange={(e) =>
+                          setEditingAgendaTitleValue(e.target.value)
+                        }
+                        onBlur={handleAgendaTitleSave}
+                        onKeyDown={handleAgendaTitleKeyDown}
+                        className="font-medium"
+                        autoFocus
+                      />
+                    ) : (
+                      <h4
+                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleAgendaTitleClick(item.id, item.title)
+                        }
+                      >
+                        {item.title}
+                      </h4>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete Agenda Item
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{item.title}"? This
+                            action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeAgendaItem(item.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
+            </div>
           </CardContent>
         </Card>
 
