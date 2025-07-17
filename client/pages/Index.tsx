@@ -45,6 +45,7 @@ import {
   Plus,
   Trash2,
   Check,
+  Grid3X3,
 } from "lucide-react";
 
 interface Task {
@@ -158,6 +159,7 @@ export default function Index() {
   >(null);
   const [editingBlockerDescriptionValue, setEditingBlockerDescriptionValue] =
     useState("");
+  const [focusMode, setFocusMode] = useState(false);
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
     {
       id: "1",
@@ -666,6 +668,10 @@ export default function Index() {
     );
   };
 
+  const toggleFocusMode = () => {
+    setFocusMode((prev) => !prev);
+  };
+
   const removeActionItem = (id: string) => {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
   };
@@ -757,11 +763,27 @@ export default function Index() {
         {/* Sales Data Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Goals & Progress</CardTitle>
-            <CardDescription>
-              Track your key business objectives and monitor progress over the
-              past three months.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Goals & Progress</CardTitle>
+                <CardDescription>
+                  Track your key business objectives and monitor progress over
+                  the past three months.
+                </CardDescription>
+              </div>
+              <Button
+                onClick={toggleFocusMode}
+                variant="ghost"
+                size="sm"
+                className={`h-8 w-8 p-0 transition-colors ${
+                  focusMode
+                    ? "text-primary bg-primary/10 hover:bg-primary/20"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                <Grid3X3 className="h-4 w-4" />
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
             <Table>
@@ -813,7 +835,7 @@ export default function Index() {
         </Card>
 
         {/* Agenda */}
-        <Card>
+        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
           <CardHeader>
             <CardTitle>Agenda</CardTitle>
             <CardDescription>
@@ -998,7 +1020,7 @@ export default function Index() {
         </Card>
 
         {/* Action Plan */}
-        <Card>
+        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
           <CardHeader>
             <CardTitle>Action Plan</CardTitle>
             <CardDescription>
@@ -1104,7 +1126,7 @@ export default function Index() {
         </Card>
 
         {/* Blockers & Issues */}
-        <Card>
+        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
           <CardHeader>
             <CardTitle>Blockers & Issues</CardTitle>
             <CardDescription>
