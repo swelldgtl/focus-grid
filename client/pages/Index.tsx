@@ -31,6 +31,8 @@ import {
   Users,
   DollarSign,
   Activity,
+  Plus,
+  Trash2,
 } from "lucide-react";
 
 interface Task {
@@ -299,6 +301,22 @@ export default function Index() {
       : "bg-red-50 border-red-200 hover:bg-red-100";
   };
 
+  const addNewActionItem = () => {
+    const newId = (
+      Math.max(...actionItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: ActionItem = {
+      id: newId,
+      title: "New action item",
+      status: "on-track",
+    };
+    setActionItems((prev) => [...prev, newItem]);
+  };
+
+  const removeActionItem = (id: string) => {
+    setActionItems((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const handleDrop2 = (
     e: React.DragEvent<HTMLDivElement>,
     dropIndex: number,
@@ -493,6 +511,17 @@ export default function Index() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="flex justify-between items-center mb-4">
+                <Button
+                  onClick={addNewActionItem}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add New
+                </Button>
+              </div>
               <div className="space-y-3">
                 {actionItems.map((action, index) => (
                   <div
@@ -522,6 +551,14 @@ export default function Index() {
                           <SelectItem value="off-track">Off Track</SelectItem>
                         </SelectContent>
                       </Select>
+                      <Button
+                        onClick={() => removeActionItem(action.id)}
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
                   </div>
                 ))}
