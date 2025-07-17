@@ -1342,7 +1342,7 @@ export default function Index() {
                       />
                     ) : (
                       <h4
-                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
                         onClick={() =>
                           handleBlockerTitleClick(blocker.id, blocker.title)
                         }
