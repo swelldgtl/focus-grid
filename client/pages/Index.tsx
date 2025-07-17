@@ -639,6 +639,31 @@ export default function Index() {
     setPendingBlockerToAgenda(null);
   };
 
+  const handleTimeHeaderClick = (headerKey: string, currentValue: string) => {
+    setEditingTimeHeader(headerKey);
+    setEditingTimeHeaderValue(currentValue);
+  };
+
+  const handleTimeHeaderSave = () => {
+    if (!editingTimeHeader) return;
+
+    setTimeHeaders((prev) => ({
+      ...prev,
+      [editingTimeHeader]: editingTimeHeaderValue,
+    }));
+    setEditingTimeHeader(null);
+    setEditingTimeHeaderValue("");
+  };
+
+  const handleTimeHeaderKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleTimeHeaderSave();
+    } else if (e.key === "Escape") {
+      setEditingTimeHeader(null);
+      setEditingTimeHeaderValue("");
+    }
+  };
+
   const handleAgendaDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     agendaId: string,
