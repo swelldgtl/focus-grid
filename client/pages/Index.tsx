@@ -57,6 +57,7 @@ import {
   Target,
   Compass,
   TriangleAlert,
+  List,
 } from "lucide-react";
 
 interface Task {
