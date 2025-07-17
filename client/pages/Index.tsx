@@ -474,10 +474,10 @@ export default function Index() {
       id: newId,
       title: "New agenda item",
       description: "Add description here",
-      owner: "Assign owner",
+      owner: "No Owner",
       completed: false,
     };
-    setAgendaItems((prev) => [newItem, ...prev]);
+    setAgendaItems((prev) => [...prev, newItem]);
     // Auto-focus on the new item's title for editing
     setEditingAgendaTitle(newId);
     setEditingAgendaTitleValue("New agenda item");
@@ -890,11 +890,42 @@ export default function Index() {
                           handleAgendaOwnerClick(item.id, item.owner || "")
                         }
                       >
-                        {item.owner || "Assign owner..."}
+                        {item.owner || "No Owner"}
                       </p>
                     )}
                   </div>
                   <div className="flex items-center gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete Agenda Item
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{item.title}"? This
+                            action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeAgendaItem(item.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                     {!item.completed && (
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
@@ -928,37 +959,6 @@ export default function Index() {
                         </AlertDialogContent>
                       </AlertDialog>
                     )}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete Agenda Item
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{item.title}"? This
-                            action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => removeAgendaItem(item.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
                   </div>
                 </div>
               ))}
