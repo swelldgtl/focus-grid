@@ -729,6 +729,7 @@ export default function Index() {
 
     setAgendaItems(newItems);
     setDraggedAgenda(null);
+    showSaveToast();
   };
 
   const handleAgendaTitleClick = (agendaId: string, currentTitle: string) => {
