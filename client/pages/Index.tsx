@@ -76,7 +76,41 @@ export default function Index() {
     },
   ]);
 
+  const [tasks2, setTasks2] = useState<Task[]>([
+    {
+      id: "6",
+      title: "Design new landing page",
+      status: "in_progress",
+      priority: "high",
+    },
+    {
+      id: "7",
+      title: "Implement user authentication",
+      status: "pending",
+      priority: "high",
+    },
+    {
+      id: "8",
+      title: "Write API documentation",
+      status: "completed",
+      priority: "medium",
+    },
+    {
+      id: "9",
+      title: "Set up monitoring dashboards",
+      status: "pending",
+      priority: "low",
+    },
+    {
+      id: "10",
+      title: "Conduct user interviews",
+      status: "in_progress",
+      priority: "medium",
+    },
+  ]);
+
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
+  const [draggedTask2, setDraggedTask2] = useState<string | null>(null);
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
@@ -207,6 +241,14 @@ export default function Index() {
     e.dataTransfer.effectAllowed = "move";
   };
 
+  const handleDragStart2 = (
+    e: React.DragEvent<HTMLDivElement>,
+    taskId: string,
+  ) => {
+    setDraggedTask2(taskId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = "move";
@@ -228,6 +270,24 @@ export default function Index() {
 
     setTasks(newTasks);
     setDraggedTask(null);
+  };
+
+  const handleDrop2 = (
+    e: React.DragEvent<HTMLDivElement>,
+    dropIndex: number,
+  ) => {
+    e.preventDefault();
+    if (!draggedTask2) return;
+
+    const draggedIndex = tasks2.findIndex((task) => task.id === draggedTask2);
+    if (draggedIndex === -1) return;
+
+    const newTasks = [...tasks2];
+    const [draggedItem] = newTasks.splice(draggedIndex, 1);
+    newTasks.splice(dropIndex, 0, draggedItem);
+
+    setTasks2(newTasks);
+    setDraggedTask2(null);
   };
 
   const getStatusBadge = (status: SaleRecord["status"]) => {
@@ -394,49 +454,96 @@ export default function Index() {
           </CardContent>
         </Card>
 
-        {/* Draggable Task List */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Management</CardTitle>
-            <CardDescription>
-              Drag and drop to reorder tasks by priority. Stay organized and
-              focused.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {tasks.map((task, index) => (
-                <div
-                  key={task.id}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, task.id)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, index)}
-                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
-                >
-                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <div className="flex-1">
-                    <h4 className="font-medium">{task.title}</h4>
+        {/* Two-Column Task Management Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Column - Task Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Task Management</CardTitle>
+              <CardDescription>
+                Drag and drop to reorder tasks by priority. Stay organized and
+                focused.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {tasks.map((task, index) => (
+                  <div
+                    key={task.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart(e, task.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop(e, index)}
+                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex-1">
+                      <h4 className="font-medium">{task.title}</h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={getPriorityBadge(task.priority)}
+                        variant="secondary"
+                      >
+                        {task.priority}
+                      </Badge>
+                      <Badge
+                        className={getTaskStatusBadge(task.status)}
+                        variant="secondary"
+                      >
+                        {task.status.replace("_", " ")}
+                      </Badge>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <Badge
-                      className={getPriorityBadge(task.priority)}
-                      variant="secondary"
-                    >
-                      {task.priority}
-                    </Badge>
-                    <Badge
-                      className={getTaskStatusBadge(task.status)}
-                      variant="secondary"
-                    >
-                      {task.status.replace("_", " ")}
-                    </Badge>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Right Column - Task Management */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Task Management</CardTitle>
+              <CardDescription>
+                Drag and drop to reorder tasks by priority. Stay organized and
+                focused.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {tasks2.map((task, index) => (
+                  <div
+                    key={task.id}
+                    draggable
+                    onDragStart={(e) => handleDragStart2(e, task.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleDrop2(e, index)}
+                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex-1">
+                      <h4 className="font-medium">{task.title}</h4>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={getPriorityBadge(task.priority)}
+                        variant="secondary"
+                      >
+                        {task.priority}
+                      </Badge>
+                      <Badge
+                        className={getTaskStatusBadge(task.status)}
+                        variant="secondary"
+                      >
+                        {task.status.replace("_", " ")}
+                      </Badge>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
