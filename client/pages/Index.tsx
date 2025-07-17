@@ -321,7 +321,7 @@ export default function Index() {
       title: "New action item",
       status: "on-track",
     };
-    setActionItems((prev) => [...prev, newItem]);
+    setActionItems((prev) => [newItem, ...prev]);
   };
 
   const removeActionItem = (id: string) => {
