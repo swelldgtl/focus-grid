@@ -79,19 +79,12 @@ export function DataManager() {
   const handleClearAll = () => {
     try {
       clearAllStoredData();
-      toast({
-        title: "Data Cleared",
-        description: "All Focus Grid data has been cleared. Refreshing page...",
-      });
+      alert("All Focus Grid data has been cleared. The page will refresh.");
       setTimeout(() => {
         window.location.reload();
       }, 1000);
     } catch (error) {
-      toast({
-        title: "Clear Failed",
-        description: "Failed to clear data. Please try again.",
-        variant: "destructive",
-      });
+      alert("Failed to clear data. Please try again.");
     }
   };
 
