@@ -641,6 +641,7 @@ export default function Index() {
     };
     setAgendaItems((prev) => [...prev, newItem]);
     setPendingActionToAgenda(null);
+    showSaveToast();
   };
 
   const cancelAddActionToAgenda = () => {
