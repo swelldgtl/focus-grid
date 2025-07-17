@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -160,6 +160,8 @@ export default function Index() {
   const [editingBlockerDescriptionValue, setEditingBlockerDescriptionValue] =
     useState("");
   const [focusMode, setFocusMode] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [timerRunning, setTimerRunning] = useState(false);
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
     {
       id: "1",
@@ -669,7 +671,36 @@ export default function Index() {
   };
 
   const toggleFocusMode = () => {
-    setFocusMode((prev) => !prev);
+    setFocusMode((prev) => {
+      const newFocusMode = !prev;
+      if (newFocusMode) {
+        // Starting focus mode - start/restart timer
+        setTimerSeconds(0);
+        setTimerRunning(true);
+      } else {
+        // Stopping focus mode - stop timer but keep time
+        setTimerRunning(false);
+      }
+      return newFocusMode;
+    });
+  };
+
+  // Timer effect
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (timerRunning) {
+      interval = setInterval(() => {
+        setTimerSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [timerRunning]);
+
+  // Format timer display
+  const formatTime = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
   };
 
   const removeActionItem = (id: string) => {
@@ -771,18 +802,25 @@ export default function Index() {
                   the past three months.
                 </CardDescription>
               </div>
-              <Button
-                onClick={toggleFocusMode}
-                variant="ghost"
-                size="sm"
-                className={`h-8 w-8 p-0 transition-colors ${
-                  focusMode
-                    ? "text-primary bg-primary/10 hover:bg-primary/20"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <Grid3X3 className="h-4 w-4" />
-              </Button>
+              <div className="flex items-center gap-3">
+                {focusMode && (
+                  <div className="text-sm font-mono text-muted-foreground">
+                    {formatTime(timerSeconds)}
+                  </div>
+                )}
+                <Button
+                  onClick={toggleFocusMode}
+                  variant="ghost"
+                  size="sm"
+                  className={`h-10 w-10 p-0 transition-colors ${
+                    focusMode
+                      ? "text-primary bg-primary/10 hover:bg-primary/20"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Grid3X3 className="h-8 w-8" />
+                </Button>
+              </div>
             </div>
           </CardHeader>
           <CardContent>
