@@ -1025,10 +1025,6 @@ export default function Index() {
                   <Target className="h-5 w-5 text-gray-600" />
                   Goals & Progress
                 </CardTitle>
-                <CardDescription>
-                  Track your key business objectives and monitor progress over
-                  the past three months.
-                </CardDescription>
               </div>
               <div className="flex items-center gap-3">
                 {activeFocusModule === "goals" && (
