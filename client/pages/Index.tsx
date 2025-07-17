@@ -159,9 +159,15 @@ export default function Index() {
   >(null);
   const [editingBlockerDescriptionValue, setEditingBlockerDescriptionValue] =
     useState("");
-  const [focusMode, setFocusMode] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(0);
-  const [timerRunning, setTimerRunning] = useState(false);
+  const [activeFocusModule, setActiveFocusModule] = useState<string | null>(
+    null,
+  );
+  const [timers, setTimers] = useState<{
+    [key: string]: { seconds: number; running: boolean };
+  }>({});
+
+  // Initialize timers for all modules
+  const modules = ["goals", "agenda", "action-plan", "blockers"];
   const [agendaItems, setAgendaItems] = useState<AgendaItem[]>([
     {
       id: "1",
@@ -670,37 +676,65 @@ export default function Index() {
     );
   };
 
-  const toggleFocusMode = () => {
-    setFocusMode((prev) => {
-      const newFocusMode = !prev;
-      if (newFocusMode) {
-        // Starting focus mode - start/restart timer
-        setTimerSeconds(0);
-        setTimerRunning(true);
+  const toggleFocusMode = (moduleId: string) => {
+    setActiveFocusModule((prev) => {
+      if (prev === moduleId) {
+        // Turning off focus mode for this module
+        setTimers((prevTimers) => ({
+          ...prevTimers,
+          [moduleId]: {
+            ...prevTimers[moduleId],
+            running: false,
+          },
+        }));
+        return null;
       } else {
-        // Stopping focus mode - stop timer but keep time
-        setTimerRunning(false);
+        // Turning on focus mode for this module
+        setTimers((prevTimers) => ({
+          ...prevTimers,
+          [moduleId]: {
+            seconds: 0,
+            running: true,
+          },
+        }));
+        return moduleId;
       }
-      return newFocusMode;
     });
   };
 
-  // Timer effect
+  // Timer effect for all modules
   useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (timerRunning) {
-      interval = setInterval(() => {
-        setTimerSeconds((prev) => prev + 1);
-      }, 1000);
-    }
-    return () => clearInterval(interval);
-  }, [timerRunning]);
+    const intervals: { [key: string]: NodeJS.Timeout } = {};
+
+    Object.keys(timers).forEach((moduleId) => {
+      if (timers[moduleId]?.running) {
+        intervals[moduleId] = setInterval(() => {
+          setTimers((prev) => ({
+            ...prev,
+            [moduleId]: {
+              ...prev[moduleId],
+              seconds: (prev[moduleId]?.seconds || 0) + 1,
+            },
+          }));
+        }, 1000);
+      }
+    });
+
+    return () => {
+      Object.values(intervals).forEach((interval) => clearInterval(interval));
+    };
+  }, [timers]);
 
   // Format timer display
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+  };
+
+  // Check if a module should be inactive
+  const isModuleInactive = (moduleId: string) => {
+    return activeFocusModule !== null && activeFocusModule !== moduleId;
   };
 
   const removeActionItem = (id: string) => {
@@ -803,17 +837,17 @@ export default function Index() {
                 </CardDescription>
               </div>
               <div className="flex items-center gap-3">
-                {focusMode && (
+                {activeFocusModule === "goals" && (
                   <div className="text-sm font-mono text-muted-foreground">
-                    {formatTime(timerSeconds)}
+                    {formatTime(timers["goals"]?.seconds || 0)}
                   </div>
                 )}
                 <Button
-                  onClick={toggleFocusMode}
+                  onClick={() => toggleFocusMode("goals")}
                   variant="ghost"
                   size="sm"
                   className={`h-10 w-10 p-0 transition-colors ${
-                    focusMode
+                    activeFocusModule === "goals"
                       ? "text-primary bg-primary/10 hover:bg-primary/20"
                       : "text-muted-foreground hover:text-foreground"
                   }`}
@@ -873,13 +907,40 @@ export default function Index() {
         </Card>
 
         {/* Agenda */}
-        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
+        <Card
+          className={
+            isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
+          }
+        >
           <CardHeader>
-            <CardTitle>Agenda</CardTitle>
-            <CardDescription>
-              Meeting agenda items in order of discussion. Drag and drop to
-              reorder.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Agenda</CardTitle>
+                <CardDescription>
+                  Meeting agenda items in order of discussion. Drag and drop to
+                  reorder.
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3">
+                {activeFocusModule === "agenda" && (
+                  <div className="text-sm font-mono text-muted-foreground">
+                    {formatTime(timers["agenda"]?.seconds || 0)}
+                  </div>
+                )}
+                <Button
+                  onClick={() => toggleFocusMode("agenda")}
+                  variant="ghost"
+                  size="sm"
+                  className={`h-10 w-10 p-0 transition-colors ${
+                    activeFocusModule === "agenda"
+                      ? "text-primary bg-primary/10 hover:bg-primary/20"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Grid3X3 className="h-8 w-8" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center mb-4">
@@ -1058,13 +1119,42 @@ export default function Index() {
         </Card>
 
         {/* Action Plan */}
-        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
+        <Card
+          className={
+            isModuleInactive("action-plan")
+              ? "opacity-20 pointer-events-none"
+              : ""
+          }
+        >
           <CardHeader>
-            <CardTitle>Action Plan</CardTitle>
-            <CardDescription>
-              Drag and drop to reorder action items. Track progress and stay
-              focused on your goals.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Action Plan</CardTitle>
+                <CardDescription>
+                  Drag and drop to reorder action items. Track progress and stay
+                  focused on your goals.
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3">
+                {activeFocusModule === "action-plan" && (
+                  <div className="text-sm font-mono text-muted-foreground">
+                    {formatTime(timers["action-plan"]?.seconds || 0)}
+                  </div>
+                )}
+                <Button
+                  onClick={() => toggleFocusMode("action-plan")}
+                  variant="ghost"
+                  size="sm"
+                  className={`h-10 w-10 p-0 transition-colors ${
+                    activeFocusModule === "action-plan"
+                      ? "text-primary bg-primary/10 hover:bg-primary/20"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Grid3X3 className="h-8 w-8" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center mb-4">
@@ -1164,13 +1254,40 @@ export default function Index() {
         </Card>
 
         {/* Blockers & Issues */}
-        <Card className={focusMode ? "opacity-20 pointer-events-none" : ""}>
+        <Card
+          className={
+            isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
+          }
+        >
           <CardHeader>
-            <CardTitle>Blockers & Issues</CardTitle>
-            <CardDescription>
-              Track and prioritize current blockers and issues affecting
-              progress.
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Blockers & Issues</CardTitle>
+                <CardDescription>
+                  Track and prioritize current blockers and issues affecting
+                  progress.
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-3">
+                {activeFocusModule === "blockers" && (
+                  <div className="text-sm font-mono text-muted-foreground">
+                    {formatTime(timers["blockers"]?.seconds || 0)}
+                  </div>
+                )}
+                <Button
+                  onClick={() => toggleFocusMode("blockers")}
+                  variant="ghost"
+                  size="sm"
+                  className={`h-10 w-10 p-0 transition-colors ${
+                    activeFocusModule === "blockers"
+                      ? "text-primary bg-primary/10 hover:bg-primary/20"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  <Grid3X3 className="h-8 w-8" />
+                </Button>
+              </div>
+            </div>
           </CardHeader>
           <CardContent>
             <div className="flex justify-between items-center mb-4">
