@@ -1037,7 +1037,7 @@ export default function Index() {
                       />
                     ) : (
                       <span
-                        className="cursor-pointer hover:text-primary transition-colors"
+                        className="cursor-pointer hover:text-blue-600 transition-colors"
                         onClick={() =>
                           handleTimeHeaderClick("month2", timeHeaders.month2)
                         }
