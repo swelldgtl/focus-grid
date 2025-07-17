@@ -687,6 +687,7 @@ export default function Index() {
     }));
     setEditingTimeHeader(null);
     setEditingTimeHeaderValue("");
+    showSaveToast();
   };
 
   const handleTimeHeaderKeyDown = (e: React.KeyboardEvent) => {
