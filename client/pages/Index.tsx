@@ -670,6 +670,7 @@ export default function Index() {
     };
     setAgendaItems((prev) => [...prev, newItem]);
     setPendingBlockerToAgenda(null);
+    showSaveToast();
   };
 
   const cancelAddBlockerToAgenda = () => {
