@@ -543,6 +543,31 @@ export default function Index() {
     setAgendaItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const handleGoalToAgendaClick = (goalId: string, goalName: string) => {
+    setPendingGoalToAgenda({ goalId, goalName });
+  };
+
+  const confirmAddGoalToAgenda = () => {
+    if (!pendingGoalToAgenda) return;
+
+    const newId = (
+      Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: AgendaItem = {
+      id: newId,
+      title: pendingGoalToAgenda.goalName,
+      description: "Add description here",
+      owner: "No Owner",
+      completed: false,
+    };
+    setAgendaItems((prev) => [...prev, newItem]);
+    setPendingGoalToAgenda(null);
+  };
+
+  const cancelAddGoalToAgenda = () => {
+    setPendingGoalToAgenda(null);
+  };
+
   const handleAgendaDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     agendaId: string,
