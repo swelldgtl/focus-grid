@@ -754,16 +754,6 @@ export default function Index() {
           </div>
         </div>
 
-        {/* Callout Alert */}
-        <Alert className="border-primary/20 bg-primary/5">
-          <TrendingUp className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            <strong>Great news!</strong> Your revenue is up 23% compared to last
-            month. Keep up the excellent work and consider expanding your
-            marketing efforts.
-          </AlertDescription>
-        </Alert>
-
         {/* Sales Data Table */}
         <Card>
           <CardHeader>
