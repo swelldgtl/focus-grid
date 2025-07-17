@@ -55,6 +55,7 @@ import {
   Grid3X3,
   Send,
   Target,
+  Compass,
 } from "lucide-react";
 
 interface Task {
