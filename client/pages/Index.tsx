@@ -123,36 +123,41 @@ export default function Index() {
   );
   const setActionItems = actionItemsActions.set;
 
-  const [blockers, setBlockers] = useState<BlockerIssue[]>([
-    {
-      id: "6",
-      title: "API Rate Limiting",
-      description:
-        "Third-party service imposing unexpected rate limits on our requests",
-    },
-    {
-      id: "7",
-      title: "Database Performance",
-      description:
-        "Slow query performance affecting user experience during peak hours",
-    },
-    {
-      id: "8",
-      title: "SSL Certificate Renewal",
-      description:
-        "Certificate expires next week, need to coordinate with DevOps team",
-    },
-    {
-      id: "9",
-      title: "Browser Compatibility",
-      description: "Feature not working correctly in older versions of Safari",
-    },
-    {
-      id: "10",
-      title: "Vendor Integration",
-      description: "Payment processor API changes breaking checkout flow",
-    },
-  ]);
+  const [blockers, blockersActions] = usePersistentArray<BlockerIssue>(
+    STORAGE_KEYS.BLOCKERS,
+    [
+      {
+        id: "6",
+        title: "API Rate Limiting",
+        description:
+          "Third-party service imposing unexpected rate limits on our requests",
+      },
+      {
+        id: "7",
+        title: "Database Performance",
+        description:
+          "Slow query performance affecting user experience during peak hours",
+      },
+      {
+        id: "8",
+        title: "SSL Certificate Renewal",
+        description:
+          "Certificate expires next week, need to coordinate with DevOps team",
+      },
+      {
+        id: "9",
+        title: "Browser Compatibility",
+        description:
+          "Feature not working correctly in older versions of Safari",
+      },
+      {
+        id: "10",
+        title: "Vendor Integration",
+        description: "Payment processor API changes breaking checkout flow",
+      },
+    ],
+  );
+  const setBlockers = blockersActions.set;
 
   const [draggedAction, setDraggedAction] = useState<string | null>(null);
   const [draggedBlocker, setDraggedBlocker] = useState<string | null>(null);
