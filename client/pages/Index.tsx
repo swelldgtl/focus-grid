@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -76,8 +77,13 @@ export default function Index() {
   ]);
 
   const [draggedTask, setDraggedTask] = useState<string | null>(null);
+  const [editingCell, setEditingCell] = useState<{
+    goalId: string;
+    field: string;
+  } | null>(null);
+  const [editValue, setEditValue] = useState("");
 
-  const goalsData: GoalRecord[] = [
+  const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
       id: "1",
       goal: "Increase Monthly Revenue",
@@ -118,7 +124,80 @@ export default function Index() {
       month2: "78% weekly active",
       month3: "81% weekly active",
     },
-  ];
+  ]);
+
+  const handleCellClick = (
+    goalId: string,
+    field: string,
+    currentValue: string,
+  ) => {
+    setEditingCell({ goalId, field });
+    setEditValue(currentValue);
+  };
+
+  const handleCellSave = () => {
+    if (!editingCell) return;
+
+    setGoalsData((prev) =>
+      prev.map((goal) => {
+        if (goal.id === editingCell.goalId) {
+          return {
+            ...goal,
+            [editingCell.field]: editValue,
+          };
+        }
+        return goal;
+      }),
+    );
+
+    setEditingCell(null);
+    setEditValue("");
+  };
+
+  const handleCellCancel = () => {
+    setEditingCell(null);
+    setEditValue("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleCellSave();
+    } else if (e.key === "Escape") {
+      handleCellCancel();
+    }
+  };
+
+  const renderEditableCell = (
+    goalId: string,
+    field: string,
+    value: string,
+    className?: string,
+  ) => {
+    const isEditing =
+      editingCell?.goalId === goalId && editingCell?.field === field;
+
+    if (isEditing) {
+      return (
+        <Input
+          value={editValue}
+          onChange={(e) => setEditValue(e.target.value)}
+          onBlur={handleCellSave}
+          onKeyDown={handleKeyDown}
+          className="h-8 text-sm"
+          autoFocus
+        />
+      );
+    }
+
+    return (
+      <div
+        className={`cursor-pointer hover:bg-accent/50 px-2 py-1 rounded transition-colors ${className || ""}`}
+        onClick={() => handleCellClick(goalId, field, value)}
+      >
+        {value}
+      </div>
+    );
+  };
 
   const handleDragStart = (
     e: React.DragEvent<HTMLDivElement>,
@@ -283,13 +362,31 @@ export default function Index() {
                     key={goal.id}
                     className={index % 2 === 1 ? "bg-muted/30" : ""}
                   >
-                    <TableCell className="font-medium">{goal.goal}</TableCell>
                     <TableCell className="font-medium">
-                      {goal.targetMetric}
+                      {renderEditableCell(
+                        goal.id,
+                        "goal",
+                        goal.goal,
+                        "font-medium",
+                      )}
                     </TableCell>
-                    <TableCell>{goal.month1}</TableCell>
-                    <TableCell>{goal.month2}</TableCell>
-                    <TableCell>{goal.month3}</TableCell>
+                    <TableCell className="font-medium">
+                      {renderEditableCell(
+                        goal.id,
+                        "targetMetric",
+                        goal.targetMetric,
+                        "font-medium",
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {renderEditableCell(goal.id, "month1", goal.month1)}
+                    </TableCell>
+                    <TableCell>
+                      {renderEditableCell(goal.id, "month2", goal.month2)}
+                    </TableCell>
+                    <TableCell>
+                      {renderEditableCell(goal.id, "month3", goal.month3)}
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
