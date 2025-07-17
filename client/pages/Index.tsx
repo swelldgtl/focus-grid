@@ -821,6 +821,7 @@ export default function Index() {
 
     setEditingAgendaOwner(null);
     setEditingAgendaOwnerValue("");
+    showSaveToast();
   };
 
   const handleAgendaOwnerCancel = () => {
