@@ -262,11 +262,14 @@ export default function Index() {
     null,
   );
   const [editingTimeHeaderValue, setEditingTimeHeaderValue] = useState("");
-  const [timeHeaders, setTimeHeaders] = useState({
-    month1: "Oct 2024",
-    month2: "Nov 2024",
-    month3: "Dec 2024",
-  });
+  const [timeHeaders, setTimeHeaders] = usePersistentState(
+    STORAGE_KEYS.TIME_HEADERS,
+    {
+      month1: "Oct 2024",
+      month2: "Nov 2024",
+      month3: "Dec 2024",
+    },
+  );
 
   const [goalsData, goalsDataActions] = usePersistentArray<GoalRecord>(
     STORAGE_KEYS.GOALS_DATA,
