@@ -966,209 +966,206 @@ export default function Index() {
           </CardContent>
         </Card>
 
-        {/* Two-Column Task Management Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Column - Action Plan */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Action Plan</CardTitle>
-              <CardDescription>
-                Drag and drop to reorder action items. Track progress and stay
-                focused on your goals.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-center mb-4">
-                <Button
-                  onClick={addNewActionItem}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
+        {/* Action Plan */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Action Plan</CardTitle>
+            <CardDescription>
+              Drag and drop to reorder action items. Track progress and stay
+              focused on your goals.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={addNewActionItem}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {actionItems.map((action, index) => (
+                <div
+                  key={action.id}
+                  draggable
+                  onDragStart={(e) => handleActionDragStart(e, action.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleActionDrop(e, index)}
+                  className={`flex items-center gap-3 p-4 border rounded-lg transition-colors cursor-move group ${getActionItemBackground(action.status)}`}
                 >
-                  <Plus className="h-4 w-4" />
-                  Add New
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {actionItems.map((action, index) => (
-                  <div
-                    key={action.id}
-                    draggable
-                    onDragStart={(e) => handleActionDragStart(e, action.id)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleActionDrop(e, index)}
-                    className={`flex items-center gap-3 p-4 border rounded-lg transition-colors cursor-move group ${getActionItemBackground(action.status)}`}
-                  >
-                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <div className="flex-1">
-                      {editingActionTitle === action.id ? (
-                        <Input
-                          value={editingTitleValue}
-                          onChange={(e) => setEditingTitleValue(e.target.value)}
-                          onBlur={handleTitleSave}
-                          onKeyDown={handleTitleKeyDown}
-                          className="font-medium"
-                          autoFocus
-                        />
-                      ) : (
-                        <h4
-                          className="font-medium cursor-pointer hover:text-primary transition-colors"
-                          onClick={() =>
-                            handleTitleClick(action.id, action.title)
-                          }
-                        >
-                          {action.title}
-                        </h4>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Select
-                        value={action.status}
-                        onValueChange={(value: "on-track" | "off-track") =>
-                          handleStatusChange(action.id, value)
+                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <div className="flex-1">
+                    {editingActionTitle === action.id ? (
+                      <Input
+                        value={editingTitleValue}
+                        onChange={(e) => setEditingTitleValue(e.target.value)}
+                        onBlur={handleTitleSave}
+                        onKeyDown={handleTitleKeyDown}
+                        className="font-medium"
+                        autoFocus
+                      />
+                    ) : (
+                      <h4
+                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleTitleClick(action.id, action.title)
                         }
                       >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="on-track">On Track</SelectItem>
-                          <SelectItem value="off-track">Off Track</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Delete Action Item
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{action.title}"?
-                              This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => removeActionItem(action.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                        {action.title}
+                      </h4>
+                    )}
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Right Column - Blockers & Issues */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Blockers & Issues</CardTitle>
-              <CardDescription>
-                Track and prioritize current blockers and issues affecting
-                progress.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-between items-center mb-4">
-                <Button
-                  onClick={addNewBlocker}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add New
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {blockers.map((blocker, index) => (
-                  <div
-                    key={blocker.id}
-                    draggable
-                    onDragStart={(e) => handleBlockerDragStart(e, blocker.id)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleBlockerDrop(e, index)}
-                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
-                  >
-                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <div className="flex-1">
-                      {editingBlockerTitle === blocker.id ? (
-                        <Input
-                          value={editingBlockerTitleValue}
-                          onChange={(e) =>
-                            setEditingBlockerTitleValue(e.target.value)
-                          }
-                          onBlur={handleBlockerTitleSave}
-                          onKeyDown={handleBlockerTitleKeyDown}
-                          className="font-medium"
-                          autoFocus
-                        />
-                      ) : (
-                        <h4
-                          className="font-medium cursor-pointer hover:text-primary transition-colors"
-                          onClick={() =>
-                            handleBlockerTitleClick(blocker.id, blocker.title)
-                          }
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={action.status}
+                      onValueChange={(value: "on-track" | "off-track") =>
+                        handleStatusChange(action.id, value)
+                      }
+                    >
+                      <SelectTrigger className="w-32">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="on-track">On Track</SelectItem>
+                        <SelectItem value="off-track">Off Track</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
                         >
-                          {blocker.title}
-                        </h4>
-                      )}
-                      <p className="text-sm text-muted-foreground mt-1">
-                        {blocker.description}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>
+                            Delete Action Item
+                          </AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{action.title}"?
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeActionItem(action.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                           >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>Delete Blocker</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{blocker.title}"?
-                              This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => removeBlocker(blocker.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Blockers & Issues */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Blockers & Issues</CardTitle>
+            <CardDescription>
+              Track and prioritize current blockers and issues affecting
+              progress.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex justify-between items-center mb-4">
+              <Button
+                onClick={addNewBlocker}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+            </div>
+            <div className="space-y-3">
+              {blockers.map((blocker, index) => (
+                <div
+                  key={blocker.id}
+                  draggable
+                  onDragStart={(e) => handleBlockerDragStart(e, blocker.id)}
+                  onDragOver={handleDragOver}
+                  onDrop={(e) => handleBlockerDrop(e, index)}
+                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                >
+                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <div className="flex-1">
+                    {editingBlockerTitle === blocker.id ? (
+                      <Input
+                        value={editingBlockerTitleValue}
+                        onChange={(e) =>
+                          setEditingBlockerTitleValue(e.target.value)
+                        }
+                        onBlur={handleBlockerTitleSave}
+                        onKeyDown={handleBlockerTitleKeyDown}
+                        className="font-medium"
+                        autoFocus
+                      />
+                    ) : (
+                      <h4
+                        className="font-medium cursor-pointer hover:text-primary transition-colors"
+                        onClick={() =>
+                          handleBlockerTitleClick(blocker.id, blocker.title)
+                        }
+                      >
+                        {blocker.title}
+                      </h4>
+                    )}
+                    <p className="text-sm text-muted-foreground mt-1">
+                      {blocker.description}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Delete Blocker</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            Are you sure you want to delete "{blocker.title}"?
+                            This action cannot be undone.
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction
+                            onClick={() => removeBlocker(blocker.id)}
+                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          >
+                            Delete
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
