@@ -132,6 +132,10 @@ export default function Index() {
 
   const [draggedAction, setDraggedAction] = useState<string | null>(null);
   const [draggedTask2, setDraggedTask2] = useState<string | null>(null);
+  const [editingActionTitle, setEditingActionTitle] = useState<string | null>(
+    null,
+  );
+  const [editingTitleValue, setEditingTitleValue] = useState("");
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
@@ -322,6 +326,42 @@ export default function Index() {
       status: "on-track",
     };
     setActionItems((prev) => [newItem, ...prev]);
+    // Auto-focus on the new item's title for editing
+    setEditingActionTitle(newId);
+    setEditingTitleValue("New action item");
+  };
+
+  const handleTitleClick = (actionId: string, currentTitle: string) => {
+    setEditingActionTitle(actionId);
+    setEditingTitleValue(currentTitle);
+  };
+
+  const handleTitleSave = () => {
+    if (!editingActionTitle) return;
+
+    setActionItems((prev) =>
+      prev.map((action) =>
+        action.id === editingActionTitle
+          ? { ...action, title: editingTitleValue }
+          : action,
+      ),
+    );
+
+    setEditingActionTitle(null);
+    setEditingTitleValue("");
+  };
+
+  const handleTitleCancel = () => {
+    setEditingActionTitle(null);
+    setEditingTitleValue("");
+  };
+
+  const handleTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleTitleSave();
+    } else if (e.key === "Escape") {
+      handleTitleCancel();
+    }
   };
 
   const removeActionItem = (id: string) => {
@@ -545,7 +585,25 @@ export default function Index() {
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
-                      <h4 className="font-medium">{action.title}</h4>
+                      {editingActionTitle === action.id ? (
+                        <Input
+                          value={editingTitleValue}
+                          onChange={(e) => setEditingTitleValue(e.target.value)}
+                          onBlur={handleTitleSave}
+                          onKeyDown={handleTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className="font-medium cursor-pointer hover:text-primary transition-colors"
+                          onClick={() =>
+                            handleTitleClick(action.id, action.title)
+                          }
+                        >
+                          {action.title}
+                        </h4>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Select
