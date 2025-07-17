@@ -910,7 +910,7 @@ export default function Index() {
           </CardContent>
         </Card>
 
-        {/* Agenda */}
+        {/* Action Plan */}
         <Card
           className={
             isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
