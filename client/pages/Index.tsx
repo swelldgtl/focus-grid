@@ -898,6 +898,7 @@ export default function Index() {
 
   const removeActionItem = (id: string) => {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
+    showSaveToast();
   };
 
   const addNewBlocker = () => {
