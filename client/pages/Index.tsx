@@ -591,6 +591,7 @@ export default function Index() {
 
   const removeAgendaItem = (id: string) => {
     setAgendaItems((prev) => prev.filter((item) => item.id !== id));
+    showSaveToast();
   };
 
   const handleGoalToAgendaClick = (goalId: string, goalName: string) => {
