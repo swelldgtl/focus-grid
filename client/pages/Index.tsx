@@ -372,6 +372,22 @@ export default function Index() {
     setActionItems((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const addNewBlocker = () => {
+    const newId = (
+      Math.max(...blockers.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: BlockerIssue = {
+      id: newId,
+      title: "New blocker",
+      description: "Describe the issue or blocker",
+    };
+    setBlockers((prev) => [newItem, ...prev]);
+  };
+
+  const removeBlocker = (id: string) => {
+    setBlockers((prev) => prev.filter((item) => item.id !== id));
+  };
+
   const handleBlockerDrop = (
     e: React.DragEvent<HTMLDivElement>,
     dropIndex: number,
@@ -674,6 +690,17 @@ export default function Index() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="flex justify-between items-center mb-4">
+                <Button
+                  onClick={addNewBlocker}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add New
+                </Button>
+              </div>
               <div className="space-y-3">
                 {blockers.map((blocker, index) => (
                   <div
@@ -690,6 +717,37 @@ export default function Index() {
                       <p className="text-sm text-muted-foreground mt-1">
                         {blocker.description}
                       </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Blocker</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{blocker.title}"?
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => removeBlocker(blocker.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </div>
                 ))}
