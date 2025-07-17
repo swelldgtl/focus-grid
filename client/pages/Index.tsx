@@ -921,8 +921,8 @@ export default function Index() {
               <div>
                 <CardTitle>Blockers & Issues</CardTitle>
                 <CardDescription>
-                  Drag and drop to reorder action items. Track progress and stay
-                  focused on your goals.
+                  Track and prioritize current blockers and issues affecting
+                  progress.
                 </CardDescription>
               </div>
               <div className="flex items-center gap-3">
