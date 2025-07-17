@@ -1495,7 +1495,10 @@ export default function Index() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Agenda</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <List className="h-5 w-5 text-primary" />
+                  Agenda
+                </CardTitle>
                 <CardDescription>
                   Meeting agenda items in order of discussion. Drag and drop to
                   reorder.
