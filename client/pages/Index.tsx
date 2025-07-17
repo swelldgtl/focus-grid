@@ -750,6 +750,7 @@ export default function Index() {
 
     setEditingAgendaTitle(null);
     setEditingAgendaTitleValue("");
+    showSaveToast();
   };
 
   const handleAgendaTitleCancel = () => {
