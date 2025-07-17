@@ -239,6 +239,15 @@ export default function Index() {
     blockerTitle: string;
   } | null>(null);
   const [isFocusModeActive, setIsFocusModeActive] = useState(false);
+  const [editingTimeHeader, setEditingTimeHeader] = useState<string | null>(
+    null,
+  );
+  const [editingTimeHeaderValue, setEditingTimeHeaderValue] = useState("");
+  const [timeHeaders, setTimeHeaders] = useState({
+    month1: "Oct 2024",
+    month2: "Nov 2024",
+    month3: "Dec 2024",
+  });
 
   const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
