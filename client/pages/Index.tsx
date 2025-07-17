@@ -91,33 +91,37 @@ interface GoalRecord {
 }
 
 export default function Index() {
-  const [actionItems, setActionItems] = useState<ActionItem[]>([
-    {
-      id: "1",
-      title: "Review Q4 performance metrics",
-      status: "on-track",
-    },
-    {
-      id: "2",
-      title: "Update client documentation",
-      status: "on-track",
-    },
-    {
-      id: "3",
-      title: "Prepare monthly newsletter",
-      status: "off-track",
-    },
-    {
-      id: "4",
-      title: "Analyze user feedback",
-      status: "on-track",
-    },
-    {
-      id: "5",
-      title: "Optimize database queries",
-      status: "off-track",
-    },
-  ]);
+  const [actionItems, actionItemsActions] = usePersistentArray<ActionItem>(
+    STORAGE_KEYS.ACTION_ITEMS,
+    [
+      {
+        id: "1",
+        title: "Review Q4 performance metrics",
+        status: "on-track",
+      },
+      {
+        id: "2",
+        title: "Update client documentation",
+        status: "on-track",
+      },
+      {
+        id: "3",
+        title: "Prepare monthly newsletter",
+        status: "off-track",
+      },
+      {
+        id: "4",
+        title: "Analyze user feedback",
+        status: "on-track",
+      },
+      {
+        id: "5",
+        title: "Optimize database queries",
+        status: "off-track",
+      },
+    ],
+  );
+  const setActionItems = actionItemsActions.set;
 
   const [blockers, setBlockers] = useState<BlockerIssue[]>([
     {
