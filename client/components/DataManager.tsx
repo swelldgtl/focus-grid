@@ -33,7 +33,6 @@ import {
 export function DataManager() {
   const [isOpen, setIsOpen] = useState(false);
   const [importData, setImportData] = useState("");
-  const { toast } = useToast();
 
   const handleExport = () => {
     try {
