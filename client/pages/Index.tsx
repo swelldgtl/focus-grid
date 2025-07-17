@@ -787,6 +787,7 @@ export default function Index() {
 
     setEditingAgendaDescription(null);
     setEditingAgendaDescriptionValue("");
+    showSaveToast();
   };
 
   const handleAgendaDescriptionCancel = () => {
