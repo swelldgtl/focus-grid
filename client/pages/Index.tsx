@@ -486,6 +486,11 @@ export default function Index() {
             </div>
             <h1 className="text-4xl font-bold tracking-tight">Focus Grid</h1>
           </div>
+          <div className="text-right">
+            <p className="text-lg font-medium text-muted-foreground">
+              Client Name
+            </p>
+          </div>
         </div>
 
         {/* Callout Alert */}
