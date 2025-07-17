@@ -1022,7 +1022,7 @@ export default function Index() {
             <div className="flex items-center justify-between">
               <div>
                 <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-primary" />
+                  <Target className="h-5 w-5 text-gray-600" />
                   Goals & Progress
                 </CardTitle>
                 <CardDescription>
