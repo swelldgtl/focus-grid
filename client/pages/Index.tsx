@@ -54,6 +54,7 @@ import {
   Check,
   Grid3X3,
   Send,
+  Target,
 } from "lucide-react";
 
 interface Task {
