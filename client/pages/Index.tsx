@@ -226,6 +226,10 @@ export default function Index() {
     field: string;
   } | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [pendingGoalToAgenda, setPendingGoalToAgenda] = useState<{
+    goalId: string;
+    goalName: string;
+  } | null>(null);
 
   const [goalsData, setGoalsData] = useState<GoalRecord[]>([
     {
