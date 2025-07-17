@@ -601,6 +601,34 @@ export default function Index() {
     setPendingActionToAgenda(null);
   };
 
+  const handleBlockerToAgendaClick = (
+    blockerId: string,
+    blockerTitle: string,
+  ) => {
+    setPendingBlockerToAgenda({ blockerId, blockerTitle });
+  };
+
+  const confirmAddBlockerToAgenda = () => {
+    if (!pendingBlockerToAgenda) return;
+
+    const newId = (
+      Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: AgendaItem = {
+      id: newId,
+      title: pendingBlockerToAgenda.blockerTitle,
+      description: "Add description here",
+      owner: "No Owner",
+      completed: false,
+    };
+    setAgendaItems((prev) => [...prev, newItem]);
+    setPendingBlockerToAgenda(null);
+  };
+
+  const cancelAddBlockerToAgenda = () => {
+    setPendingBlockerToAgenda(null);
+  };
+
   const handleAgendaDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     agendaId: string,
