@@ -1337,7 +1337,10 @@ export default function Index() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Blockers & Issues</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <TriangleAlert className="h-5 w-5 text-primary" />
+                  Blockers & Issues
+                </CardTitle>
                 <CardDescription>
                   Track and prioritize current blockers and issues affecting
                   progress.
