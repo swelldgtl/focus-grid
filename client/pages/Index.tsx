@@ -346,6 +346,7 @@ export default function Index() {
 
     setEditingCell(null);
     setEditValue("");
+    showSaveToast();
   };
 
   const handleCellCancel = () => {
