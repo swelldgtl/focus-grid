@@ -76,7 +76,9 @@ export function usePersistentState<T>(
   // Utility functions
   const clear = useCallback(() => {
     setState(defaultValue);
-    localStorage.removeItem(key);
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(key);
+    }
   }, [key, defaultValue]);
 
   const exportData = useCallback(() => {
