@@ -779,8 +779,8 @@ export default function Index() {
             running: false,
           },
         }));
-        // Reset body background color when turning off focus mode
-        document.body.style.backgroundColor = "";
+        // Reset background when turning off focus mode
+        setIsFocusModeActive(false);
         return null;
       } else {
         // Turning on focus mode for this module
@@ -791,8 +791,8 @@ export default function Index() {
             running: true,
           },
         }));
-        // Change body background color to #7D7F7C when turning on focus mode
-        document.body.style.backgroundColor = "#7D7F7C";
+        // Change background when turning on focus mode
+        setIsFocusModeActive(true);
         return moduleId;
       }
     });
