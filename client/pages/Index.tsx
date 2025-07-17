@@ -445,6 +445,7 @@ export default function Index() {
         action.id === actionId ? { ...action, status: newStatus } : action,
       ),
     );
+    showSaveToast();
   };
 
   const getActionItemBackground = (status: "on-track" | "off-track") => {
