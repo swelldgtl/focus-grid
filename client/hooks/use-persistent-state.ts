@@ -32,6 +32,11 @@ export function usePersistentState<T>(
 
   // Initialize state with stored data or default value
   const [state, setState] = useState<T>(() => {
+    // Check if we're on the client side
+    if (typeof window === "undefined") {
+      return defaultValue;
+    }
+
     if (deserialize) {
       try {
         const stored = localStorage.getItem(key);
