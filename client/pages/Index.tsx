@@ -913,16 +913,18 @@ export default function Index() {
         {/* Action Plan */}
         <Card
           className={
-            isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
+            isModuleInactive("action-plan")
+              ? "opacity-20 pointer-events-none"
+              : ""
           }
         >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Agenda</CardTitle>
+                <CardTitle>Action Plan</CardTitle>
                 <CardDescription>
-                  Meeting agenda items in order of discussion. Drag and drop to
-                  reorder.
+                  Drag and drop to reorder action items. Track progress and stay
+                  focused on your goals.
                 </CardDescription>
               </div>
               <div className="flex items-center gap-3">
