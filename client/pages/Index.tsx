@@ -919,7 +919,7 @@ export default function Index() {
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Action Plan</CardTitle>
+                <CardTitle>Blockers & Issues</CardTitle>
                 <CardDescription>
                   Drag and drop to reorder action items. Track progress and stay
                   focused on your goals.
