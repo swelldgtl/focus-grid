@@ -56,38 +56,23 @@ export function DataManager() {
   const handleImport = () => {
     try {
       if (!importData.trim()) {
-        toast({
-          title: "Import Failed",
-          description: "Please paste your backup data first.",
-          variant: "destructive",
-        });
+        alert("Please paste your backup data first.");
         return;
       }
 
       const success = importAllData(importData);
       if (success) {
-        toast({
-          title: "Import Successful",
-          description: "Your data has been imported. Refreshing page...",
-        });
+        alert("Import successful! The page will refresh to load your data.");
         setTimeout(() => {
           window.location.reload();
         }, 1000);
       } else {
-        toast({
-          title: "Import Failed",
-          description:
-            "Invalid backup data format. Please check your data and try again.",
-          variant: "destructive",
-        });
+        alert(
+          "Import failed. Invalid backup data format. Please check your data and try again.",
+        );
       }
     } catch (error) {
-      toast({
-        title: "Import Failed",
-        description:
-          "Failed to import data. Please check the format and try again.",
-        variant: "destructive",
-      });
+      alert("Import failed. Please check the format and try again.");
     }
   };
 
