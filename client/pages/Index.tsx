@@ -1095,6 +1095,109 @@ export default function Index() {
           </div>
         </div>
 
+        {/* Long-Term Goals */}
+        <Card className="transition-all duration-500">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <button
+                onClick={() =>
+                  setIsLongTermGoalsExpanded(!isLongTermGoalsExpanded)
+                }
+                className="flex items-center gap-2 text-left hover:bg-accent/50 p-2 -m-2 rounded transition-colors"
+              >
+                <div className="flex items-center gap-2">
+                  <Binoculars className="h-5 w-5 text-gray-600" />
+                  <h2 className="text-xl font-semibold tracking-tight">
+                    Long-Term Goals
+                  </h2>
+                </div>
+                {isLongTermGoalsExpanded ? (
+                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                ) : (
+                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                )}
+              </button>
+            </div>
+          </CardHeader>
+          {isLongTermGoalsExpanded && (
+            <CardContent>
+              <div className="flex justify-between items-center mb-4">
+                <Button
+                  onClick={addNewLongTermGoal}
+                  variant="outline"
+                  size="sm"
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Add New
+                </Button>
+              </div>
+              <div className="space-y-3">
+                {longTermGoals.map((goal, index) => (
+                  <div
+                    key={goal.id}
+                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex-1">
+                      <h4 className="font-medium cursor-pointer hover:text-blue-600 transition-colors">
+                        {goal.title}
+                      </h4>
+                      <p className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors">
+                        {goal.description}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() =>
+                          handleLongTermGoalToAgendaClick(goal.id, goal.title)
+                        }
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                        title="Add to Agenda"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Delete Long-Term Goal
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{goal.title}"?
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => removeLongTermGoal(goal.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          )}
+        </Card>
+
         {/* Sales Data Table */}
         <Card
           className={`transition-all duration-500 ${
