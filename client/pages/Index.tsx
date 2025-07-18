@@ -58,6 +58,9 @@ import {
   Compass,
   TriangleAlert,
   List,
+  Binoculars,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 interface Task {
