@@ -794,6 +794,55 @@ export default function Index() {
     }
   };
 
+  // Goals table functions
+  const addNewGoal = () => {
+    const newId = (
+      Math.max(...goalsData.map((goal) => parseInt(goal.id))) + 1
+    ).toString();
+    const newGoal: GoalRecord = {
+      id: newId,
+      goal: "New Goal",
+      targetMetric: "Target",
+      month1: "0",
+      month2: "0",
+      month3: "0",
+    };
+    setGoalsData((prev) => [...prev, newGoal]);
+    showSaveToast();
+  };
+
+  const removeGoal = (id: string) => {
+    setGoalsData((prev) => prev.filter((goal) => goal.id !== id));
+    showSaveToast();
+  };
+
+  const handleGoalDragStart = (
+    e: React.DragEvent<HTMLTableRowElement>,
+    goalId: string,
+  ) => {
+    setDraggedGoal(goalId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleGoalDrop = (
+    e: React.DragEvent<HTMLTableRowElement>,
+    dropIndex: number,
+  ) => {
+    e.preventDefault();
+    if (!draggedGoal) return;
+
+    const draggedIndex = goalsData.findIndex((goal) => goal.id === draggedGoal);
+    if (draggedIndex === -1) return;
+
+    const newGoals = [...goalsData];
+    const [draggedItem] = newGoals.splice(draggedIndex, 1);
+    newGoals.splice(dropIndex, 0, draggedItem);
+
+    setGoalsData(newGoals);
+    setDraggedGoal(null);
+    showSaveToast();
+  };
+
   const handleAgendaDragStart = (
     e: React.DragEvent<HTMLDivElement>,
     agendaId: string,
