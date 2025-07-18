@@ -1359,7 +1359,7 @@ export default function Index() {
                       </span>
                     )}
                   </TableHead>
-                  <TableHead className="text-center">Actions</TableHead>
+                  <TableHead className="text-center w-24">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
