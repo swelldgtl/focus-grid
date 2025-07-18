@@ -189,6 +189,17 @@ export default function Index() {
   >(null);
   const [editingBlockerDescriptionValue, setEditingBlockerDescriptionValue] =
     useState("");
+  const [editingLongTermGoalTitle, setEditingLongTermGoalTitle] = useState<
+    string | null
+  >(null);
+  const [editingLongTermGoalTitleValue, setEditingLongTermGoalTitleValue] =
+    useState("");
+  const [editingLongTermGoalDescription, setEditingLongTermGoalDescription] =
+    useState<string | null>(null);
+  const [
+    editingLongTermGoalDescriptionValue,
+    setEditingLongTermGoalDescriptionValue,
+  ] = useState("");
   const [activeFocusModule, setActiveFocusModule] = useState<string | null>(
     null,
   );
