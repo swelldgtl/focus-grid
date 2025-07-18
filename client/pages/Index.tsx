@@ -76,6 +76,12 @@ interface BlockerIssue {
   description: string;
 }
 
+interface LongTermGoal {
+  id: string;
+  title: string;
+  description: string;
+}
+
 interface AgendaItem {
   id: string;
   title: string;
