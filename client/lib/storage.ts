@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
   BLOCKERS: "focus_grid_blockers",
   AGENDA_ITEMS: "focus_grid_agenda",
   TIME_HEADERS: "focus_grid_time_headers",
+  LONG_TERM_GOALS: "focus_grid_long_term_goals",
   APP_DATA: "focus_grid_app_data",
 } as const;
 
