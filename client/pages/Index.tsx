@@ -272,7 +272,13 @@ export default function Index() {
     blockerId: string;
     blockerTitle: string;
   } | null>(null);
+  const [pendingLongTermGoalToAgenda, setPendingLongTermGoalToAgenda] =
+    useState<{
+      goalId: string;
+      goalTitle: string;
+    } | null>(null);
   const [isFocusModeActive, setIsFocusModeActive] = useState(false);
+  const [isLongTermGoalsExpanded, setIsLongTermGoalsExpanded] = useState(false);
   const [editingTimeHeader, setEditingTimeHeader] = useState<string | null>(
     null,
   );
