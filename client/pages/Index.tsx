@@ -1366,8 +1366,15 @@ export default function Index() {
                 {goalsData.map((goal, index) => (
                   <TableRow
                     key={goal.id}
-                    className={index % 2 === 1 ? "bg-muted/30" : ""}
+                    className={`cursor-move ${index % 2 === 1 ? "bg-muted/30" : ""}`}
+                    draggable
+                    onDragStart={(e) => handleGoalDragStart(e, goal.id)}
+                    onDragOver={(e) => e.preventDefault()}
+                    onDrop={(e) => handleGoalDrop(e, index)}
                   >
+                    <TableCell className="text-center">
+                      <GripVertical className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors mx-auto" />
+                    </TableCell>
                     <TableCell className="font-medium">
                       {renderEditableCell(
                         goal.id,
