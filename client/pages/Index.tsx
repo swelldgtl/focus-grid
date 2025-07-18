@@ -339,6 +339,29 @@ export default function Index() {
   );
   const setGoalsData = goalsDataActions.set;
 
+  const [longTermGoals, longTermGoalsActions] =
+    usePersistentArray<LongTermGoal>(STORAGE_KEYS.LONG_TERM_GOALS, [
+      {
+        id: "1",
+        title: "Expand to international markets",
+        description:
+          "Research and establish presence in 2-3 key international markets",
+      },
+      {
+        id: "2",
+        title: "Build strategic partnerships",
+        description:
+          "Form alliances with complementary businesses to expand reach",
+      },
+      {
+        id: "3",
+        title: "Develop new product line",
+        description:
+          "Create and launch innovative products to diversify revenue streams",
+      },
+    ]);
+  const setLongTermGoals = longTermGoalsActions.set;
+
   const handleCellClick = (
     goalId: string,
     field: string,
