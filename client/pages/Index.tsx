@@ -615,6 +615,54 @@ export default function Index() {
     }
   };
 
+  // Long-term goal functions
+  const addNewLongTermGoal = () => {
+    const newId = (
+      Math.max(...longTermGoals.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: LongTermGoal = {
+      id: newId,
+      title: "New long-term goal",
+      description: "Describe your long-term objective",
+    };
+    setLongTermGoals((prev) => [newItem, ...prev]);
+    showSaveToast();
+  };
+
+  const removeLongTermGoal = (id: string) => {
+    setLongTermGoals((prev) => prev.filter((item) => item.id !== id));
+    showSaveToast();
+  };
+
+  const handleLongTermGoalToAgendaClick = (
+    goalId: string,
+    goalTitle: string,
+  ) => {
+    setPendingLongTermGoalToAgenda({ goalId, goalTitle });
+  };
+
+  const confirmAddLongTermGoalToAgenda = () => {
+    if (!pendingLongTermGoalToAgenda) return;
+
+    const newId = (
+      Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
+    ).toString();
+    const newItem: AgendaItem = {
+      id: newId,
+      title: pendingLongTermGoalToAgenda.goalTitle,
+      description: "Add description here",
+      owner: "No Owner",
+      completed: false,
+    };
+    setAgendaItems((prev) => [...prev, newItem]);
+    setPendingLongTermGoalToAgenda(null);
+    showSaveToast();
+  };
+
+  const cancelAddLongTermGoalToAgenda = () => {
+    setPendingLongTermGoalToAgenda(null);
+  };
+
   const addNewAgendaItem = () => {
     const newId = (
       Math.max(...agendaItems.map((item) => parseInt(item.id))) + 1
