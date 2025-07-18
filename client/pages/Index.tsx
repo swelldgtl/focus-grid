@@ -1449,6 +1449,17 @@ export default function Index() {
                 ))}
               </TableBody>
             </Table>
+            <div className="px-6 pb-6">
+              <Button
+                onClick={addNewGoal}
+                variant="outline"
+                size="sm"
+                className="flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                Add New
+              </Button>
+            </div>
           </CardContent>
         </Card>
 
