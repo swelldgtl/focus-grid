@@ -1951,6 +1951,33 @@ export default function Index() {
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+
+        {/* Confirmation Dialog for adding long-term goal to agenda */}
+        <AlertDialog
+          open={!!pendingLongTermGoalToAgenda}
+          onOpenChange={() => setPendingLongTermGoalToAgenda(null)}
+        >
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Add Long-Term Goal to Agenda</AlertDialogTitle>
+              <AlertDialogDescription>
+                Are you sure you want to add "
+                {pendingLongTermGoalToAgenda?.goalTitle}" to the agenda?
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel onClick={cancelAddLongTermGoalToAgenda}>
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={confirmAddLongTermGoalToAgenda}
+                className="bg-green-600 text-white hover:bg-green-700"
+              >
+                Yes, Add to Agenda
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Footer */}
