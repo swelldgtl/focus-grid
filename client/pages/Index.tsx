@@ -1454,7 +1454,7 @@ export default function Index() {
                 onClick={addNewGoal}
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 mt-6"
               >
                 <Plus className="h-4 w-4" />
                 Add New
