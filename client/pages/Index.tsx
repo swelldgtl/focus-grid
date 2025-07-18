@@ -1276,12 +1276,53 @@ export default function Index() {
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
                     <div className="flex-1">
-                      <h4 className="font-medium cursor-pointer hover:text-blue-600 transition-colors">
-                        {goal.title}
-                      </h4>
-                      <p className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors">
-                        {goal.description}
-                      </p>
+                      {editingLongTermGoalTitle === goal.id ? (
+                        <Input
+                          value={editingLongTermGoalTitleValue}
+                          onChange={(e) =>
+                            setEditingLongTermGoalTitleValue(e.target.value)
+                          }
+                          onBlur={handleLongTermGoalTitleSave}
+                          onKeyDown={handleLongTermGoalTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleLongTermGoalTitleClick(goal.id, goal.title)
+                          }
+                        >
+                          {goal.title}
+                        </h4>
+                      )}
+                      {editingLongTermGoalDescription === goal.id ? (
+                        <Input
+                          value={editingLongTermGoalDescriptionValue}
+                          onChange={(e) =>
+                            setEditingLongTermGoalDescriptionValue(
+                              e.target.value,
+                            )
+                          }
+                          onBlur={handleLongTermGoalDescriptionSave}
+                          onKeyDown={handleLongTermGoalDescriptionKeyDown}
+                          className="text-sm mt-1"
+                          autoFocus
+                        />
+                      ) : (
+                        <p
+                          className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
+                          onClick={() =>
+                            handleLongTermGoalDescriptionClick(
+                              goal.id,
+                              goal.description,
+                            )
+                          }
+                        >
+                          {goal.description}
+                        </p>
+                      )}
                     </div>
                     <div className="flex items-center gap-2">
                       <Button
