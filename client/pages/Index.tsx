@@ -1186,6 +1186,35 @@ export default function Index() {
     setDraggedBlocker(null);
   };
 
+  const handleLongTermGoalDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    goalId: string,
+  ) => {
+    setDraggedLongTermGoal(goalId);
+    e.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleLongTermGoalDrop = (
+    e: React.DragEvent<HTMLDivElement>,
+    dropIndex: number,
+  ) => {
+    e.preventDefault();
+    if (!draggedLongTermGoal) return;
+
+    const draggedIndex = longTermGoals.findIndex(
+      (goal) => goal.id === draggedLongTermGoal,
+    );
+    if (draggedIndex === -1) return;
+
+    const newGoals = [...longTermGoals];
+    const [draggedItem] = newGoals.splice(draggedIndex, 1);
+    newGoals.splice(dropIndex, 0, draggedItem);
+
+    setLongTermGoals(newGoals);
+    setDraggedLongTermGoal(null);
+    showSaveToast();
+  };
+
   const getStatusBadge = (status: SaleRecord["status"]) => {
     const variants = {
       paid: "bg-green-100 text-green-800 hover:bg-green-200",
