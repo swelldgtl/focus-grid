@@ -279,6 +279,7 @@ export default function Index() {
     } | null>(null);
   const [isFocusModeActive, setIsFocusModeActive] = useState(false);
   const [isLongTermGoalsExpanded, setIsLongTermGoalsExpanded] = useState(false);
+  const [draggedGoal, setDraggedGoal] = useState<string | null>(null);
   const [editingTimeHeader, setEditingTimeHeader] = useState<string | null>(
     null,
   );
