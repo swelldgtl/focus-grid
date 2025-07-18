@@ -1287,6 +1287,7 @@ export default function Index() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-12"></TableHead>
                   <TableHead>Goal</TableHead>
                   <TableHead>Target Metric</TableHead>
                   <TableHead>
