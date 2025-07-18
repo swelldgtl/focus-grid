@@ -1310,6 +1310,10 @@ export default function Index() {
                 {longTermGoals.map((goal, index) => (
                   <div
                     key={goal.id}
+                    draggable
+                    onDragStart={(e) => handleLongTermGoalDragStart(e, goal.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleLongTermGoalDrop(e, index)}
                     className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
                   >
                     <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
