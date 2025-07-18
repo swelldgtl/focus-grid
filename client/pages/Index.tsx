@@ -627,6 +627,81 @@ export default function Index() {
     }
   };
 
+  // Long-Term Goal editing functions
+  const handleLongTermGoalTitleClick = (
+    goalId: string,
+    currentTitle: string,
+  ) => {
+    setEditingLongTermGoalTitle(goalId);
+    setEditingLongTermGoalTitleValue(currentTitle);
+  };
+
+  const handleLongTermGoalTitleSave = () => {
+    if (!editingLongTermGoalTitle) return;
+
+    setLongTermGoals((prev) =>
+      prev.map((goal) =>
+        goal.id === editingLongTermGoalTitle
+          ? { ...goal, title: editingLongTermGoalTitleValue }
+          : goal,
+      ),
+    );
+
+    setEditingLongTermGoalTitle(null);
+    setEditingLongTermGoalTitleValue("");
+    showSaveToast();
+  };
+
+  const handleLongTermGoalTitleCancel = () => {
+    setEditingLongTermGoalTitle(null);
+    setEditingLongTermGoalTitleValue("");
+  };
+
+  const handleLongTermGoalTitleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleLongTermGoalTitleSave();
+    } else if (e.key === "Escape") {
+      handleLongTermGoalTitleCancel();
+    }
+  };
+
+  const handleLongTermGoalDescriptionClick = (
+    goalId: string,
+    currentDescription: string,
+  ) => {
+    setEditingLongTermGoalDescription(goalId);
+    setEditingLongTermGoalDescriptionValue(currentDescription);
+  };
+
+  const handleLongTermGoalDescriptionSave = () => {
+    if (!editingLongTermGoalDescription) return;
+
+    setLongTermGoals((prev) =>
+      prev.map((goal) =>
+        goal.id === editingLongTermGoalDescription
+          ? { ...goal, description: editingLongTermGoalDescriptionValue }
+          : goal,
+      ),
+    );
+
+    setEditingLongTermGoalDescription(null);
+    setEditingLongTermGoalDescriptionValue("");
+    showSaveToast();
+  };
+
+  const handleLongTermGoalDescriptionCancel = () => {
+    setEditingLongTermGoalDescription(null);
+    setEditingLongTermGoalDescriptionValue("");
+  };
+
+  const handleLongTermGoalDescriptionKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleLongTermGoalDescriptionSave();
+    } else if (e.key === "Escape") {
+      handleLongTermGoalDescriptionCancel();
+    }
+  };
+
   // Long-term goal functions
   const addNewLongTermGoal = () => {
     const newId = (
