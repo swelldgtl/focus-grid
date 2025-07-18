@@ -176,6 +176,9 @@ export default function Index() {
 
   const [draggedAction, setDraggedAction] = useState<string | null>(null);
   const [draggedBlocker, setDraggedBlocker] = useState<string | null>(null);
+  const [draggedLongTermGoal, setDraggedLongTermGoal] = useState<string | null>(
+    null,
+  );
   const [editingActionTitle, setEditingActionTitle] = useState<string | null>(
     null,
   );
