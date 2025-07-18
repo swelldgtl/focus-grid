@@ -1401,17 +1401,49 @@ export default function Index() {
                       {renderEditableCell(goal.id, "month3", goal.month3)}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Button
-                        onClick={() =>
-                          handleGoalToAgendaClick(goal.id, goal.goal)
-                        }
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
-                        title="Add to Agenda"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center justify-center gap-1">
+                        <Button
+                          onClick={() =>
+                            handleGoalToAgendaClick(goal.id, goal.goal)
+                          }
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                          title="Add to Agenda"
+                        >
+                          <Send className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                              title="Delete Goal"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Delete Goal</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{goal.goal}"?
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => removeGoal(goal.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
