@@ -17,6 +17,7 @@ import {
 import { useClientConfig } from "@/hooks/use-client-config";
 import FeatureAdmin from "@/components/FeatureAdmin";
 import ClientSwitcher from "@/components/ClientSwitcher";
+import ApiHealth from "@/components/ApiHealth";
 import { Input } from "@/components/ui/input";
 import {
   Select,
