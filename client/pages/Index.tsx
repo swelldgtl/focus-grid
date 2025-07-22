@@ -1263,13 +1263,12 @@ export default function Index() {
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
         {/* Development Testing Tools */}
-        <div className="flex gap-4 flex-wrap">
+        <div className="flex gap-4">
           <FeatureAdmin />
           <ClientSwitcher
             currentClientId={clientConfig?.clientId}
             onClientChange={() => {}} // Handled internally now
           />
-          <BrandingDemo />
         </div>
 
         {/* Header */}
