@@ -18,6 +18,7 @@ export default defineConfig({
       },
     },
   },
+  base: "/",
   server: {
     port: 5174, // Different port from main app
     proxy: {
