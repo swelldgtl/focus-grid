@@ -2283,7 +2283,7 @@ export default function Index() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => window.location.href = '/admin'}
+              onClick={() => (window.location.href = "/admin")}
               className="text-muted-foreground hover:text-foreground"
             >
               Admin Dashboard
