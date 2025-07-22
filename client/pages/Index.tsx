@@ -1262,8 +1262,19 @@ export default function Index() {
       style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
-        {/* Feature Admin */}
-        <FeatureAdmin />
+        {/* Development Testing Tools */}
+        <div className="flex gap-4">
+          <FeatureAdmin />
+          <ClientSwitcher
+            currentClientId={clientConfig?.clientId}
+            onClientChange={(clientId, clientName) => {
+              // Update the URL to test different clients
+              const url = new URL(window.location.href);
+              url.searchParams.set('clientId', clientId);
+              window.location.href = url.toString();
+            }}
+          />
+        </div>
 
         {/* Header */}
         <div className="flex items-center justify-between">
