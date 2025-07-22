@@ -15,6 +15,7 @@ import {
   Globe
 } from 'lucide-react';
 import ClientManager from '@/components/admin/ClientManager';
+import FeatureManager from '@/components/admin/FeatureManager';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -177,22 +178,9 @@ export default function Admin() {
             <ClientManager />
           </TabsContent>
 
-          {/* Features Tab - Placeholder */}
+          {/* Features Tab */}
           <TabsContent value="features">
-            <Card>
-              <CardHeader>
-                <CardTitle>Feature Management</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Configure which features are available for each client
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <Settings className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Feature management interface coming next...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <FeatureManager />
           </TabsContent>
 
           {/* Settings Tab - Placeholder */}
