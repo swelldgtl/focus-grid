@@ -181,6 +181,112 @@ export async function deleteClient(clientId: string): Promise<boolean> {
   }
 }
 
+// Admin authentication functions
+export async function createAdminUser(username: string, email: string, passwordHash: string): Promise<AdminUser | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      INSERT INTO admin_users (username, email, password_hash, is_active)
+      VALUES (${username}, ${email}, ${passwordHash}, true)
+      RETURNING id, username, email, password_hash, created_at, last_login, is_active
+    `;
+    return result[0] as AdminUser;
+  } catch (error) {
+    console.error("Error creating admin user:", error);
+    return null;
+  }
+}
+
+export async function getAdminUserByUsername(username: string): Promise<AdminUser | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      SELECT id, username, email, password_hash, created_at, last_login, is_active
+      FROM admin_users
+      WHERE username = ${username} AND is_active = true
+      LIMIT 1
+    `;
+    return (result[0] as AdminUser) || null;
+  } catch (error) {
+    console.error("Error fetching admin user:", error);
+    return null;
+  }
+}
+
+export async function updateAdminLastLogin(userId: string): Promise<boolean> {
+  try {
+    const sql = createConnection();
+    await sql`
+      UPDATE admin_users
+      SET last_login = NOW()
+      WHERE id = ${userId}
+    `;
+    return true;
+  } catch (error) {
+    console.error("Error updating last login:", error);
+    return false;
+  }
+}
+
+export async function createAdminSession(userId: string, sessionToken: string, expiresAt: Date): Promise<AdminSession | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      INSERT INTO admin_sessions (user_id, session_token, expires_at)
+      VALUES (${userId}, ${sessionToken}, ${expiresAt.toISOString()})
+      RETURNING id, user_id, session_token, expires_at, created_at
+    `;
+    return result[0] as AdminSession;
+  } catch (error) {
+    console.error("Error creating admin session:", error);
+    return null;
+  }
+}
+
+export async function getAdminSessionByToken(sessionToken: string): Promise<AdminSession | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      SELECT id, user_id, session_token, expires_at, created_at
+      FROM admin_sessions
+      WHERE session_token = ${sessionToken} AND expires_at > NOW()
+      LIMIT 1
+    `;
+    return (result[0] as AdminSession) || null;
+  } catch (error) {
+    console.error("Error fetching admin session:", error);
+    return null;
+  }
+}
+
+export async function deleteAdminSession(sessionToken: string): Promise<boolean> {
+  try {
+    const sql = createConnection();
+    await sql`
+      DELETE FROM admin_sessions
+      WHERE session_token = ${sessionToken}
+    `;
+    return true;
+  } catch (error) {
+    console.error("Error deleting admin session:", error);
+    return false;
+  }
+}
+
+export async function cleanupExpiredSessions(): Promise<boolean> {
+  try {
+    const sql = createConnection();
+    await sql`
+      DELETE FROM admin_sessions
+      WHERE expires_at <= NOW()
+    `;
+    return true;
+  } catch (error) {
+    console.error("Error cleaning up expired sessions:", error);
+    return false;
+  }
+}
+
 // Feature management
 export async function getClientFeatures(
   clientId: string,
