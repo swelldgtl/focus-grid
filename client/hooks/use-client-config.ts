@@ -38,19 +38,28 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
 
       // Use provided clientId or fall back to environment default
       const queryParams = clientId ? `?clientId=${clientId}` : '';
-      const response = await fetch(`/api/config${queryParams}`);
+      const url = `/api/config${queryParams}`;
+      console.log('Fetching config from:', url);
+
+      const response = await fetch(url);
+      console.log('Config response status:', response.status);
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Config API error response:', errorText);
+
         if (response.status === 404) {
           throw new Error('Client not found');
         }
-        throw new Error(`HTTP ${response.status}`);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
 
       const data = await response.json();
+      console.log('Config data received:', data);
       setConfig(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load client configuration');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to load client configuration';
+      setError(errorMessage);
       console.error('Error loading client config:', err);
     } finally {
       setLoading(false);
