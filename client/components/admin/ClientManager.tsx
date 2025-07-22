@@ -134,11 +134,7 @@ export default function ClientManager() {
     }
   };
 
-  const getClientIcon = (name: string) => {
-    if (name.includes('Blue Label')) return Building2;
-    if (name.includes('ERC')) return Briefcase;
-    return Users;
-  };
+
 
   const getEnabledFeaturesCount = (features?: Client['features']) => {
     if (!features) return 0;
@@ -695,18 +691,14 @@ export default function ClientManager() {
             </TableHeader>
             <TableBody>
               {clients.map((client) => {
-                const Icon = getClientIcon(client.name);
                 const enabledFeatures = getEnabledFeaturesCount(client.features);
                 
                 return (
                   <TableRow key={client.id}>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <Icon className="h-5 w-5 text-muted-foreground" />
-                        <div>
-                          <div className="font-medium">{client.name}</div>
-                          <div className="text-sm text-muted-foreground">/{client.slug}</div>
-                        </div>
+                      <div>
+                        <div className="font-medium">{client.name}</div>
+                        <div className="text-sm text-muted-foreground">/{client.slug}</div>
                       </div>
                     </TableCell>
                     <TableCell>
