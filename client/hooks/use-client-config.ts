@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getFallbackConfig, getDefaultFallbackConfig } from '@/lib/fallback-configs';
 
 export interface ClientConfig {
   clientId: string;
