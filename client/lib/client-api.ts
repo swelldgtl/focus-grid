@@ -116,6 +116,23 @@ export async function deleteClient(clientId: string): Promise<boolean> {
   }
 }
 
+export async function updateClientFeatures(clientId: string, features: Record<string, boolean>): Promise<boolean> {
+  try {
+    const response = await fetch(`/api/clients/${clientId}/features`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ features }),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Error updating client features:', error);
+    return false;
+  }
+}
+
 export async function checkSlugAvailability(slug: string): Promise<boolean> {
   try {
     const clients = await getClients();
