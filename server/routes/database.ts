@@ -129,6 +129,59 @@ export const handleCreateClient: RequestHandler = async (req, res) => {
   }
 };
 
+export const handleUpdateClient: RequestHandler = async (req, res) => {
+  try {
+    const { updateClient, getClient } = await import("../lib/database");
+    const { clientId } = req.params;
+    const { name, slug, subdomain } = req.body;
+
+    if (!clientId) {
+      return res.status(400).json({
+        error: "Client ID is required",
+      });
+    }
+
+    if (!name || !slug) {
+      return res.status(400).json({
+        error: "Name and slug are required",
+      });
+    }
+
+    // Check if slug is being changed and if it conflicts with another client
+    const existingClient = await getClient(clientId);
+    if (!existingClient) {
+      return res.status(404).json({
+        error: "Client not found",
+      });
+    }
+
+    if (slug !== existingClient.slug) {
+      const conflictClient = await getClient(slug);
+      if (conflictClient && conflictClient.id !== clientId) {
+        return res.status(409).json({
+          error: "Client with this slug already exists",
+        });
+      }
+    }
+
+    const updatedClient = await updateClient(clientId, { name, slug, subdomain });
+
+    if (!updatedClient) {
+      return res.status(500).json({
+        error: "Failed to update client",
+      });
+    }
+
+    return res.status(200).json({ client: updatedClient });
+  } catch (error) {
+    console.error("Update client error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 export const handleDeleteClient: RequestHandler = async (req, res) => {
   try {
     const { deleteClient } = await import("../lib/database");
