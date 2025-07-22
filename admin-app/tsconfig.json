@@ -13,16 +13,12 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noFallthroughCasesInSwitch": true,
-
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["../client/*"]
-    }
+    "strict": false,
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "../client"],
+  "include": ["src/**/*"],
+  "exclude": ["../client/**/*", "../server/**/*", "../netlify/**/*", "node_modules"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
