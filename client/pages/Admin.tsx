@@ -3,17 +3,18 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Settings, 
-  Users, 
-  BarChart3, 
-  Plus, 
-  Building2, 
+import {
+  Settings,
+  Users,
+  BarChart3,
+  Plus,
+  Building2,
   Briefcase,
   Shield,
   Database,
   Globe
 } from 'lucide-react';
+import ClientManager from '@/components/admin/ClientManager';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
