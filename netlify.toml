@@ -22,9 +22,10 @@
   from = "/*"
   to = "/admin/index.html"
   status = 200
+  force = true
   conditions = {Host = ["admin.swellfocusgrid.com"]}
 
-# Default - serve client app
+# Default - serve client app for all other hosts
 [[redirects]]
   from = "/*"
   to = "/client/index.html"
