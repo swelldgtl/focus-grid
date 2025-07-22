@@ -16,30 +16,45 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
 
   const toggleFeature = async (feature: string, enabled: boolean) => {
     if (!config) return;
-    
+
+    console.log('Toggling feature:', feature, 'to:', enabled);
     setUpdating(feature);
+
     try {
+      const payload = {
+        clientId: config.clientId,
+        feature,
+        enabled
+      };
+      console.log('Sending payload:', payload);
+
       const response = await fetch('/api/features/toggle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          clientId: config.clientId,
-          feature,
-          enabled
-        })
+        body: JSON.stringify(payload)
       });
 
+      console.log('Toggle response status:', response.status);
+
       if (response.ok) {
+        const result = await response.json();
+        console.log('Toggle success:', result);
         // Refresh the configuration
         refetch();
       } else {
-        const error = await response.json();
-        console.error('Failed to toggle feature:', error);
-        alert(`Failed to toggle feature: ${error.error}`);
+        const errorText = await response.text();
+        console.error('Toggle failed:', errorText);
+        let error;
+        try {
+          error = JSON.parse(errorText);
+        } catch {
+          error = { error: errorText };
+        }
+        alert(`Failed to toggle feature: ${error.error || errorText}`);
       }
     } catch (error) {
       console.error('Network error:', error);
-      alert('Network error occurred');
+      alert('Network error occurred: ' + (error instanceof Error ? error.message : 'Unknown'));
     } finally {
       setUpdating(null);
     }
