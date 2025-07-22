@@ -76,6 +76,29 @@ export async function createClient(clientData: CreateClientData): Promise<Client
   }
 }
 
+export async function updateClient(clientId: string, clientData: Omit<CreateClientData, 'subdomain'> & { subdomain?: string }): Promise<Client | null> {
+  try {
+    const response = await fetch(`/api/clients/${clientId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(clientData),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.client;
+  } catch (error) {
+    console.error('Error updating client:', error);
+    throw error;
+  }
+}
+
 export async function deleteClient(clientId: string): Promise<boolean> {
   try {
     const response = await fetch(`/api/clients/${clientId}`, {
