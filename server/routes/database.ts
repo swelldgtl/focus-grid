@@ -66,3 +66,83 @@ export const handleClientConfig: RequestHandler = async (req, res) => {
     });
   }
 };
+
+export const handleGetClients: RequestHandler = async (req, res) => {
+  try {
+    const { getClients } = await import("../lib/database");
+    const clients = await getClients();
+    return res.status(200).json({ clients });
+  } catch (error) {
+    console.error("Get clients error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const handleCreateClient: RequestHandler = async (req, res) => {
+  try {
+    const { createClient, getClient } = await import("../lib/database");
+    const { name, slug, subdomain } = req.body;
+
+    if (!name || !slug) {
+      return res.status(400).json({
+        error: "Name and slug are required",
+      });
+    }
+
+    // Check for duplicates
+    const existingClient = await getClient(slug);
+    if (existingClient) {
+      return res.status(409).json({
+        error: "Client with this slug already exists",
+      });
+    }
+
+    const newClient = await createClient({ name, slug, subdomain });
+
+    if (!newClient) {
+      return res.status(500).json({
+        error: "Failed to create client",
+      });
+    }
+
+    return res.status(201).json({ client: newClient });
+  } catch (error) {
+    console.error("Create client error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
+export const handleDeleteClient: RequestHandler = async (req, res) => {
+  try {
+    const { deleteClient } = await import("../lib/database");
+    const { clientId } = req.params;
+
+    if (!clientId) {
+      return res.status(400).json({
+        error: "Client ID is required",
+      });
+    }
+
+    const success = await deleteClient(clientId);
+
+    if (!success) {
+      return res.status(404).json({
+        error: "Client not found or could not be deleted",
+      });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Delete client error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
