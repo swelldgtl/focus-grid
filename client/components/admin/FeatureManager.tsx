@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { getClients, type Client } from '@/lib/client-api';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -84,53 +85,33 @@ export default function FeatureManager() {
   const [saving, setSaving] = useState(false);
   const [pendingChanges, setPendingChanges] = useState<{[clientId: string]: Partial<Client['features']>}>({});
 
-  // Mock data - in real implementation, this would come from API
+  // Load clients from API
   useEffect(() => {
-    setTimeout(() => {
-      setClients([
-        {
-          id: '8323e82d-075a-496d-8861-a86d862a67bc',
-          name: 'Demo Client',
-          slug: 'demo',
-          subdomain: 'demo',
-          features: {
-            long_term_goals: true,
-            action_plan: true,
-            blockers_issues: true,
-            agenda: true,
-            focus_mode: true
-          }
-        },
-        {
-          id: 'fbf03fbc-bf81-462b-a88f-668dfcb09acc',
-          name: 'Blue Label Packaging',
-          slug: 'blue-label-packaging',
-          subdomain: 'bluelabelpackaging',
-          features: {
-            long_term_goals: true,
-            action_plan: true,
-            blockers_issues: false,
-            agenda: true,
-            focus_mode: true
-          }
-        },
-        {
-          id: '360e6a09-c7e2-447e-8dbc-cebae72f1ff2',
-          name: 'ERC',
-          slug: 'erc',
-          subdomain: 'erc',
-          features: {
-            long_term_goals: false,
-            action_plan: true,
-            blockers_issues: true,
-            agenda: true,
-            focus_mode: true
-          }
-        }
-      ]);
-      setLoading(false);
-    }, 1000);
+    loadClients();
   }, []);
+
+  const loadClients = async () => {
+    try {
+      setLoading(true);
+      const clientsData = await getClients();
+      // Add default features for display if not present
+      const clientsWithFeatures = clientsData.map(client => ({
+        ...client,
+        features: client.features || {
+          long_term_goals: true,
+          action_plan: true,
+          blockers_issues: true,
+          agenda: true,
+          focus_mode: true
+        }
+      }));
+      setClients(clientsWithFeatures);
+    } catch (error) {
+      console.error('Error loading clients:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const getClientIcon = (name: string) => {
     if (name.includes('Blue Label')) return Building2;
