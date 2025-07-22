@@ -83,7 +83,8 @@ export const handleGetClients: RequestHandler = async (req, res) => {
 
 export const handleCreateClient: RequestHandler = async (req, res) => {
   try {
-    const { createClient, getClient } = await import("../lib/database");
+    const { createClient, getClient, updateClientFeature, AVAILABLE_FEATURES } = await import("../lib/database");
+    const { getCurrentFeatureDefaults } = await import("./admin");
     const { name, slug, subdomain } = req.body;
 
     if (!name || !slug) {
@@ -107,6 +108,16 @@ export const handleCreateClient: RequestHandler = async (req, res) => {
         error: "Failed to create client",
       });
     }
+
+    // Apply feature defaults from admin settings
+    const featureDefaults = getCurrentFeatureDefaults();
+
+    // Set up features based on admin defaults
+    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.LONG_TERM_GOALS, featureDefaults.long_term_goals);
+    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.ACTION_PLAN, featureDefaults.action_plan);
+    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.BLOCKERS_ISSUES, featureDefaults.blockers_issues);
+    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.AGENDA, featureDefaults.agenda);
+    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.FOCUS_MODE, featureDefaults.focus_mode);
 
     return res.status(201).json({ client: newClient });
   } catch (error) {
