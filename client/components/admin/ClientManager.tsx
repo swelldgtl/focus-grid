@@ -42,7 +42,10 @@ import {
   CheckCircle,
   XCircle,
   Loader2,
-  AlertCircle
+  AlertCircle,
+  AlertTriangle,
+  Database,
+  Zap
 } from 'lucide-react';
 import {
   getClients,
@@ -70,6 +73,19 @@ export default function ClientManager() {
     name: '',
     slug: '',
     subdomain: ''
+  });
+  const [deleteState, setDeleteState] = useState<{
+    isFirstDialogOpen: boolean;
+    isSecondDialogOpen: boolean;
+    clientToDelete: Client | null;
+    confirmationText: string;
+    isDeleting: boolean;
+  }>({
+    isFirstDialogOpen: false,
+    isSecondDialogOpen: false,
+    clientToDelete: null,
+    confirmationText: '',
+    isDeleting: false
   });
   const { toast } = useToast();
 
@@ -196,15 +212,60 @@ export default function ClientManager() {
     }
   };
 
-  const handleDeleteClient = async (clientId: string, clientName: string) => {
+  const initiateDelete = (client: Client) => {
+    setDeleteState({
+      isFirstDialogOpen: true,
+      isSecondDialogOpen: false,
+      clientToDelete: client,
+      confirmationText: '',
+      isDeleting: false
+    });
+  };
+
+  const proceedToSecondConfirmation = () => {
+    setDeleteState(prev => ({
+      ...prev,
+      isFirstDialogOpen: false,
+      isSecondDialogOpen: true
+    }));
+  };
+
+  const cancelDelete = () => {
+    setDeleteState({
+      isFirstDialogOpen: false,
+      isSecondDialogOpen: false,
+      clientToDelete: null,
+      confirmationText: '',
+      isDeleting: false
+    });
+  };
+
+  const executeDelete = async () => {
+    if (!deleteState.clientToDelete) return;
+
+    const client = deleteState.clientToDelete;
+    const expectedText = `DELETE ${client.name}`;
+
+    if (deleteState.confirmationText !== expectedText) {
+      toast({
+        title: "Confirmation Required",
+        description: `Please type "${expectedText}" exactly as shown`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setDeleteState(prev => ({ ...prev, isDeleting: true }));
+
     try {
-      const success = await deleteClient(clientId);
+      const success = await deleteClient(client.id);
       if (success) {
-        setClients(prev => prev.filter(client => client.id !== clientId));
+        setClients(prev => prev.filter(c => c.id !== client.id));
         toast({
-          title: "Success",
-          description: `Client "${clientName}" deleted successfully`,
+          title: "Client Deleted",
+          description: `"${client.name}" has been permanently deleted`,
         });
+        cancelDelete();
       } else {
         throw new Error('Failed to delete client');
       }
@@ -214,6 +275,7 @@ export default function ClientManager() {
         description: "Failed to delete client",
         variant: "destructive",
       });
+      setDeleteState(prev => ({ ...prev, isDeleting: false }));
     }
   };
 
@@ -356,6 +418,114 @@ export default function ClientManager() {
         </Dialog>
       </div>
 
+      {/* First Deletion Warning Dialog */}
+      <AlertDialog open={deleteState.isFirstDialogOpen} onOpenChange={(open) => !open && cancelDelete()}>
+        <AlertDialogContent className="max-w-lg">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              Permanent Client Deletion
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p className="text-base font-medium text-gray-900">
+                You are about to permanently delete "{deleteState.clientToDelete?.name}"
+              </p>
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Database className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="space-y-2">
+                    <p className="font-medium text-red-800">This will permanently:</p>
+                    <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
+                      <li>Delete all client data and configurations</li>
+                      <li>Remove access to {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com</li>
+                      <li>Delete all associated user data and content</li>
+                      <li>Remove all feature settings and customizations</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Zap className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-yellow-800">This action cannot be undone!</p>
+                    <p className="text-sm text-yellow-700 mt-1">
+                      Once deleted, all data will be permanently lost and cannot be recovered.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={cancelDelete}>Cancel</AlertDialogCancel>
+            <Button
+              onClick={proceedToSecondConfirmation}
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700"
+            >
+              I Understand, Continue
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Second Deletion Confirmation Dialog */}
+      <AlertDialog open={deleteState.isSecondDialogOpen} onOpenChange={(open) => !open && cancelDelete()}>
+        <AlertDialogContent className="max-w-md">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              Final Confirmation Required
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-4">
+              <p className="text-sm">
+                To confirm deletion of <span className="font-semibold">"{deleteState.clientToDelete?.name}"</span>,
+                please type the following text exactly:
+              </p>
+              <div className="bg-gray-100 border rounded p-3">
+                <code className="text-sm font-mono font-semibold text-red-600">
+                  DELETE {deleteState.clientToDelete?.name}
+                </code>
+              </div>
+              <div>
+                <Label htmlFor="delete-confirmation" className="text-sm font-medium">
+                  Confirmation Text
+                </Label>
+                <Input
+                  id="delete-confirmation"
+                  placeholder={`DELETE ${deleteState.clientToDelete?.name}`}
+                  value={deleteState.confirmationText}
+                  onChange={(e) => setDeleteState(prev => ({
+                    ...prev,
+                    confirmationText: e.target.value
+                  }))}
+                  className="mt-1 font-mono"
+                  disabled={deleteState.isDeleting}
+                />
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              onClick={cancelDelete}
+              disabled={deleteState.isDeleting}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <Button
+              onClick={executeDelete}
+              variant="destructive"
+              disabled={deleteState.isDeleting || deleteState.confirmationText !== `DELETE ${deleteState.clientToDelete?.name}`}
+              className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
+            >
+              {deleteState.isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
+              Permanently Delete
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
       {/* Clients Table */}
       <Card>
         <CardHeader>
@@ -448,30 +618,14 @@ export default function ClientManager() {
                         <Button variant="ghost" size="sm">
                           <Edit2 className="h-4 w-4" />
                         </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="text-red-600 hover:text-red-700">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Client</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{client.name}"? This action cannot be undone and will remove all data for this client.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => handleDeleteClient(client.id, client.name)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          onClick={() => initiateDelete(client)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
