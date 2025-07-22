@@ -1249,6 +1249,9 @@ export default function Index() {
       style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
+        {/* Environment Test (temporary) */}
+        <EnvTest />
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
