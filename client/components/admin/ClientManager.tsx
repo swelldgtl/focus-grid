@@ -727,6 +727,68 @@ export default function ClientManager() {
                 </p>
               )}
             </div>
+
+            {/* Feature Toggles */}
+            <div className="border-t pt-4">
+              <Label className="text-sm font-medium mb-3 block">Feature Configuration</Label>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">Long-Term Goals</div>
+                    <div className="text-sm text-muted-foreground">Strategic planning and goal tracking</div>
+                  </div>
+                  <Switch
+                    checked={editFeatures.long_term_goals}
+                    onCheckedChange={(checked) => handleEditFeatureToggle('long_term_goals', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">Action Plan</div>
+                    <div className="text-sm text-muted-foreground">Task management and action items</div>
+                  </div>
+                  <Switch
+                    checked={editFeatures.action_plan}
+                    onCheckedChange={(checked) => handleEditFeatureToggle('action_plan', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">Blockers & Issues</div>
+                    <div className="text-sm text-muted-foreground">Issue tracking and blocker management</div>
+                  </div>
+                  <Switch
+                    checked={editFeatures.blockers_issues}
+                    onCheckedChange={(checked) => handleEditFeatureToggle('blockers_issues', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">Agenda</div>
+                    <div className="text-sm text-muted-foreground">Meeting agenda and note-taking</div>
+                  </div>
+                  <Switch
+                    checked={editFeatures.agenda}
+                    onCheckedChange={(checked) => handleEditFeatureToggle('agenda', checked)}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <div className="font-medium">Focus Mode</div>
+                    <div className="text-sm text-muted-foreground">Distraction-free interface</div>
+                  </div>
+                  <Switch
+                    checked={editFeatures.focus_mode}
+                    onCheckedChange={(checked) => handleEditFeatureToggle('focus_mode', checked)}
+                  />
+                </div>
+              </div>
+            </div>
+
             <div className="flex justify-end gap-2">
               <Button
                 variant="outline"
