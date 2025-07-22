@@ -50,6 +50,7 @@ import {
 import {
   getClients,
   createClient,
+  updateClient,
   deleteClient,
   generateSlug,
   generateSubdomain,
@@ -389,6 +390,89 @@ export default function ClientManager() {
 
   const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
     setNewClient(prev => ({ ...prev, createNetlifyProject }));
+  };
+
+  const initiateEdit = (client: Client) => {
+    setClientToEdit(client);
+    setEditClient({
+      name: client.name,
+      slug: client.slug,
+      subdomain: client.subdomain || ''
+    });
+    setEditErrors({ name: '', slug: '', subdomain: '' });
+    setIsEditDialogOpen(true);
+  };
+
+  const validateEditForm = () => {
+    const newErrors = { name: '', slug: '', subdomain: '' };
+    let isValid = true;
+
+    if (!editClient.name.trim()) {
+      newErrors.name = 'Client name is required';
+      isValid = false;
+    }
+
+    if (!editClient.slug.trim()) {
+      newErrors.slug = 'Slug is required';
+      isValid = false;
+    } else if (!/^[a-z0-9-]+$/.test(editClient.slug)) {
+      newErrors.slug = 'Slug can only contain lowercase letters, numbers, and hyphens';
+      isValid = false;
+    }
+
+    if (editClient.subdomain && !/^[a-z0-9]+$/.test(editClient.subdomain)) {
+      newErrors.subdomain = 'Subdomain can only contain lowercase letters and numbers';
+      isValid = false;
+    }
+
+    setEditErrors(newErrors);
+    return isValid;
+  };
+
+  const handleUpdateClient = async () => {
+    if (!validateEditForm() || !clientToEdit) return;
+
+    setCreating(true);
+    try {
+      // Check for duplicates only if slug changed
+      if (editClient.slug !== clientToEdit.slug) {
+        const slugAvailable = await checkSlugAvailability(editClient.slug);
+        if (!slugAvailable) {
+          setEditErrors(prev => ({ ...prev, slug: 'A client with this slug already exists' }));
+          return;
+        }
+      }
+
+      const updatedClient = await updateClient(clientToEdit.id, {
+        name: editClient.name,
+        slug: editClient.slug,
+        subdomain: editClient.subdomain
+      });
+
+      if (updatedClient) {
+        // Update local state
+        setClients(prev => prev.map(client =>
+          client.id === clientToEdit.id
+            ? { ...client, ...updatedClient }
+            : client
+        ));
+        setIsEditDialogOpen(false);
+        setClientToEdit(null);
+
+        toast({
+          title: "Success",
+          description: `Client "${updatedClient.name}" updated successfully`,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to update client",
+        variant: "destructive",
+      });
+    } finally {
+      setCreating(false);
+    }
   };
 
   if (loading) {
@@ -767,7 +851,12 @@ export default function ClientManager() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => initiateEdit(client)}
+                          title="Edit client"
+                        >
                           <Edit2 className="h-4 w-4" />
                         </Button>
                         <Button
