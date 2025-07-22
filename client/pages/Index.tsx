@@ -1952,11 +1952,12 @@ export default function Index() {
         </BlockersIssuesFeature>
 
         {/* Agenda */}
-        <Card
-          className={`transition-all duration-500 ${
-            isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
-          }`}
-        >
+        <AgendaFeature>
+          <Card
+            className={`transition-all duration-500 ${
+              isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
+            }`}
+          >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -2160,7 +2161,8 @@ export default function Index() {
               ))}
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </AgendaFeature>
 
         {/* Confirmation Dialog for adding goal to agenda */}
         <AlertDialog
