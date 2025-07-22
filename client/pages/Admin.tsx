@@ -20,6 +20,37 @@ import AdminSettings from "@/components/admin/AdminSettings";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
+  const { isAuthenticated, loading, logout } = useAuthCheck();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      window.location.href = "/admin/login";
+    }
+  }, [isAuthenticated, loading]);
+
+  // Handle logout
+  const handleLogout = async () => {
+    await logout();
+    window.location.href = "/admin/login";
+  };
+
+  // Show loading while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="text-muted-foreground mt-2">Checking authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render anything if not authenticated (will redirect)
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
