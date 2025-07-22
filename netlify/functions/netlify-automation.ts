@@ -19,6 +19,8 @@ export const handler: Handler = async (event, context) => {
         return await setEnvironmentVariables(data);
       case 'deploy':
         return await deployProject(data);
+      case 'delete-project':
+        return await deleteNetlifyProject(data);
       default:
         return {
           statusCode: 400,
@@ -97,7 +99,7 @@ async function deployProject(data: { siteId: string }) {
   try {
     // Deployment logic would go here
     console.log('Deploying project:', data.siteId);
-    
+
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
@@ -108,6 +110,27 @@ async function deployProject(data: { siteId: string }) {
       body: JSON.stringify({
         success: false,
         error: error instanceof Error ? error.message : 'Failed to deploy project',
+      }),
+    };
+  }
+}
+
+async function deleteNetlifyProject(data: { subdomain: string }) {
+  try {
+    // In a real implementation, this would find and delete the Netlify project
+    // by subdomain or project name using the Netlify API
+    console.log('Deleting Netlify project for subdomain:', data.subdomain);
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ success: true }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : 'Failed to delete Netlify project',
       }),
     };
   }
