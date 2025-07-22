@@ -113,6 +113,27 @@ export async function createClient(data: {
   }
 }
 
+export async function deleteClient(clientId: string): Promise<boolean> {
+  try {
+    const sql = createConnection();
+
+    // First delete associated client features
+    await sql`DELETE FROM client_features WHERE client_id = ${clientId}`;
+
+    // Then delete the client
+    const result = await sql`
+      DELETE FROM clients
+      WHERE id = ${clientId}
+      RETURNING id
+    `;
+
+    return result.length > 0;
+  } catch (error) {
+    console.error("Error deleting client:", error);
+    return false;
+  }
+}
+
 // Feature management
 export async function getClientFeatures(
   clientId: string,
