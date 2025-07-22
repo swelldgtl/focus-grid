@@ -345,7 +345,10 @@ export default function FeatureManager() {
                             <Switch
                               checked={isEnabled}
                               onCheckedChange={(value) => handleFeatureToggle(client.id, feature.key, value)}
-                              className={`${hasChanged ? "ring-2 ring-yellow-400" : ""} ${isEnabled ? "data-[state=checked]:bg-green-600" : "data-[state=unchecked]:bg-gray-400"}`}
+                              className={`${hasChanged ? "ring-2 ring-yellow-400" : ""}`}
+                              style={{
+                                backgroundColor: isEnabled ? '#16a34a' : '#9ca3af'
+                              }}
                             />
                             {isEnabled ? (
                               <CheckCircle className="h-4 w-4 text-green-600" />
