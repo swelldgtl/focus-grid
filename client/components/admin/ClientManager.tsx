@@ -630,6 +630,85 @@ export default function ClientManager() {
         </Dialog>
       </div>
 
+      {/* Edit Client Dialog */}
+      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Client</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="edit-client-name" className="text-sm font-medium">Client Name</Label>
+              <Input
+                id="edit-client-name"
+                placeholder="e.g., Acme Corporation"
+                value={editClient.name}
+                onChange={(e) => setEditClient(prev => ({ ...prev, name: e.target.value }))}
+                className={editErrors.name ? "border-red-500" : ""}
+              />
+              {editErrors.name && (
+                <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {editErrors.name}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="edit-client-slug" className="text-sm font-medium">Slug</Label>
+              <Input
+                id="edit-client-slug"
+                placeholder="e.g., acme-corp"
+                value={editClient.slug}
+                onChange={(e) => setEditClient(prev => ({ ...prev, slug: e.target.value }))}
+                className={editErrors.slug ? "border-red-500" : ""}
+              />
+              {editErrors.slug && (
+                <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {editErrors.slug}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="edit-client-subdomain" className="text-sm font-medium">Subdomain</Label>
+              <div className="flex items-center gap-2">
+                <Input
+                  id="edit-client-subdomain"
+                  placeholder="e.g., acme"
+                  value={editClient.subdomain}
+                  onChange={(e) => setEditClient(prev => ({ ...prev, subdomain: e.target.value }))}
+                  className={editErrors.subdomain ? "border-red-500" : ""}
+                />
+                <span className="text-sm text-muted-foreground">.swellfocusgrid.com</span>
+              </div>
+              {editErrors.subdomain && (
+                <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
+                  <AlertCircle className="h-3 w-3" />
+                  {editErrors.subdomain}
+                </p>
+              )}
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsEditDialogOpen(false)}
+                disabled={creating}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateClient}
+                disabled={!editClient.name || !editClient.slug || creating}
+                className="flex items-center gap-2"
+              >
+                {creating && <Loader2 className="h-4 w-4 animate-spin" />}
+                Update Client
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* First Deletion Warning Dialog */}
       <AlertDialog open={deleteState.isFirstDialogOpen} onOpenChange={(open) => !open && cancelDelete()}>
         <AlertDialogContent className="max-w-lg">
