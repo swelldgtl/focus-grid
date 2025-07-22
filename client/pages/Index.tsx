@@ -12,7 +12,6 @@ import {
   BlockersIssuesFeature,
   AgendaFeature,
   FocusModeFeature,
-  ClientConfigStatus,
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
 
@@ -1276,7 +1275,6 @@ export default function Index() {
               <p className="text-lg font-medium text-muted-foreground">
                 {clientConfig?.name || "Loading..."}
               </p>
-              <ClientConfigStatus />
             </div>
           </div>
         </div>
