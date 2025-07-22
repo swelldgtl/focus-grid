@@ -21,6 +21,15 @@ export function createServer() {
     res.json({ message: "Hello from Express server v2!" });
   });
 
+  app.get("/api/env-test", (_req, res) => {
+    res.json({
+      message: "Environment test",
+      hasDatabaseUrl: !!process.env.DATABASE_URL,
+      clientId: process.env.CLIENT_ID,
+      databaseUrlLength: process.env.DATABASE_URL?.length || 0
+    });
+  });
+
   app.get("/api/demo", handleDemo);
   app.get("/api/database/test", handleDatabaseTest);
   app.get("/api/config", handleClientConfig);
