@@ -62,8 +62,8 @@ export default function ClientSwitcher({ currentClientId, onClientChange }: Clie
       <CardContent className="space-y-3">
         {clients.map((client) => {
           const Icon = client.icon;
-          const isActive = currentClientId === client.id;
-          
+          const isActive = actualCurrentClientId === client.id;
+
           return (
             <div key={client.id} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export default function ClientSwitcher({ currentClientId, onClientChange }: Clie
                 <Button
                   variant={isActive ? "default" : "outline"}
                   size="sm"
-                  onClick={() => onClientChange(client.id, client.name)}
+                  onClick={() => handleClientSwitch(client.id, client.name)}
                   disabled={isActive}
                 >
                   {isActive ? "Current" : "Switch"}
