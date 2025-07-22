@@ -4,8 +4,11 @@ import { neon } from "@neondatabase/serverless";
 const getDatabaseUrl = () => {
   const url = process.env.DATABASE_URL;
   if (!url) {
-    console.error('DATABASE_URL environment variable is not set');
-    console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('DATABASE')));
+    console.error("DATABASE_URL environment variable is not set");
+    console.error(
+      "Available env vars:",
+      Object.keys(process.env).filter((key) => key.includes("DATABASE")),
+    );
   }
   return url || "";
 };
@@ -14,7 +17,9 @@ const getDatabaseUrl = () => {
 const createConnection = () => {
   const url = getDatabaseUrl();
   if (!url) {
-    throw new Error("DATABASE_URL environment variable is not set. Check deployment configuration.");
+    throw new Error(
+      "DATABASE_URL environment variable is not set. Check deployment configuration.",
+    );
   }
   return neon(url);
 };
@@ -113,11 +118,14 @@ export async function createClient(data: {
   }
 }
 
-export async function updateClient(clientId: string, data: {
-  name: string;
-  slug: string;
-  subdomain?: string;
-}): Promise<Client | null> {
+export async function updateClient(
+  clientId: string,
+  data: {
+    name: string;
+    slug: string;
+    subdomain?: string;
+  },
+): Promise<Client | null> {
   try {
     const sql = createConnection();
     const result = await sql`

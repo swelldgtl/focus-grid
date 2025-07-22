@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Settings,
   Users,
@@ -11,11 +11,11 @@ import {
   Building2,
   Briefcase,
   Database,
-  Globe
-} from 'lucide-react';
-import ClientManager from '@/components/admin/ClientManager';
-import FeatureManager from '@/components/admin/FeatureManager';
-import AdminSettings from '@/components/admin/AdminSettings';
+  Globe,
+} from "lucide-react";
+import ClientManager from "@/components/admin/ClientManager";
+import FeatureManager from "@/components/admin/FeatureManager";
+import AdminSettings from "@/components/admin/AdminSettings";
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -31,7 +31,9 @@ export default function Admin() {
                 <Settings className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">Focus Grid Admin</h1>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Focus Grid Admin
+                </h1>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -39,10 +41,10 @@ export default function Admin() {
                 <Database className="h-3 w-3 mr-1" />
                 Admin Mode
               </Badge>
-              <Button 
-                variant="outline" 
+              <Button
+                variant="outline"
                 size="sm"
-                onClick={() => window.location.href = '/'}
+                onClick={() => (window.location.href = "/")}
               >
                 <Globe className="h-4 w-4 mr-1" />
                 View Client App
@@ -54,7 +56,11 @@ export default function Admin() {
 
       {/* Admin Content */}
       <div className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+        <Tabs
+          value={activeTab}
+          onValueChange={setActiveTab}
+          className="space-y-6"
+        >
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
@@ -82,7 +88,9 @@ export default function Admin() {
                 onClick={() => setActiveTab("clients")}
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Total Clients
+                  </CardTitle>
                   <Users className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -98,7 +106,9 @@ export default function Admin() {
                 onClick={() => setActiveTab("features")}
               >
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Active Features</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    Active Features
+                  </CardTitle>
                   <Settings className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
@@ -110,8 +120,6 @@ export default function Admin() {
               </Card>
             </div>
 
-
-
             {/* Recent Activity */}
             <Card>
               <CardHeader>
@@ -121,18 +129,30 @@ export default function Admin() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-3">
                     <Building2 className="h-4 w-4 text-blue-600" />
-                    <span className="text-sm">Blue Label Packaging - Blockers & Issues disabled</span>
-                    <Badge variant="secondary" className="text-xs">2 hours ago</Badge>
+                    <span className="text-sm">
+                      Blue Label Packaging - Blockers & Issues disabled
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      2 hours ago
+                    </Badge>
                   </div>
                   <div className="flex items-center gap-3">
                     <Briefcase className="h-4 w-4 text-green-600" />
-                    <span className="text-sm">ERC - Long-Term Goals disabled</span>
-                    <Badge variant="secondary" className="text-xs">1 day ago</Badge>
+                    <span className="text-sm">
+                      ERC - Long-Term Goals disabled
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      1 day ago
+                    </Badge>
                   </div>
                   <div className="flex items-center gap-3">
                     <Users className="h-4 w-4 text-purple-600" />
-                    <span className="text-sm">Demo Client - All features enabled</span>
-                    <Badge variant="secondary" className="text-xs">3 days ago</Badge>
+                    <span className="text-sm">
+                      Demo Client - All features enabled
+                    </span>
+                    <Badge variant="secondary" className="text-xs">
+                      3 days ago
+                    </Badge>
                   </div>
                 </div>
               </CardContent>

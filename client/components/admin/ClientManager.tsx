@@ -1,26 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
-import { 
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
+} from "@/components/ui/table";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +31,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from '@/components/ui/alert-dialog';
+} from "@/components/ui/alert-dialog";
 import {
   Plus,
   Edit2,
@@ -46,8 +46,8 @@ import {
   Zap,
   Globe,
   Rocket,
-  Settings2
-} from 'lucide-react';
+  Settings2,
+} from "lucide-react";
 import {
   getClients,
   createClient,
@@ -57,9 +57,13 @@ import {
   generateSlug,
   generateSubdomain,
   checkSlugAvailability,
-  type Client
-} from '@/lib/client-api';
-import { createNetlifyProject, deleteNetlifyProject, type NetlifyProjectCreationResult } from '@/lib/netlify-api';
+  type Client,
+} from "@/lib/client-api";
+import {
+  createNetlifyProject,
+  deleteNetlifyProject,
+  type NetlifyProjectCreationResult,
+} from "@/lib/netlify-api";
 
 // Client interface moved to client-api.ts
 
@@ -71,36 +75,36 @@ export default function ClientManager() {
   const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
   const [creating, setCreating] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState<{
-    step: 'client' | 'netlify' | 'deploy' | 'complete';
+    step: "client" | "netlify" | "deploy" | "complete";
     message: string;
   } | null>(null);
   const [newClient, setNewClient] = useState({
-    name: '',
-    slug: '',
-    subdomain: '',
-    createNetlifyProject: true
+    name: "",
+    slug: "",
+    subdomain: "",
+    createNetlifyProject: true,
   });
   const [editClient, setEditClient] = useState({
-    name: '',
-    slug: '',
-    subdomain: ''
+    name: "",
+    slug: "",
+    subdomain: "",
   });
   const [editFeatures, setEditFeatures] = useState({
     long_term_goals: true,
     action_plan: true,
     blockers_issues: true,
     agenda: true,
-    focus_mode: true
+    focus_mode: true,
   });
   const [errors, setErrors] = useState({
-    name: '',
-    slug: '',
-    subdomain: ''
+    name: "",
+    slug: "",
+    subdomain: "",
   });
   const [editErrors, setEditErrors] = useState({
-    name: '',
-    slug: '',
-    subdomain: ''
+    name: "",
+    slug: "",
+    subdomain: "",
   });
   const [deleteState, setDeleteState] = useState<{
     isFirstDialogOpen: boolean;
@@ -114,10 +118,10 @@ export default function ClientManager() {
     isFirstDialogOpen: false,
     isSecondDialogOpen: false,
     clientToDelete: null,
-    confirmationText: '',
+    confirmationText: "",
     isDeleting: false,
     deleteNetlifyProject: true,
-    deletionStep: ''
+    deletionStep: "",
   });
   const { toast } = useToast();
 
@@ -131,15 +135,15 @@ export default function ClientManager() {
       setLoading(true);
       const clientsData = await getClients();
       // Add default features for display if not present
-      const clientsWithFeatures = clientsData.map(client => ({
+      const clientsWithFeatures = clientsData.map((client) => ({
         ...client,
         features: client.features || {
           long_term_goals: true,
           action_plan: true,
           blockers_issues: true,
           agenda: true,
-          focus_mode: true
-        }
+          focus_mode: true,
+        },
       }));
       setClients(clientsWithFeatures);
     } catch (error) {
@@ -153,35 +157,35 @@ export default function ClientManager() {
     }
   };
 
-
-
-  const getEnabledFeaturesCount = (features?: Client['features']) => {
+  const getEnabledFeaturesCount = (features?: Client["features"]) => {
     if (!features) return 0;
     return Object.values(features).filter(Boolean).length;
   };
 
   const validateForm = () => {
-    const newErrors = { name: '', slug: '', subdomain: '' };
+    const newErrors = { name: "", slug: "", subdomain: "" };
     let isValid = true;
 
     if (!newClient.name.trim()) {
-      newErrors.name = 'Client name is required';
+      newErrors.name = "Client name is required";
       isValid = false;
     }
 
     if (!newClient.slug.trim()) {
-      newErrors.slug = 'Slug is required';
+      newErrors.slug = "Slug is required";
       isValid = false;
     } else if (!/^[a-z0-9-]+$/.test(newClient.slug)) {
-      newErrors.slug = 'Slug can only contain lowercase letters, numbers, and hyphens';
+      newErrors.slug =
+        "Slug can only contain lowercase letters, numbers, and hyphens";
       isValid = false;
     }
 
     if (!newClient.subdomain.trim()) {
-      newErrors.subdomain = 'Subdomain is required';
+      newErrors.subdomain = "Subdomain is required";
       isValid = false;
     } else if (!/^[a-z0-9]+$/.test(newClient.subdomain)) {
-      newErrors.subdomain = 'Subdomain can only contain lowercase letters and numbers';
+      newErrors.subdomain =
+        "Subdomain can only contain lowercase letters and numbers";
       isValid = false;
     }
 
@@ -193,13 +197,19 @@ export default function ClientManager() {
     if (!validateForm()) return;
 
     setCreating(true);
-    setDeploymentStatus({ step: 'client', message: 'Creating client in database...' });
+    setDeploymentStatus({
+      step: "client",
+      message: "Creating client in database...",
+    });
 
     try {
       // Check for duplicates
       const slugAvailable = await checkSlugAvailability(newClient.slug);
       if (!slugAvailable) {
-        setErrors(prev => ({ ...prev, slug: 'A client with this slug already exists' }));
+        setErrors((prev) => ({
+          ...prev,
+          slug: "A client with this slug already exists",
+        }));
         return;
       }
 
@@ -207,23 +217,26 @@ export default function ClientManager() {
       const newClientData = await createClient({
         name: newClient.name,
         slug: newClient.slug,
-        subdomain: newClient.subdomain
+        subdomain: newClient.subdomain,
       });
 
       if (!newClientData) {
-        throw new Error('Failed to create client');
+        throw new Error("Failed to create client");
       }
 
       // Step 2: Create Netlify project if requested
       let netlifyResult: NetlifyProjectCreationResult | null = null;
       if (newClient.createNetlifyProject) {
-        setDeploymentStatus({ step: 'netlify', message: 'Creating Netlify project...' });
+        setDeploymentStatus({
+          step: "netlify",
+          message: "Creating Netlify project...",
+        });
 
         netlifyResult = await createNetlifyProject({
           clientId: newClientData.id,
           clientName: newClient.name,
           subdomain: newClient.subdomain,
-          databaseUrl: process.env.DATABASE_URL || ''
+          databaseUrl: process.env.DATABASE_URL || "",
         });
 
         if (!netlifyResult.success) {
@@ -237,7 +250,10 @@ export default function ClientManager() {
       }
 
       // Step 3: Finalize
-      setDeploymentStatus({ step: 'complete', message: 'Client creation completed!' });
+      setDeploymentStatus({
+        step: "complete",
+        message: "Client creation completed!",
+      });
 
       // Add to local state with default features
       const clientWithFeatures = {
@@ -247,18 +263,24 @@ export default function ClientManager() {
           action_plan: true,
           blockers_issues: true,
           agenda: true,
-          focus_mode: true
-        }
+          focus_mode: true,
+        },
       };
-      setClients(prev => [clientWithFeatures, ...prev]);
-      setNewClient({ name: '', slug: '', subdomain: '', createNetlifyProject: true });
-      setErrors({ name: '', slug: '', subdomain: '' });
+      setClients((prev) => [clientWithFeatures, ...prev]);
+      setNewClient({
+        name: "",
+        slug: "",
+        subdomain: "",
+        createNetlifyProject: true,
+      });
+      setErrors({ name: "", slug: "", subdomain: "" });
       setDeploymentStatus(null);
       setIsCreateDialogOpen(false);
 
-      const successMessage = newClient.createNetlifyProject && netlifyResult?.success
-        ? `Client "${newClientData.name}" created with Netlify project at ${netlifyResult.primaryUrl}`
-        : `Client "${newClientData.name}" created successfully`;
+      const successMessage =
+        newClient.createNetlifyProject && netlifyResult?.success
+          ? `Client "${newClientData.name}" created with Netlify project at ${netlifyResult.primaryUrl}`
+          : `Client "${newClientData.name}" created successfully`;
 
       toast({
         title: "Success",
@@ -268,7 +290,8 @@ export default function ClientManager() {
       setDeploymentStatus(null);
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to create client",
+        description:
+          error instanceof Error ? error.message : "Failed to create client",
         variant: "destructive",
       });
     } finally {
@@ -281,18 +304,18 @@ export default function ClientManager() {
       isFirstDialogOpen: true,
       isSecondDialogOpen: false,
       clientToDelete: client,
-      confirmationText: '',
+      confirmationText: "",
       isDeleting: false,
       deleteNetlifyProject: true,
-      deletionStep: ''
+      deletionStep: "",
     });
   };
 
   const proceedToSecondConfirmation = () => {
-    setDeleteState(prev => ({
+    setDeleteState((prev) => ({
       ...prev,
       isFirstDialogOpen: false,
-      isSecondDialogOpen: true
+      isSecondDialogOpen: true,
     }));
   };
 
@@ -301,10 +324,10 @@ export default function ClientManager() {
       isFirstDialogOpen: false,
       isSecondDialogOpen: false,
       clientToDelete: null,
-      confirmationText: '',
+      confirmationText: "",
       isDeleting: false,
       deleteNetlifyProject: true,
-      deletionStep: ''
+      deletionStep: "",
     });
   };
 
@@ -323,18 +346,25 @@ export default function ClientManager() {
       return;
     }
 
-    setDeleteState(prev => ({ ...prev, isDeleting: true, deletionStep: 'Deleting from database...' }));
+    setDeleteState((prev) => ({
+      ...prev,
+      isDeleting: true,
+      deletionStep: "Deleting from database...",
+    }));
 
     try {
       // Step 1: Delete from database
       const success = await deleteClient(client.id);
       if (!success) {
-        throw new Error('Failed to delete client from database');
+        throw new Error("Failed to delete client from database");
       }
 
       // Step 2: Delete Netlify project if requested
       if (deleteState.deleteNetlifyProject && client.subdomain) {
-        setDeleteState(prev => ({ ...prev, deletionStep: 'Deleting Netlify project...' }));
+        setDeleteState((prev) => ({
+          ...prev,
+          deletionStep: "Deleting Netlify project...",
+        }));
 
         const netlifySuccess = await deleteNetlifyProject(client.subdomain);
         if (!netlifySuccess) {
@@ -348,7 +378,7 @@ export default function ClientManager() {
       }
 
       // Step 3: Update UI
-      setClients(prev => prev.filter(c => c.id !== client.id));
+      setClients((prev) => prev.filter((c) => c.id !== client.id));
 
       const successMessage = deleteState.deleteNetlifyProject
         ? `"${client.name}" and its Netlify project have been permanently deleted`
@@ -363,42 +393,47 @@ export default function ClientManager() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to delete client",
+        description:
+          error instanceof Error ? error.message : "Failed to delete client",
         variant: "destructive",
       });
-      setDeleteState(prev => ({ ...prev, isDeleting: false, deletionStep: '' }));
+      setDeleteState((prev) => ({
+        ...prev,
+        isDeleting: false,
+        deletionStep: "",
+      }));
     }
   };
 
   const handleNameChange = (name: string) => {
-    setNewClient(prev => ({
+    setNewClient((prev) => ({
       ...prev,
       name,
       slug: generateSlug(name),
-      subdomain: generateSubdomain(name)
+      subdomain: generateSubdomain(name),
     }));
     // Clear errors when user starts typing
     if (errors.name) {
-      setErrors(prev => ({ ...prev, name: '' }));
+      setErrors((prev) => ({ ...prev, name: "" }));
     }
   };
 
   const handleSlugChange = (slug: string) => {
-    setNewClient(prev => ({ ...prev, slug }));
+    setNewClient((prev) => ({ ...prev, slug }));
     if (errors.slug) {
-      setErrors(prev => ({ ...prev, slug: '' }));
+      setErrors((prev) => ({ ...prev, slug: "" }));
     }
   };
 
   const handleSubdomainChange = (subdomain: string) => {
-    setNewClient(prev => ({ ...prev, subdomain }));
+    setNewClient((prev) => ({ ...prev, subdomain }));
     if (errors.subdomain) {
-      setErrors(prev => ({ ...prev, subdomain: '' }));
+      setErrors((prev) => ({ ...prev, subdomain: "" }));
     }
   };
 
   const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
-    setNewClient(prev => ({ ...prev, createNetlifyProject }));
+    setNewClient((prev) => ({ ...prev, createNetlifyProject }));
   };
 
   const initiateEdit = (client: Client) => {
@@ -406,38 +441,40 @@ export default function ClientManager() {
     setEditClient({
       name: client.name,
       slug: client.slug,
-      subdomain: client.subdomain || ''
+      subdomain: client.subdomain || "",
     });
     setEditFeatures({
       long_term_goals: client.features?.long_term_goals ?? true,
       action_plan: client.features?.action_plan ?? true,
       blockers_issues: client.features?.blockers_issues ?? true,
       agenda: client.features?.agenda ?? true,
-      focus_mode: client.features?.focus_mode ?? true
+      focus_mode: client.features?.focus_mode ?? true,
     });
-    setEditErrors({ name: '', slug: '', subdomain: '' });
+    setEditErrors({ name: "", slug: "", subdomain: "" });
     setIsEditDialogOpen(true);
   };
 
   const validateEditForm = () => {
-    const newErrors = { name: '', slug: '', subdomain: '' };
+    const newErrors = { name: "", slug: "", subdomain: "" };
     let isValid = true;
 
     if (!editClient.name.trim()) {
-      newErrors.name = 'Client name is required';
+      newErrors.name = "Client name is required";
       isValid = false;
     }
 
     if (!editClient.slug.trim()) {
-      newErrors.slug = 'Slug is required';
+      newErrors.slug = "Slug is required";
       isValid = false;
     } else if (!/^[a-z0-9-]+$/.test(editClient.slug)) {
-      newErrors.slug = 'Slug can only contain lowercase letters, numbers, and hyphens';
+      newErrors.slug =
+        "Slug can only contain lowercase letters, numbers, and hyphens";
       isValid = false;
     }
 
     if (editClient.subdomain && !/^[a-z0-9]+$/.test(editClient.subdomain)) {
-      newErrors.subdomain = 'Subdomain can only contain lowercase letters and numbers';
+      newErrors.subdomain =
+        "Subdomain can only contain lowercase letters and numbers";
       isValid = false;
     }
 
@@ -454,7 +491,10 @@ export default function ClientManager() {
       if (editClient.slug !== clientToEdit.slug) {
         const slugAvailable = await checkSlugAvailability(editClient.slug);
         if (!slugAvailable) {
-          setEditErrors(prev => ({ ...prev, slug: 'A client with this slug already exists' }));
+          setEditErrors((prev) => ({
+            ...prev,
+            slug: "A client with this slug already exists",
+          }));
           return;
         }
       }
@@ -462,12 +502,15 @@ export default function ClientManager() {
       const updatedClient = await updateClient(clientToEdit.id, {
         name: editClient.name,
         slug: editClient.slug,
-        subdomain: editClient.subdomain
+        subdomain: editClient.subdomain,
       });
 
       if (updatedClient) {
         // Update features
-        const featuresUpdated = await updateClientFeatures(clientToEdit.id, editFeatures);
+        const featuresUpdated = await updateClientFeatures(
+          clientToEdit.id,
+          editFeatures,
+        );
 
         if (!featuresUpdated) {
           toast({
@@ -480,14 +523,14 @@ export default function ClientManager() {
         // Update local state with both client data and features
         const updatedClientWithFeatures = {
           ...updatedClient,
-          features: editFeatures
+          features: editFeatures,
         };
 
-        setClients(prev => prev.map(client =>
-          client.id === clientToEdit.id
-            ? updatedClientWithFeatures
-            : client
-        ));
+        setClients((prev) =>
+          prev.map((client) =>
+            client.id === clientToEdit.id ? updatedClientWithFeatures : client,
+          ),
+        );
         setIsEditDialogOpen(false);
         setClientToEdit(null);
 
@@ -499,7 +542,8 @@ export default function ClientManager() {
     } catch (error) {
       toast({
         title: "Error",
-        description: error instanceof Error ? error.message : "Failed to update client",
+        description:
+          error instanceof Error ? error.message : "Failed to update client",
         variant: "destructive",
       });
     } finally {
@@ -508,9 +552,9 @@ export default function ClientManager() {
   };
 
   const handleEditFeatureToggle = (featureKey: string, enabled: boolean) => {
-    setEditFeatures(prev => ({
+    setEditFeatures((prev) => ({
       ...prev,
-      [featureKey]: enabled
+      [featureKey]: enabled,
     }));
   };
 
@@ -532,7 +576,9 @@ export default function ClientManager() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold text-gray-900">Client Management</h2>
+          <h2 className="text-2xl font-bold text-gray-900">
+            Client Management
+          </h2>
           <p className="text-gray-600">Manage all your Focus Grid clients</p>
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -548,7 +594,9 @@ export default function ClientManager() {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="client-name" className="text-sm font-medium">Client Name</Label>
+                <Label htmlFor="client-name" className="text-sm font-medium">
+                  Client Name
+                </Label>
                 <Input
                   id="client-name"
                   placeholder="e.g., Acme Corporation"
@@ -564,7 +612,9 @@ export default function ClientManager() {
                 )}
               </div>
               <div>
-                <Label htmlFor="client-slug" className="text-sm font-medium">Slug</Label>
+                <Label htmlFor="client-slug" className="text-sm font-medium">
+                  Slug
+                </Label>
                 <Input
                   id="client-slug"
                   placeholder="e.g., acme-corp"
@@ -572,7 +622,9 @@ export default function ClientManager() {
                   onChange={(e) => handleSlugChange(e.target.value)}
                   className={errors.slug ? "border-red-500" : ""}
                 />
-                <p className="text-xs text-muted-foreground mt-1">Auto-generated from name, but can be customized</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Auto-generated from name, but can be customized
+                </p>
                 {errors.slug && (
                   <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
                     <AlertCircle className="h-3 w-3" />
@@ -581,7 +633,12 @@ export default function ClientManager() {
                 )}
               </div>
               <div>
-                <Label htmlFor="client-subdomain" className="text-sm font-medium">Subdomain</Label>
+                <Label
+                  htmlFor="client-subdomain"
+                  className="text-sm font-medium"
+                >
+                  Subdomain
+                </Label>
                 <div className="flex items-center gap-2">
                   <Input
                     id="client-subdomain"
@@ -590,9 +647,13 @@ export default function ClientManager() {
                     onChange={(e) => handleSubdomainChange(e.target.value)}
                     className={errors.subdomain ? "border-red-500" : ""}
                   />
-                  <span className="text-sm text-muted-foreground">.swellfocusgrid.com</span>
+                  <span className="text-sm text-muted-foreground">
+                    .swellfocusgrid.com
+                  </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">Auto-generated from name, but can be customized</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Auto-generated from name, but can be customized
+                </p>
                 {errors.subdomain && (
                   <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
                     <AlertCircle className="h-3 w-3" />
@@ -606,26 +667,39 @@ export default function ClientManager() {
                     type="checkbox"
                     id="create-netlify"
                     checked={newClient.createNetlifyProject}
-                    onChange={(e) => handleCreateNetlifyProjectChange(e.target.checked)}
+                    onChange={(e) =>
+                      handleCreateNetlifyProjectChange(e.target.checked)
+                    }
                     className="rounded border-gray-300"
                   />
-                  <Label htmlFor="create-netlify" className="text-sm font-medium flex items-center gap-2">
+                  <Label
+                    htmlFor="create-netlify"
+                    className="text-sm font-medium flex items-center gap-2"
+                  >
                     <Rocket className="h-4 w-4 text-blue-600" />
                     Automatically create Netlify project
                   </Label>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1 ml-6">
-                  Creates a new Netlify project with environment variables and deploys automatically
+                  Creates a new Netlify project with environment variables and
+                  deploys automatically
                 </p>
                 {newClient.createNetlifyProject && (
                   <div className="mt-2 ml-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
                     <div className="flex items-start gap-2">
                       <Settings2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
                       <div className="text-sm">
-                        <p className="font-medium text-blue-800">Netlify project will include:</p>
+                        <p className="font-medium text-blue-800">
+                          Netlify project will include:
+                        </p>
                         <ul className="text-blue-700 mt-1 space-y-1 text-xs">
-                          <li>• Environment variables (CLIENT_ID, DATABASE_URL)</li>
-                          <li>• Custom domain: {newClient.subdomain}.swellfocusgrid.com</li>
+                          <li>
+                            • Environment variables (CLIENT_ID, DATABASE_URL)
+                          </li>
+                          <li>
+                            • Custom domain: {newClient.subdomain}
+                            .swellfocusgrid.com
+                          </li>
                           <li>• Automatic deployment from main branch</li>
                         </ul>
                       </div>
@@ -638,8 +712,13 @@ export default function ClientManager() {
                   variant="outline"
                   onClick={() => {
                     setIsCreateDialogOpen(false);
-                    setNewClient({ name: '', slug: '', subdomain: '', createNetlifyProject: true });
-                    setErrors({ name: '', slug: '', subdomain: '' });
+                    setNewClient({
+                      name: "",
+                      slug: "",
+                      subdomain: "",
+                      createNetlifyProject: true,
+                    });
+                    setErrors({ name: "", slug: "", subdomain: "" });
                     setDeploymentStatus(null);
                   }}
                   disabled={creating}
@@ -648,18 +727,29 @@ export default function ClientManager() {
                 </Button>
                 <Button
                   onClick={handleCreateClient}
-                  disabled={!newClient.name || !newClient.slug || !newClient.subdomain || creating}
+                  disabled={
+                    !newClient.name ||
+                    !newClient.slug ||
+                    !newClient.subdomain ||
+                    creating
+                  }
                   className="flex items-center gap-2"
                 >
                   {creating ? (
                     <>
                       <Loader2 className="h-4 w-4 animate-spin" />
-                      {deploymentStatus?.message || 'Creating...'}
+                      {deploymentStatus?.message || "Creating..."}
                     </>
                   ) : (
                     <>
-                      {newClient.createNetlifyProject ? <Rocket className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
-                      {newClient.createNetlifyProject ? 'Create Client & Deploy' : 'Create Client'}
+                      {newClient.createNetlifyProject ? (
+                        <Rocket className="h-4 w-4" />
+                      ) : (
+                        <Plus className="h-4 w-4" />
+                      )}
+                      {newClient.createNetlifyProject
+                        ? "Create Client & Deploy"
+                        : "Create Client"}
                     </>
                   )}
                 </Button>
@@ -677,12 +767,16 @@ export default function ClientManager() {
           </DialogHeader>
           <div className="space-y-4">
             <div>
-              <Label htmlFor="edit-client-name" className="text-sm font-medium">Client Name</Label>
+              <Label htmlFor="edit-client-name" className="text-sm font-medium">
+                Client Name
+              </Label>
               <Input
                 id="edit-client-name"
                 placeholder="e.g., Acme Corporation"
                 value={editClient.name}
-                onChange={(e) => setEditClient(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) =>
+                  setEditClient((prev) => ({ ...prev, name: e.target.value }))
+                }
                 className={editErrors.name ? "border-red-500" : ""}
               />
               {editErrors.name && (
@@ -693,12 +787,16 @@ export default function ClientManager() {
               )}
             </div>
             <div>
-              <Label htmlFor="edit-client-slug" className="text-sm font-medium">Slug</Label>
+              <Label htmlFor="edit-client-slug" className="text-sm font-medium">
+                Slug
+              </Label>
               <Input
                 id="edit-client-slug"
                 placeholder="e.g., acme-corp"
                 value={editClient.slug}
-                onChange={(e) => setEditClient(prev => ({ ...prev, slug: e.target.value }))}
+                onChange={(e) =>
+                  setEditClient((prev) => ({ ...prev, slug: e.target.value }))
+                }
                 className={editErrors.slug ? "border-red-500" : ""}
               />
               {editErrors.slug && (
@@ -709,16 +807,28 @@ export default function ClientManager() {
               )}
             </div>
             <div>
-              <Label htmlFor="edit-client-subdomain" className="text-sm font-medium">Subdomain</Label>
+              <Label
+                htmlFor="edit-client-subdomain"
+                className="text-sm font-medium"
+              >
+                Subdomain
+              </Label>
               <div className="flex items-center gap-2">
                 <Input
                   id="edit-client-subdomain"
                   placeholder="e.g., acme"
                   value={editClient.subdomain}
-                  onChange={(e) => setEditClient(prev => ({ ...prev, subdomain: e.target.value }))}
+                  onChange={(e) =>
+                    setEditClient((prev) => ({
+                      ...prev,
+                      subdomain: e.target.value,
+                    }))
+                  }
                   className={editErrors.subdomain ? "border-red-500" : ""}
                 />
-                <span className="text-sm text-muted-foreground">.swellfocusgrid.com</span>
+                <span className="text-sm text-muted-foreground">
+                  .swellfocusgrid.com
+                </span>
               </div>
               {editErrors.subdomain && (
                 <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
@@ -730,60 +840,82 @@ export default function ClientManager() {
 
             {/* Feature Toggles */}
             <div className="border-t pt-4">
-              <Label className="text-sm font-medium mb-3 block">Feature Configuration</Label>
+              <Label className="text-sm font-medium mb-3 block">
+                Feature Configuration
+              </Label>
               <div className="space-y-3">
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">Long-Term Goals</div>
-                    <div className="text-sm text-muted-foreground">Strategic planning and goal tracking</div>
+                    <div className="text-sm text-muted-foreground">
+                      Strategic planning and goal tracking
+                    </div>
                   </div>
                   <Switch
                     checked={editFeatures.long_term_goals}
-                    onCheckedChange={(checked) => handleEditFeatureToggle('long_term_goals', checked)}
+                    onCheckedChange={(checked) =>
+                      handleEditFeatureToggle("long_term_goals", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">Action Plan</div>
-                    <div className="text-sm text-muted-foreground">Task management and action items</div>
+                    <div className="text-sm text-muted-foreground">
+                      Task management and action items
+                    </div>
                   </div>
                   <Switch
                     checked={editFeatures.action_plan}
-                    onCheckedChange={(checked) => handleEditFeatureToggle('action_plan', checked)}
+                    onCheckedChange={(checked) =>
+                      handleEditFeatureToggle("action_plan", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">Blockers & Issues</div>
-                    <div className="text-sm text-muted-foreground">Issue tracking and blocker management</div>
+                    <div className="text-sm text-muted-foreground">
+                      Issue tracking and blocker management
+                    </div>
                   </div>
                   <Switch
                     checked={editFeatures.blockers_issues}
-                    onCheckedChange={(checked) => handleEditFeatureToggle('blockers_issues', checked)}
+                    onCheckedChange={(checked) =>
+                      handleEditFeatureToggle("blockers_issues", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">Agenda</div>
-                    <div className="text-sm text-muted-foreground">Meeting agenda and note-taking</div>
+                    <div className="text-sm text-muted-foreground">
+                      Meeting agenda and note-taking
+                    </div>
                   </div>
                   <Switch
                     checked={editFeatures.agenda}
-                    onCheckedChange={(checked) => handleEditFeatureToggle('agenda', checked)}
+                    onCheckedChange={(checked) =>
+                      handleEditFeatureToggle("agenda", checked)
+                    }
                   />
                 </div>
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
                     <div className="font-medium">Focus Mode</div>
-                    <div className="text-sm text-muted-foreground">Distraction-free interface</div>
+                    <div className="text-sm text-muted-foreground">
+                      Distraction-free interface
+                    </div>
                   </div>
                   <Switch
                     checked={editFeatures.focus_mode}
-                    onCheckedChange={(checked) => handleEditFeatureToggle('focus_mode', checked)}
+                    onCheckedChange={(checked) =>
+                      handleEditFeatureToggle("focus_mode", checked)
+                    }
                   />
                 </div>
               </div>
@@ -811,7 +943,10 @@ export default function ClientManager() {
       </Dialog>
 
       {/* First Deletion Warning Dialog */}
-      <AlertDialog open={deleteState.isFirstDialogOpen} onOpenChange={(open) => !open && cancelDelete()}>
+      <AlertDialog
+        open={deleteState.isFirstDialogOpen}
+        onOpenChange={(open) => !open && cancelDelete()}
+      >
         <AlertDialogContent className="max-w-lg">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-red-600">
@@ -820,19 +955,27 @@ export default function ClientManager() {
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-3">
               <p className="text-base font-medium text-gray-900">
-                You are about to permanently delete "{deleteState.clientToDelete?.name}"
+                You are about to permanently delete "
+                {deleteState.clientToDelete?.name}"
               </p>
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
                 <div className="flex items-start gap-3">
                   <Database className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
                   <div className="space-y-2">
-                    <p className="font-medium text-red-800">This will permanently:</p>
+                    <p className="font-medium text-red-800">
+                      This will permanently:
+                    </p>
                     <ul className="text-sm text-red-700 space-y-1 list-disc list-inside">
                       <li>Delete all client data and configurations</li>
-                      <li>Remove access to {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com</li>
+                      <li>
+                        Remove access to {deleteState.clientToDelete?.subdomain}
+                        .swellfocusgrid.com
+                      </li>
                       <li>Delete all associated user data and content</li>
                       <li>Remove all feature settings and customizations</li>
-                      <li>Delete the corresponding Netlify project (if selected)</li>
+                      <li>
+                        Delete the corresponding Netlify project (if selected)
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -841,9 +984,12 @@ export default function ClientManager() {
                 <div className="flex items-start gap-3">
                   <Zap className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
                   <div>
-                    <p className="font-medium text-yellow-800">This action cannot be undone!</p>
+                    <p className="font-medium text-yellow-800">
+                      This action cannot be undone!
+                    </p>
                     <p className="text-sm text-yellow-700 mt-1">
-                      Once deleted, all data will be permanently lost and cannot be recovered.
+                      Once deleted, all data will be permanently lost and cannot
+                      be recovered.
                     </p>
                   </div>
                 </div>
@@ -854,19 +1000,25 @@ export default function ClientManager() {
                     type="checkbox"
                     id="delete-netlify"
                     checked={deleteState.deleteNetlifyProject}
-                    onChange={(e) => setDeleteState(prev => ({
-                      ...prev,
-                      deleteNetlifyProject: e.target.checked
-                    }))}
+                    onChange={(e) =>
+                      setDeleteState((prev) => ({
+                        ...prev,
+                        deleteNetlifyProject: e.target.checked,
+                      }))
+                    }
                     className="rounded border-gray-300"
                   />
-                  <Label htmlFor="delete-netlify" className="text-sm font-medium flex items-center gap-2">
+                  <Label
+                    htmlFor="delete-netlify"
+                    className="text-sm font-medium flex items-center gap-2"
+                  >
                     <Globe className="h-4 w-4 text-red-600" />
                     Also delete Netlify project
                   </Label>
                 </div>
                 <p className="text-xs text-muted-foreground mt-1 ml-6">
-                  This will permanently delete the Netlify project for {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com
+                  This will permanently delete the Netlify project for{" "}
+                  {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com
                 </p>
               </div>
             </AlertDialogDescription>
@@ -885,7 +1037,10 @@ export default function ClientManager() {
       </AlertDialog>
 
       {/* Second Deletion Confirmation Dialog */}
-      <AlertDialog open={deleteState.isSecondDialogOpen} onOpenChange={(open) => !open && cancelDelete()}>
+      <AlertDialog
+        open={deleteState.isSecondDialogOpen}
+        onOpenChange={(open) => !open && cancelDelete()}
+      >
         <AlertDialogContent className="max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-red-600">
@@ -894,8 +1049,11 @@ export default function ClientManager() {
             </AlertDialogTitle>
             <AlertDialogDescription className="space-y-4">
               <p className="text-sm">
-                To confirm deletion of <span className="font-semibold">"{deleteState.clientToDelete?.name}"</span>,
-                please type the following text exactly:
+                To confirm deletion of{" "}
+                <span className="font-semibold">
+                  "{deleteState.clientToDelete?.name}"
+                </span>
+                , please type the following text exactly:
               </p>
               <div className="bg-gray-100 border rounded p-3">
                 <code className="text-sm font-mono font-semibold text-red-600">
@@ -903,17 +1061,22 @@ export default function ClientManager() {
                 </code>
               </div>
               <div>
-                <Label htmlFor="delete-confirmation" className="text-sm font-medium">
+                <Label
+                  htmlFor="delete-confirmation"
+                  className="text-sm font-medium"
+                >
                   Confirmation Text
                 </Label>
                 <Input
                   id="delete-confirmation"
                   placeholder={`DELETE ${deleteState.clientToDelete?.name}`}
                   value={deleteState.confirmationText}
-                  onChange={(e) => setDeleteState(prev => ({
-                    ...prev,
-                    confirmationText: e.target.value
-                  }))}
+                  onChange={(e) =>
+                    setDeleteState((prev) => ({
+                      ...prev,
+                      confirmationText: e.target.value,
+                    }))
+                  }
                   className="mt-1 font-mono"
                   disabled={deleteState.isDeleting}
                 />
@@ -930,16 +1093,20 @@ export default function ClientManager() {
             <Button
               onClick={executeDelete}
               variant="destructive"
-              disabled={deleteState.isDeleting || deleteState.confirmationText !== `DELETE ${deleteState.clientToDelete?.name}`}
+              disabled={
+                deleteState.isDeleting ||
+                deleteState.confirmationText !==
+                  `DELETE ${deleteState.clientToDelete?.name}`
+              }
               className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
             >
               {deleteState.isDeleting ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {deleteState.deletionStep || 'Deleting...'}
+                  {deleteState.deletionStep || "Deleting..."}
                 </>
               ) : (
-                'Permanently Delete'
+                "Permanently Delete"
               )}
             </Button>
           </AlertDialogFooter>
@@ -964,14 +1131,18 @@ export default function ClientManager() {
             </TableHeader>
             <TableBody>
               {clients.map((client) => {
-                const enabledFeatures = getEnabledFeaturesCount(client.features);
-                
+                const enabledFeatures = getEnabledFeaturesCount(
+                  client.features,
+                );
+
                 return (
                   <TableRow key={client.id}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{client.name}</div>
-                        <div className="text-sm text-muted-foreground">/{client.slug}</div>
+                        <div className="text-sm text-muted-foreground">
+                          /{client.slug}
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -983,7 +1154,12 @@ export default function ClientManager() {
                           variant="ghost"
                           size="sm"
                           className="h-6 w-6 p-0 hover:bg-gray-200"
-                          onClick={() => window.open(`https://${client.subdomain}.swellfocusgrid.com`, '_blank')}
+                          onClick={() =>
+                            window.open(
+                              `https://${client.subdomain}.swellfocusgrid.com`,
+                              "_blank",
+                            )
+                          }
                           title={`Open ${client.subdomain}.swellfocusgrid.com`}
                         >
                           <ExternalLink className="h-3 w-3" />

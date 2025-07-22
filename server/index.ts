@@ -9,19 +9,19 @@ import {
   handleCreateClient,
   handleUpdateClient,
   handleUpdateClientFeatures,
-  handleDeleteClient
+  handleDeleteClient,
 } from "./routes/database";
 import {
   handleCreateNetlifyProject,
   handleSetNetlifyEnvVars,
-  handleDeployNetlifyProject
+  handleDeployNetlifyProject,
 } from "./routes/netlify";
 import {
   handleGetSystemConfig,
   handleUpdateSystemConfig,
   handleGetFeatureDefaults,
   handleUpdateFeatureDefaults,
-  handleSystemHealth
+  handleSystemHealth,
 } from "./routes/admin";
 import {
   handleFeatureToggle,
@@ -36,7 +36,20 @@ export function createServer() {
   const app = express();
 
   // Middleware
-  app.use(cors());
+  app.use(
+    cors({
+      origin: [
+        "https://swellfocusgrid.com",
+        "https://admin.swellfocusgrid.com",
+        "https://bluelabelpackaging.swellfocusgrid.com",
+        "https://erc.swellfocusgrid.com",
+        "http://localhost:5173", // Main app dev
+        "http://localhost:5174", // Admin app dev
+        "http://localhost:3000",
+      ],
+      credentials: true,
+    }),
+  );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
