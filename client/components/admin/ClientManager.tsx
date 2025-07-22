@@ -265,7 +265,13 @@ export default function ClientManager() {
                         <code className="text-sm bg-gray-100 px-2 py-1 rounded">
                           {client.subdomain}.swellfocusgrid.com
                         </code>
-                        <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 hover:bg-gray-200"
+                          onClick={() => window.open(`https://${client.subdomain}.swellfocusgrid.com`, '_blank')}
+                          title={`Open ${client.subdomain}.swellfocusgrid.com`}
+                        >
                           <ExternalLink className="h-3 w-3" />
                         </Button>
                       </div>
