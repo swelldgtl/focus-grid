@@ -1434,7 +1434,7 @@ export default function Index() {
           </Card>
         </LongTermGoalsFeature>
 
-        {/* Sales Data Table */}
+        {/* Goals & Progress (always enabled - core functionality) */}
         <Card
           className={`transition-all duration-500 ${
             isModuleInactive("goals") ? "opacity-20 pointer-events-none" : ""
