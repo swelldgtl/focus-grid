@@ -1264,12 +1264,13 @@ export default function Index() {
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
         {/* Development Testing Tools */}
-        <div className="flex gap-4">
+        <div className="flex gap-4 flex-wrap">
           <FeatureAdmin />
           <ClientSwitcher
             currentClientId={clientConfig?.clientId}
             onClientChange={() => {}} // Handled internally now
           />
+          <ApiHealth />
         </div>
 
         {/* Header */}
