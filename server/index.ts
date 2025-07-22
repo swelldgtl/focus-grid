@@ -75,6 +75,11 @@ export function createServer() {
     });
   });
 
+  // Authentication routes
+  app.post("/api/auth/login", handleLogin);
+  app.post("/api/auth/logout", handleLogout);
+  app.get("/api/auth/session", handleCheckSession);
+
   app.get("/api/demo", handleDemo);
   app.get("/api/database/test", handleDatabaseTest);
   app.get("/api/config", handleClientConfig);
