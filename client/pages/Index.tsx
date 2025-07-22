@@ -1797,11 +1797,12 @@ export default function Index() {
         </ActionPlanFeature>
 
         {/* Blockers & Issues */}
-        <Card
-          className={`transition-all duration-500 ${
-            isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
-          }`}
-        >
+        <BlockersIssuesFeature>
+          <Card
+            className={`transition-all duration-500 ${
+              isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
+            }`}
+          >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -1947,7 +1948,8 @@ export default function Index() {
               ))}
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </BlockersIssuesFeature>
 
         {/* Agenda */}
         <Card
