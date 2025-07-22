@@ -2,7 +2,13 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { handleDemo } from "./routes/demo";
-import { handleDatabaseTest, handleClientConfig } from "./routes/database";
+import {
+  handleDatabaseTest,
+  handleClientConfig,
+  handleGetClients,
+  handleCreateClient,
+  handleDeleteClient
+} from "./routes/database";
 import {
   handleFeatureToggle,
   handleGetFeatures,
@@ -39,6 +45,9 @@ export function createServer() {
   app.get("/api/config", handleClientConfig);
   app.get("/api/features", handleGetFeatures);
   app.post("/api/features/toggle", handleFeatureToggle);
+  app.get("/api/clients", handleGetClients);
+  app.post("/api/clients", handleCreateClient);
+  app.delete("/api/clients/:clientId", handleDeleteClient);
 
   return app;
 }
