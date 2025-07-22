@@ -45,7 +45,10 @@ import {
   AlertCircle,
   AlertTriangle,
   Database,
-  Zap
+  Zap,
+  Globe,
+  Rocket,
+  Settings2
 } from 'lucide-react';
 import {
   getClients,
@@ -56,6 +59,7 @@ import {
   checkSlugAvailability,
   type Client
 } from '@/lib/client-api';
+import { createNetlifyProject, type NetlifyProjectCreationResult } from '@/lib/netlify-api';
 
 // Client interface moved to client-api.ts
 
@@ -64,10 +68,15 @@ export default function ClientManager() {
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [creating, setCreating] = useState(false);
+  const [deploymentStatus, setDeploymentStatus] = useState<{
+    step: 'client' | 'netlify' | 'deploy' | 'complete';
+    message: string;
+  } | null>(null);
   const [newClient, setNewClient] = useState({
     name: '',
     slug: '',
-    subdomain: ''
+    subdomain: '',
+    createNetlifyProject: true
   });
   const [errors, setErrors] = useState({
     name: '',
@@ -165,6 +174,8 @@ export default function ClientManager() {
     if (!validateForm()) return;
 
     setCreating(true);
+    setDeploymentStatus({ step: 'client', message: 'Creating client in database...' });
+
     try {
       // Check for duplicates
       const slugAvailable = await checkSlugAvailability(newClient.slug);
@@ -173,35 +184,69 @@ export default function ClientManager() {
         return;
       }
 
+      // Step 1: Create client in database
       const newClientData = await createClient({
         name: newClient.name,
         slug: newClient.slug,
         subdomain: newClient.subdomain
       });
 
-      if (newClientData) {
-        // Add to local state with default features
-        const clientWithFeatures = {
-          ...newClientData,
-          features: {
-            long_term_goals: true,
-            action_plan: true,
-            blockers_issues: true,
-            agenda: true,
-            focus_mode: true
-          }
-        };
-        setClients(prev => [clientWithFeatures, ...prev]);
-        setNewClient({ name: '', slug: '', subdomain: '' });
-        setErrors({ name: '', slug: '', subdomain: '' });
-        setIsCreateDialogOpen(false);
-
-        toast({
-          title: "Success",
-          description: `Client "${newClientData.name}" created successfully`,
-        });
+      if (!newClientData) {
+        throw new Error('Failed to create client');
       }
+
+      // Step 2: Create Netlify project if requested
+      let netlifyResult: NetlifyProjectCreationResult | null = null;
+      if (newClient.createNetlifyProject) {
+        setDeploymentStatus({ step: 'netlify', message: 'Creating Netlify project...' });
+
+        netlifyResult = await createNetlifyProject({
+          clientId: newClientData.id,
+          clientName: newClient.name,
+          subdomain: newClient.subdomain,
+          databaseUrl: process.env.DATABASE_URL || ''
+        });
+
+        if (!netlifyResult.success) {
+          // Client was created but Netlify failed - still show success but with warning
+          toast({
+            title: "Client Created with Warning",
+            description: `Client created successfully, but Netlify project creation failed: ${netlifyResult.error}`,
+            variant: "destructive",
+          });
+        }
+      }
+
+      // Step 3: Finalize
+      setDeploymentStatus({ step: 'complete', message: 'Client creation completed!' });
+
+      // Add to local state with default features
+      const clientWithFeatures = {
+        ...newClientData,
+        features: {
+          long_term_goals: true,
+          action_plan: true,
+          blockers_issues: true,
+          agenda: true,
+          focus_mode: true
+        }
+      };
+      setClients(prev => [clientWithFeatures, ...prev]);
+      setNewClient({ name: '', slug: '', subdomain: '', createNetlifyProject: true });
+      setErrors({ name: '', slug: '', subdomain: '' });
+      setDeploymentStatus(null);
+      setIsCreateDialogOpen(false);
+
+      const successMessage = newClient.createNetlifyProject && netlifyResult?.success
+        ? `Client "${newClientData.name}" created with Netlify project at ${netlifyResult.primaryUrl}`
+        : `Client "${newClientData.name}" created successfully`;
+
+      toast({
+        title: "Success",
+        description: successMessage,
+      });
     } catch (error) {
+      setDeploymentStatus(null);
       toast({
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to create client",
@@ -306,6 +351,10 @@ export default function ClientManager() {
     }
   };
 
+  const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
+    setNewClient(prev => ({ ...prev, createNetlifyProject }));
+  };
+
   if (loading) {
     return (
       <Card>
@@ -392,13 +441,47 @@ export default function ClientManager() {
                   </p>
                 )}
               </div>
+              <div className="border-t pt-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="create-netlify"
+                    checked={newClient.createNetlifyProject}
+                    onChange={(e) => handleCreateNetlifyProjectChange(e.target.checked)}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="create-netlify" className="text-sm font-medium flex items-center gap-2">
+                    <Rocket className="h-4 w-4 text-blue-600" />
+                    Automatically create Netlify project
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 ml-6">
+                  Creates a new Netlify project with environment variables and deploys automatically
+                </p>
+                {newClient.createNetlifyProject && (
+                  <div className="mt-2 ml-6 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <div className="flex items-start gap-2">
+                      <Settings2 className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm">
+                        <p className="font-medium text-blue-800">Netlify project will include:</p>
+                        <ul className="text-blue-700 mt-1 space-y-1 text-xs">
+                          <li>• Environment variables (CLIENT_ID, DATABASE_URL)</li>
+                          <li>• Custom domain: {newClient.subdomain}.swellfocusgrid.com</li>
+                          <li>• Automatic deployment from main branch</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setIsCreateDialogOpen(false);
-                    setNewClient({ name: '', slug: '', subdomain: '' });
+                    setNewClient({ name: '', slug: '', subdomain: '', createNetlifyProject: true });
                     setErrors({ name: '', slug: '', subdomain: '' });
+                    setDeploymentStatus(null);
                   }}
                   disabled={creating}
                 >
@@ -409,8 +492,17 @@ export default function ClientManager() {
                   disabled={!newClient.name || !newClient.slug || !newClient.subdomain || creating}
                   className="flex items-center gap-2"
                 >
-                  {creating && <Loader2 className="h-4 w-4 animate-spin" />}
-                  Create Client
+                  {creating ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {deploymentStatus?.message || 'Creating...'}
+                    </>
+                  ) : (
+                    <>
+                      {newClient.createNetlifyProject ? <Rocket className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                      {newClient.createNetlifyProject ? 'Create Client & Deploy' : 'Create Client'}
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
