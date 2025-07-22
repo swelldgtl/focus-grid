@@ -1273,6 +1273,25 @@ export default function Index() {
           <ApiHealth />
         </div>
 
+        {/* Admin Access */}
+        <Card className="border-red-200 bg-red-50">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="font-semibold text-red-900">Admin Dashboard</h3>
+                <p className="text-sm text-red-700">Manage all clients and features</p>
+              </div>
+              <Button
+                onClick={() => window.location.href = '/admin'}
+                variant="outline"
+                className="border-red-300 text-red-700 hover:bg-red-100"
+              >
+                Open Admin
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
