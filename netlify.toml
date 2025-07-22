@@ -17,10 +17,4 @@
   status = 200
   to = "/.netlify/functions/api/:splat"
 
-# Admin subdomain - serve admin app (if you have a separate admin subdomain)
-[[redirects]]
-  from = "/*"
-  to = "/admin/index.html"
-  status = 200
-  force = true
-  conditions = {Host = ["admin.swellfocusgrid.com"]}
+# Removed conflicting admin subdomain rule - using _redirects file instead
