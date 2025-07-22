@@ -17,7 +17,15 @@
   status = 200
   to = "/.netlify/functions/api/:splat"
 
-# Admin subdomain - serve admin app
+# Admin subdomain routing
+[[redirects]]
+  from = "/*"
+  to = "/admin/:splat"
+  status = 200
+  force = true
+  conditions = {Host = ["admin.swellfocusgrid.com"]}
+
+# Admin root fallback
 [[redirects]]
   from = "/*"
   to = "/admin/index.html"
@@ -25,7 +33,7 @@
   force = true
   conditions = {Host = ["admin.swellfocusgrid.com"]}
 
-# Default - serve client app for all other hosts
+# Default - serve client app for main domain
 [[redirects]]
   from = "/*"
   to = "/client/index.html"
