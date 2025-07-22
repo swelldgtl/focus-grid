@@ -113,6 +113,26 @@ export async function createClient(data: {
   }
 }
 
+export async function updateClient(clientId: string, data: {
+  name: string;
+  slug: string;
+  subdomain?: string;
+}): Promise<Client | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      UPDATE clients
+      SET name = ${data.name}, slug = ${data.slug}, subdomain = ${data.subdomain || null}
+      WHERE id = ${clientId}
+      RETURNING id, name, slug, subdomain, database_url, created_at
+    `;
+    return (result[0] as Client) || null;
+  } catch (error) {
+    console.error("Error updating client:", error);
+    return null;
+  }
+}
+
 export async function deleteClient(clientId: string): Promise<boolean> {
   try {
     const sql = createConnection();
