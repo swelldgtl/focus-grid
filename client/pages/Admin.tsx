@@ -81,6 +81,14 @@ export default function Admin() {
                 <Globe className="h-4 w-4 mr-1" />
                 View Client App
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              >
+                Logout
+              </Button>
             </div>
           </div>
         </div>
