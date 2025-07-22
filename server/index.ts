@@ -10,6 +10,11 @@ import {
   handleDeleteClient
 } from "./routes/database";
 import {
+  handleCreateNetlifyProject,
+  handleSetNetlifyEnvVars,
+  handleDeployNetlifyProject
+} from "./routes/netlify";
+import {
   handleFeatureToggle,
   handleGetFeatures,
 } from "./routes/feature-toggle";
@@ -48,6 +53,9 @@ export function createServer() {
   app.get("/api/clients", handleGetClients);
   app.post("/api/clients", handleCreateClient);
   app.delete("/api/clients/:clientId", handleDeleteClient);
+  app.post("/api/netlify/create-project", handleCreateNetlifyProject);
+  app.post("/api/netlify/set-env-vars", handleSetNetlifyEnvVars);
+  app.post("/api/netlify/deploy", handleDeployNetlifyProject);
 
   return app;
 }
