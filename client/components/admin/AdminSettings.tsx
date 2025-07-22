@@ -315,7 +315,13 @@ export default function AdminSettings() {
                   <Database className="h-4 w-4" />
                   <span className="text-sm font-medium">Database</span>
                 </div>
-                <Badge variant={systemHealth.database.status === 'connected' ? 'default' : 'destructive'}>
+                <Badge
+                  variant="outline"
+                  className={systemHealth.database.status === 'connected'
+                    ? 'bg-green-100 text-green-800 border-green-300'
+                    : 'bg-red-100 text-red-800 border-red-300'
+                  }
+                >
                   {systemHealth.database.status}
                 </Badge>
               </div>
@@ -324,7 +330,13 @@ export default function AdminSettings() {
                   <Globe className="h-4 w-4" />
                   <span className="text-sm font-medium">Netlify</span>
                 </div>
-                <Badge variant={systemHealth.netlify.status === 'connected' ? 'default' : 'destructive'}>
+                <Badge
+                  variant="outline"
+                  className={systemHealth.netlify.status === 'connected'
+                    ? 'bg-green-100 text-green-800 border-green-300'
+                    : 'bg-red-100 text-red-800 border-red-300'
+                  }
+                >
                   {systemHealth.netlify.status}
                 </Badge>
               </div>
