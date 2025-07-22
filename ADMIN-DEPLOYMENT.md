@@ -3,6 +3,7 @@
 ## Step 1: Build and Deploy Admin App
 
 ### Local Testing First:
+
 ```bash
 cd admin-app
 npm install
@@ -11,6 +12,7 @@ npm run dev
 ```
 
 ### Deploy to Netlify:
+
 ```bash
 cd admin-app
 npm run build
@@ -69,16 +71,19 @@ Wait 5-10 minutes after DNS setup for certificate activation.
 ## Troubleshooting
 
 ### If admin subdomain doesn't work:
+
 - Check DNS propagation (can take up to 24 hours)
 - Verify CNAME record is correct
 - Check Netlify domain settings
 
 ### If API calls fail:
+
 - Ensure environment variables are set
 - Check CORS settings for admin subdomain
 - Verify database URL is accessible
 
 ### If components don't load:
+
 - Check build logs in Netlify
 - Verify all dependencies are installed
 - Check for TypeScript errors
