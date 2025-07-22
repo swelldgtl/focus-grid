@@ -97,6 +97,19 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
   };
 
   useEffect(() => {
+    // Try to load fallback config immediately
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlClientId = urlParams.get('clientId');
+    const targetClientId = urlClientId || clientId;
+
+    const fallbackConfig = targetClientId ? getFallbackConfig(targetClientId) : getDefaultFallbackConfig();
+    if (fallbackConfig) {
+      console.log('Loading fallback configuration immediately for:', targetClientId);
+      setConfig(fallbackConfig);
+      setLoading(false);
+    }
+
+    // Then try to fetch from API (will override fallback if successful)
     fetchConfig();
   }, [clientId]);
 
