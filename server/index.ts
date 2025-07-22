@@ -28,6 +28,12 @@ import {
   handleFeatureToggle,
   handleGetFeatures,
 } from "./routes/feature-toggle";
+import {
+  handleLogin,
+  handleLogout,
+  handleCheckSession,
+  requireAuth,
+} from "./routes/auth";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
