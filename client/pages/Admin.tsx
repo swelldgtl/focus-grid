@@ -169,22 +169,9 @@ export default function Admin() {
             </Card>
           </TabsContent>
 
-          {/* Clients Tab - Placeholder */}
+          {/* Clients Tab */}
           <TabsContent value="clients">
-            <Card>
-              <CardHeader>
-                <CardTitle>Client Management</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Manage all your Focus Grid clients and their configurations
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Client management interface coming next...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <ClientManager />
           </TabsContent>
 
           {/* Features Tab - Placeholder */}
