@@ -287,7 +287,9 @@ export default function ClientManager() {
       isSecondDialogOpen: false,
       clientToDelete: null,
       confirmationText: '',
-      isDeleting: false
+      isDeleting: false,
+      deleteNetlifyProject: true,
+      deletionStep: ''
     });
   };
 
@@ -306,27 +308,50 @@ export default function ClientManager() {
       return;
     }
 
-    setDeleteState(prev => ({ ...prev, isDeleting: true }));
+    setDeleteState(prev => ({ ...prev, isDeleting: true, deletionStep: 'Deleting from database...' }));
 
     try {
+      // Step 1: Delete from database
       const success = await deleteClient(client.id);
-      if (success) {
-        setClients(prev => prev.filter(c => c.id !== client.id));
-        toast({
-          title: "Client Deleted",
-          description: `"${client.name}" has been permanently deleted`,
-        });
-        cancelDelete();
-      } else {
-        throw new Error('Failed to delete client');
+      if (!success) {
+        throw new Error('Failed to delete client from database');
       }
+
+      // Step 2: Delete Netlify project if requested
+      if (deleteState.deleteNetlifyProject && client.subdomain) {
+        setDeleteState(prev => ({ ...prev, deletionStep: 'Deleting Netlify project...' }));
+
+        const netlifySuccess = await deleteNetlifyProject(client.subdomain);
+        if (!netlifySuccess) {
+          // Database deletion succeeded but Netlify failed - show warning
+          toast({
+            title: "Partial Deletion",
+            description: `Client deleted from database, but Netlify project deletion failed. Please delete manually.`,
+            variant: "destructive",
+          });
+        }
+      }
+
+      // Step 3: Update UI
+      setClients(prev => prev.filter(c => c.id !== client.id));
+
+      const successMessage = deleteState.deleteNetlifyProject
+        ? `"${client.name}" and its Netlify project have been permanently deleted`
+        : `"${client.name}" has been permanently deleted`;
+
+      toast({
+        title: "Client Deleted",
+        description: successMessage,
+      });
+
+      cancelDelete();
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete client",
+        description: error instanceof Error ? error.message : "Failed to delete client",
         variant: "destructive",
       });
-      setDeleteState(prev => ({ ...prev, isDeleting: false }));
+      setDeleteState(prev => ({ ...prev, isDeleting: false, deletionStep: '' }));
     }
   };
 
@@ -554,6 +579,27 @@ export default function ClientManager() {
                   </div>
                 </div>
               </div>
+              <div className="mt-4 border-t pt-4">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="delete-netlify"
+                    checked={deleteState.deleteNetlifyProject}
+                    onChange={(e) => setDeleteState(prev => ({
+                      ...prev,
+                      deleteNetlifyProject: e.target.checked
+                    }))}
+                    className="rounded border-gray-300"
+                  />
+                  <Label htmlFor="delete-netlify" className="text-sm font-medium flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-red-600" />
+                    Also delete Netlify project
+                  </Label>
+                </div>
+                <p className="text-xs text-muted-foreground mt-1 ml-6">
+                  This will permanently delete the Netlify project for {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com
+                </p>
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -618,8 +664,14 @@ export default function ClientManager() {
               disabled={deleteState.isDeleting || deleteState.confirmationText !== `DELETE ${deleteState.clientToDelete?.name}`}
               className="bg-red-600 hover:bg-red-700 flex items-center gap-2"
             >
-              {deleteState.isDeleting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Permanently Delete
+              {deleteState.isDeleting ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  {deleteState.deletionStep || 'Deleting...'}
+                </>
+              ) : (
+                'Permanently Delete'
+              )}
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
