@@ -2,9 +2,9 @@ import { RequestHandler } from "express";
 
 export const handleDatabaseTest: RequestHandler = async (req, res) => {
   try {
-    // Import database functions
-    const { testConnection, getClients, AVAILABLE_FEATURES } = await import("../../client/lib/database");
-    
+    // Import database functions from server-side utilities
+    const { testConnection, getClients, AVAILABLE_FEATURES } = await import("../lib/database");
+
     // Test basic database connection
     const connectionTest = await testConnection();
     if (!connectionTest.success) {
@@ -16,7 +16,7 @@ export const handleDatabaseTest: RequestHandler = async (req, res) => {
 
     // Get existing clients
     const clients = await getClients();
-    
+
     return res.status(200).json({
       message: 'Database connection successful',
       connectionTime: connectionTest.data?.[0]?.current_time,
