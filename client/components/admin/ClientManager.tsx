@@ -59,7 +59,7 @@ import {
   checkSlugAvailability,
   type Client
 } from '@/lib/client-api';
-import { createNetlifyProject, type NetlifyProjectCreationResult } from '@/lib/netlify-api';
+import { createNetlifyProject, deleteNetlifyProject, type NetlifyProjectCreationResult } from '@/lib/netlify-api';
 
 // Client interface moved to client-api.ts
 
@@ -89,12 +89,16 @@ export default function ClientManager() {
     clientToDelete: Client | null;
     confirmationText: string;
     isDeleting: boolean;
+    deleteNetlifyProject: boolean;
+    deletionStep: string;
   }>({
     isFirstDialogOpen: false,
     isSecondDialogOpen: false,
     clientToDelete: null,
     confirmationText: '',
-    isDeleting: false
+    isDeleting: false,
+    deleteNetlifyProject: true,
+    deletionStep: ''
   });
   const { toast } = useToast();
 
@@ -263,7 +267,9 @@ export default function ClientManager() {
       isSecondDialogOpen: false,
       clientToDelete: client,
       confirmationText: '',
-      isDeleting: false
+      isDeleting: false,
+      deleteNetlifyProject: true,
+      deletionStep: ''
     });
   };
 
@@ -532,6 +538,7 @@ export default function ClientManager() {
                       <li>Remove access to {deleteState.clientToDelete?.subdomain}.swellfocusgrid.com</li>
                       <li>Delete all associated user data and content</li>
                       <li>Remove all feature settings and customizations</li>
+                      <li>Delete the corresponding Netlify project (if selected)</li>
                     </ul>
                   </div>
                 </div>
