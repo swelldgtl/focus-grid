@@ -182,6 +182,57 @@ export const handleUpdateClient: RequestHandler = async (req, res) => {
   }
 };
 
+export const handleUpdateClientFeatures: RequestHandler = async (req, res) => {
+  try {
+    const { updateClientFeature, AVAILABLE_FEATURES } = await import("../lib/database");
+    const { clientId } = req.params;
+    const { features } = req.body;
+
+    if (!clientId) {
+      return res.status(400).json({
+        error: "Client ID is required",
+      });
+    }
+
+    if (!features || typeof features !== 'object') {
+      return res.status(400).json({
+        error: "Features object is required",
+      });
+    }
+
+    try {
+      // Update each feature
+      const featureMap = {
+        long_term_goals: AVAILABLE_FEATURES.LONG_TERM_GOALS,
+        action_plan: AVAILABLE_FEATURES.ACTION_PLAN,
+        blockers_issues: AVAILABLE_FEATURES.BLOCKERS_ISSUES,
+        agenda: AVAILABLE_FEATURES.AGENDA,
+        focus_mode: AVAILABLE_FEATURES.FOCUS_MODE,
+      };
+
+      for (const [featureKey, enabled] of Object.entries(features)) {
+        if (featureKey in featureMap) {
+          await updateClientFeature(
+            clientId,
+            featureMap[featureKey as keyof typeof featureMap],
+            Boolean(enabled)
+          );
+        }
+      }
+
+      return res.status(200).json({ success: true });
+    } catch (error) {
+      throw error;
+    }
+  } catch (error) {
+    console.error("Update client features error:", error);
+    return res.status(500).json({
+      error: "Internal server error",
+      details: error instanceof Error ? error.message : "Unknown error",
+    });
+  }
+};
+
 export const handleDeleteClient: RequestHandler = async (req, res) => {
   try {
     const { deleteClient } = await import("../lib/database");
