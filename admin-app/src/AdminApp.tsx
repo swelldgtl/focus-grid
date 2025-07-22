@@ -1,11 +1,10 @@
-import React from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./components/ui/card";
 import { Button } from "./components/ui/button";
 import { ExternalLink, Settings, Users, Flag } from "lucide-react";
-import { ClientManager } from "./components/admin/ClientManager";
-import { FeatureManager } from "./components/admin/FeatureManager";
-import { AdminSettings } from "./components/admin/AdminSettings";
+import ClientManager from "./components/admin/ClientManager";
+import FeatureManager from "./components/admin/FeatureManager";
+import AdminSettings from "./components/admin/AdminSettings";
 import { Toaster } from "./components/ui/toaster";
 
 export default function AdminApp() {
