@@ -76,7 +76,7 @@ export default function Admin() {
 
           {/* Overview Tab */}
           <TabsContent value="overview" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card
                 className="cursor-pointer hover:bg-gray-50 transition-colors"
                 onClick={() => setActiveTab("clients")}
@@ -108,48 +108,9 @@ export default function Admin() {
                   </p>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Deployments</CardTitle>
-                  <Globe className="h-4 w-4 text-muted-foreground" />
-                </CardHeader>
-                <CardContent>
-                  <div className="text-2xl font-bold">3</div>
-                  <p className="text-xs text-muted-foreground">
-                    All sites operational
-                  </p>
-                </CardContent>
-              </Card>
             </div>
 
-            {/* Quick Actions */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Quick Actions</CardTitle>
-              </CardHeader>
-              <CardContent className="flex gap-4">
-                <Button 
-                  onClick={() => setActiveTab("clients")}
-                  className="flex items-center gap-2"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add New Client
-                </Button>
-                <Button 
-                  variant="outline"
-                  onClick={() => setActiveTab("features")}
-                >
-                  Manage Features
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setActiveTab("settings")}
-                >
-                  Admin Settings
-                </Button>
-              </CardContent>
-            </Card>
+
 
             {/* Recent Activity */}
             <Card>
