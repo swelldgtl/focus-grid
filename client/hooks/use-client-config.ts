@@ -36,10 +36,14 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       setLoading(true);
       setError(null);
 
-      // Use provided clientId or fall back to environment default
-      const queryParams = clientId ? `?clientId=${clientId}` : '';
+      // Check URL parameters first, then provided clientId, then environment default
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlClientId = urlParams.get('clientId');
+      const targetClientId = urlClientId || clientId;
+
+      const queryParams = targetClientId ? `?clientId=${targetClientId}` : '';
       const url = `/api/config${queryParams}`;
-      console.log('Fetching config from:', url);
+      console.log('Fetching config from:', url, 'for client:', targetClientId);
 
       const response = await fetch(url);
       console.log('Config response status:', response.status);
@@ -50,6 +54,9 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
 
         if (response.status === 404) {
           throw new Error('Client not found');
+        }
+        if (response.status === 500 && errorText.includes('DATABASE_URL')) {
+          throw new Error('Database connection failed - check environment variables');
         }
         throw new Error(`HTTP ${response.status}: ${errorText}`);
       }
