@@ -19,12 +19,15 @@ export interface ClientNetlifyConfig {
 // Create a new Netlify project for a client
 export async function createNetlifyProject(config: ClientNetlifyConfig): Promise<NetlifyProjectCreationResult> {
   try {
-    const response = await fetch('/api/netlify/create-project', {
+    const response = await fetch('/.netlify/functions/netlify-automation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(config),
+      body: JSON.stringify({
+        action: 'create-project',
+        ...config,
+      }),
     });
 
     if (!response.ok) {
@@ -34,11 +37,12 @@ export async function createNetlifyProject(config: ClientNetlifyConfig): Promise
 
     const result = await response.json();
     return {
-      success: true,
+      success: result.success,
       projectId: result.projectId,
       siteId: result.siteId,
       primaryUrl: result.primaryUrl,
       branchUrl: result.branchUrl,
+      error: result.error,
     };
   } catch (error) {
     console.error('Error creating Netlify project:', error);
@@ -51,16 +55,20 @@ export async function createNetlifyProject(config: ClientNetlifyConfig): Promise
 
 // Set environment variables for a Netlify project
 export async function setNetlifyEnvironmentVariables(
-  siteId: string, 
+  siteId: string,
   variables: Record<string, string>
 ): Promise<boolean> {
   try {
-    const response = await fetch('/api/netlify/set-env-vars', {
+    const response = await fetch('/.netlify/functions/netlify-automation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ siteId, variables }),
+      body: JSON.stringify({
+        action: 'set-env-vars',
+        siteId,
+        variables,
+      }),
     });
 
     return response.ok;
@@ -73,12 +81,15 @@ export async function setNetlifyEnvironmentVariables(
 // Deploy a Netlify project
 export async function deployNetlifyProject(siteId: string): Promise<boolean> {
   try {
-    const response = await fetch('/api/netlify/deploy', {
+    const response = await fetch('/.netlify/functions/netlify-automation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ siteId }),
+      body: JSON.stringify({
+        action: 'deploy',
+        siteId,
+      }),
     });
 
     return response.ok;
