@@ -58,6 +58,14 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
           <div className="text-center text-muted-foreground">
             Loading configuration...
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refetch}
+            className="w-full mt-2"
+          >
+            Retry
+          </Button>
         </CardContent>
       </Card>
     );
@@ -73,9 +81,22 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="text-center text-red-600">
+          <div className="text-center text-red-600 mb-2">
             Failed to load configuration
           </div>
+          {error && (
+            <div className="text-xs text-muted-foreground mb-2">
+              Error: {error}
+            </div>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={refetch}
+            className="w-full"
+          >
+            Retry
+          </Button>
         </CardContent>
       </Card>
     );
