@@ -1285,9 +1285,18 @@ export default function Index() {
           </div>
           <div className="text-right">
             <div className="space-y-1">
-              <p className="text-lg font-medium text-muted-foreground">
-                {clientConfig?.name || "Loading..."}
-              </p>
+              <div className="flex items-center gap-2">
+                <p className="text-lg font-medium text-muted-foreground">
+                  {clientConfig?.name || "Loading..."}
+                </p>
+                {primaryColor && (
+                  <div
+                    className="w-4 h-4 rounded-full border-2 border-gray-300"
+                    style={{ backgroundColor: primaryColor.startsWith('#') ? primaryColor : `hsl(${primaryColor})` }}
+                    title={`Brand color: ${primaryColor}`}
+                  />
+                )}
+              </div>
               <ClientConfigStatus />
             </div>
           </div>
