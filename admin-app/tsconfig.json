@@ -19,6 +19,11 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*"],
-  "exclude": ["../client/**/*", "../server/**/*", "../netlify/**/*", "node_modules"],
+  "exclude": [
+    "../client/**/*",
+    "../server/**/*",
+    "../netlify/**/*",
+    "node_modules"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
