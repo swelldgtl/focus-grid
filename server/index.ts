@@ -34,6 +34,9 @@ import {
   handleCheckSession,
   requireAuth,
 } from "./routes/auth";
+import {
+  handleSetupAdminAuth,
+} from "./routes/setup";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
