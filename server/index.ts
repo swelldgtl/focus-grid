@@ -15,6 +15,13 @@ import {
   handleDeployNetlifyProject
 } from "./routes/netlify";
 import {
+  handleGetSystemConfig,
+  handleUpdateSystemConfig,
+  handleGetFeatureDefaults,
+  handleUpdateFeatureDefaults,
+  handleSystemHealth
+} from "./routes/admin";
+import {
   handleFeatureToggle,
   handleGetFeatures,
 } from "./routes/feature-toggle";
@@ -56,6 +63,11 @@ export function createServer() {
   app.post("/api/netlify/create-project", handleCreateNetlifyProject);
   app.post("/api/netlify/set-env-vars", handleSetNetlifyEnvVars);
   app.post("/api/netlify/deploy", handleDeployNetlifyProject);
+  app.get("/api/admin/system-config", handleGetSystemConfig);
+  app.post("/api/admin/system-config", handleUpdateSystemConfig);
+  app.get("/api/admin/feature-defaults", handleGetFeatureDefaults);
+  app.post("/api/admin/feature-defaults", handleUpdateFeatureDefaults);
+  app.get("/api/admin/health", handleSystemHealth);
 
   return app;
 }
