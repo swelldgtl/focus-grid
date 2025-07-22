@@ -15,6 +15,7 @@ import {
   ClientConfigStatus,
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
+import FeatureAdmin from "@/components/FeatureAdmin";
 import { Input } from "@/components/ui/input";
 import {
   Select,
