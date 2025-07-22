@@ -115,6 +115,9 @@ interface GoalRecord {
 }
 
 export default function Index() {
+  // Load client configuration and feature flags
+  const { config: clientConfig, loading: configLoading } = useClientConfig();
+
   const [actionItems, actionItemsActions] = usePersistentArray<ActionItem>(
     STORAGE_KEYS.ACTION_ITEMS,
     [
