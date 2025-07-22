@@ -83,6 +83,13 @@ export default function ClientManager() {
     slug: '',
     subdomain: ''
   });
+  const [editFeatures, setEditFeatures] = useState({
+    long_term_goals: true,
+    action_plan: true,
+    blockers_issues: true,
+    agenda: true,
+    focus_mode: true
+  });
   const [errors, setErrors] = useState({
     name: '',
     slug: '',
@@ -398,6 +405,13 @@ export default function ClientManager() {
       name: client.name,
       slug: client.slug,
       subdomain: client.subdomain || ''
+    });
+    setEditFeatures({
+      long_term_goals: client.features?.long_term_goals ?? true,
+      action_plan: client.features?.action_plan ?? true,
+      blockers_issues: client.features?.blockers_issues ?? true,
+      agenda: client.features?.agenda ?? true,
+      focus_mode: client.features?.focus_mode ?? true
     });
     setEditErrors({ name: '', slug: '', subdomain: '' });
     setIsEditDialogOpen(true);
