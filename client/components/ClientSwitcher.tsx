@@ -10,6 +10,12 @@ interface ClientSwitcherProps {
 }
 
 export default function ClientSwitcher({ currentClientId, onClientChange }: ClientSwitcherProps) {
+  const [actualCurrentClientId, setActualCurrentClientId] = React.useState(() => {
+    // Check URL parameters first
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('clientId') || currentClientId;
+  });
+
   const clients = [
     {
       id: '8323e82d-075a-496d-8861-a86d862a67bc',
@@ -19,7 +25,7 @@ export default function ClientSwitcher({ currentClientId, onClientChange }: Clie
       color: 'bg-gray-100 text-gray-800'
     },
     {
-      id: 'fbf03fbc-bf81-462b-a88f-668dfcb09acc', 
+      id: 'fbf03fbc-bf81-462b-a88f-668dfcb09acc',
       name: 'Blue Label Packaging',
       description: 'Packaging company (no Blockers)',
       icon: Building2,
@@ -27,12 +33,20 @@ export default function ClientSwitcher({ currentClientId, onClientChange }: Clie
     },
     {
       id: '360e6a09-c7e2-447e-8dbc-cebae72f1ff2',
-      name: 'ERC', 
+      name: 'ERC',
       description: 'Consulting firm (no Long-Term Goals)',
       icon: Briefcase,
       color: 'bg-green-100 text-green-800'
     }
   ];
+
+  const handleClientSwitch = (clientId: string, clientName: string) => {
+    setActualCurrentClientId(clientId);
+    const url = new URL(window.location.href);
+    url.searchParams.set('clientId', clientId);
+    console.log('Switching to client:', clientName, 'ID:', clientId);
+    window.location.href = url.toString();
+  };
 
   return (
     <Card className="w-full max-w-md">
