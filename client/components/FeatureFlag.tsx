@@ -1,8 +1,12 @@
-import React from 'react';
-import { useFeatureFlag, useClientConfig, type ClientConfig } from '@/hooks/use-client-config';
+import React from "react";
+import {
+  useFeatureFlag,
+  useClientConfig,
+  type ClientConfig,
+} from "@/hooks/use-client-config";
 
 interface FeatureFlagProps {
-  feature: keyof ClientConfig['features'];
+  feature: keyof ClientConfig["features"];
   children: React.ReactNode;
   fallback?: React.ReactNode;
   clientId?: string;
@@ -11,11 +15,11 @@ interface FeatureFlagProps {
 /**
  * Wrapper component that conditionally renders children based on feature flag
  */
-export function FeatureFlag({ 
-  feature, 
-  children, 
-  fallback = null, 
-  clientId 
+export function FeatureFlag({
+  feature,
+  children,
+  fallback = null,
+  clientId,
 }: FeatureFlagProps) {
   const isEnabled = useFeatureFlag(feature, clientId);
 
@@ -29,15 +33,27 @@ export function FeatureFlag({
 /**
  * Specific feature flag components for better type safety and readability
  */
-export function LongTermGoalsFeature({ children, fallback, clientId }: Omit<FeatureFlagProps, 'feature'>) {
+export function LongTermGoalsFeature({
+  children,
+  fallback,
+  clientId,
+}: Omit<FeatureFlagProps, "feature">) {
   return (
-    <FeatureFlag feature="long_term_goals" fallback={fallback} clientId={clientId}>
+    <FeatureFlag
+      feature="long_term_goals"
+      fallback={fallback}
+      clientId={clientId}
+    >
       {children}
     </FeatureFlag>
   );
 }
 
-export function ActionPlanFeature({ children, fallback, clientId }: Omit<FeatureFlagProps, 'feature'>) {
+export function ActionPlanFeature({
+  children,
+  fallback,
+  clientId,
+}: Omit<FeatureFlagProps, "feature">) {
   return (
     <FeatureFlag feature="action_plan" fallback={fallback} clientId={clientId}>
       {children}
@@ -45,15 +61,27 @@ export function ActionPlanFeature({ children, fallback, clientId }: Omit<Feature
   );
 }
 
-export function BlockersIssuesFeature({ children, fallback, clientId }: Omit<FeatureFlagProps, 'feature'>) {
+export function BlockersIssuesFeature({
+  children,
+  fallback,
+  clientId,
+}: Omit<FeatureFlagProps, "feature">) {
   return (
-    <FeatureFlag feature="blockers_issues" fallback={fallback} clientId={clientId}>
+    <FeatureFlag
+      feature="blockers_issues"
+      fallback={fallback}
+      clientId={clientId}
+    >
       {children}
     </FeatureFlag>
   );
 }
 
-export function AgendaFeature({ children, fallback, clientId }: Omit<FeatureFlagProps, 'feature'>) {
+export function AgendaFeature({
+  children,
+  fallback,
+  clientId,
+}: Omit<FeatureFlagProps, "feature">) {
   return (
     <FeatureFlag feature="agenda" fallback={fallback} clientId={clientId}>
       {children}
@@ -61,7 +89,11 @@ export function AgendaFeature({ children, fallback, clientId }: Omit<FeatureFlag
   );
 }
 
-export function FocusModeFeature({ children, fallback, clientId }: Omit<FeatureFlagProps, 'feature'>) {
+export function FocusModeFeature({
+  children,
+  fallback,
+  clientId,
+}: Omit<FeatureFlagProps, "feature">) {
   return (
     <FeatureFlag feature="focus_mode" fallback={fallback} clientId={clientId}>
       {children}
@@ -84,11 +116,7 @@ export function ClientConfigStatus({ clientId }: { clientId?: string }) {
   }
 
   if (error) {
-    return (
-      <div className="text-xs text-red-600">
-        Config error: {error}
-      </div>
-    );
+    return <div className="text-xs text-red-600">Config error: {error}</div>;
   }
 
   if (!config) {
@@ -99,9 +127,9 @@ export function ClientConfigStatus({ clientId }: { clientId?: string }) {
     );
   }
 
-  const enabledFeatures = Object.entries(config.features)
-    .filter(([_, enabled]) => enabled)
-    .length;
+  const enabledFeatures = Object.entries(config.features).filter(
+    ([_, enabled]) => enabled,
+  ).length;
 
   return (
     <div className="text-xs text-muted-foreground">

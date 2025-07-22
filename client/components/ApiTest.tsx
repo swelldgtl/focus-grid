@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Bug } from 'lucide-react';
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Bug } from "lucide-react";
 
 export default function ApiTest() {
   const [result, setResult] = useState<any>(null);
@@ -11,31 +11,31 @@ export default function ApiTest() {
   const testConfigApi = async () => {
     setLoading(true);
     setResult(null);
-    
+
     try {
-      console.log('Testing config API...');
-      const response = await fetch('/api/config');
-      console.log('Response status:', response.status);
-      
+      console.log("Testing config API...");
+      const response = await fetch("/api/config");
+      console.log("Response status:", response.status);
+
       const text = await response.text();
-      console.log('Response text:', text);
-      
+      console.log("Response text:", text);
+
       let data;
       try {
         data = JSON.parse(text);
       } catch (e) {
-        data = { error: 'Invalid JSON', rawResponse: text };
+        data = { error: "Invalid JSON", rawResponse: text };
       }
-      
+
       setResult({
         status: response.status,
         ok: response.ok,
-        data: data
+        data: data,
       });
     } catch (error) {
-      console.error('API Test Error:', error);
+      console.error("API Test Error:", error);
       setResult({
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : "Unknown error",
       });
     } finally {
       setLoading(false);
@@ -52,9 +52,9 @@ export default function ApiTest() {
       </CardHeader>
       <CardContent className="space-y-4">
         <Button onClick={testConfigApi} disabled={loading}>
-          {loading ? 'Testing...' : 'Test Config API'}
+          {loading ? "Testing..." : "Test Config API"}
         </Button>
-        
+
         {result && (
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export default function ApiTest() {
                 Status: {result.status}
               </Badge>
             </div>
-            
+
             <div className="text-xs bg-gray-100 p-2 rounded overflow-auto max-h-40">
               <pre>{JSON.stringify(result, null, 2)}</pre>
             </div>

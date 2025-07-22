@@ -1,15 +1,15 @@
-import { neon } from '@neondatabase/serverless';
+import { neon } from "@neondatabase/serverless";
 
 // Get database URL from environment
 const getDatabaseUrl = () => {
-  return process.env.DATABASE_URL || '';
+  return process.env.DATABASE_URL || "";
 };
 
 // Create database connection
 const createConnection = () => {
   const url = getDatabaseUrl();
   if (!url) {
-    throw new Error('DATABASE_URL environment variable is not set');
+    throw new Error("DATABASE_URL environment variable is not set");
   }
   return neon(url);
 };
@@ -21,7 +21,10 @@ export async function testConnection() {
     const result = await sql`SELECT NOW() as current_time`;
     return { success: true, data: result };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
   }
 }
 
@@ -44,14 +47,15 @@ export interface ClientFeature {
 
 // Available features
 export const AVAILABLE_FEATURES = {
-  LONG_TERM_GOALS: 'long_term_goals',
-  ACTION_PLAN: 'action_plan',
-  BLOCKERS_ISSUES: 'blockers_issues',
-  AGENDA: 'agenda',
-  FOCUS_MODE: 'focus_mode'
+  LONG_TERM_GOALS: "long_term_goals",
+  ACTION_PLAN: "action_plan",
+  BLOCKERS_ISSUES: "blockers_issues",
+  AGENDA: "agenda",
+  FOCUS_MODE: "focus_mode",
 } as const;
 
-export type FeatureName = typeof AVAILABLE_FEATURES[keyof typeof AVAILABLE_FEATURES];
+export type FeatureName =
+  (typeof AVAILABLE_FEATURES)[keyof typeof AVAILABLE_FEATURES];
 
 // Client operations
 export async function getClients(): Promise<Client[]> {
@@ -64,7 +68,7 @@ export async function getClients(): Promise<Client[]> {
     `;
     return result as Client[];
   } catch (error) {
-    console.error('Error fetching clients:', error);
+    console.error("Error fetching clients:", error);
     return [];
   }
 }
@@ -78,9 +82,9 @@ export async function getClient(slugOrId: string): Promise<Client | null> {
       WHERE slug = ${slugOrId} OR id = ${slugOrId}
       LIMIT 1
     `;
-    return result[0] as Client || null;
+    return (result[0] as Client) || null;
   } catch (error) {
-    console.error('Error fetching client:', error);
+    console.error("Error fetching client:", error);
     return null;
   }
 }
@@ -97,15 +101,17 @@ export async function createClient(data: {
       VALUES (${data.name}, ${data.slug}, ${data.subdomain || null})
       RETURNING id, name, slug, subdomain, database_url, created_at
     `;
-    return result[0] as Client || null;
+    return (result[0] as Client) || null;
   } catch (error) {
-    console.error('Error creating client:', error);
+    console.error("Error creating client:", error);
     return null;
   }
 }
 
 // Feature management
-export async function getClientFeatures(clientId: string): Promise<ClientFeature[]> {
+export async function getClientFeatures(
+  clientId: string,
+): Promise<ClientFeature[]> {
   try {
     const sql = createConnection();
     const result = await sql`
@@ -115,7 +121,7 @@ export async function getClientFeatures(clientId: string): Promise<ClientFeature
     `;
     return result as ClientFeature[];
   } catch (error) {
-    console.error('Error fetching client features:', error);
+    console.error("Error fetching client features:", error);
     return [];
   }
 }
@@ -124,7 +130,7 @@ export async function updateClientFeature(
   clientId: string,
   featureName: FeatureName,
   enabled: boolean,
-  config: Record<string, any> = {}
+  config: Record<string, any> = {},
 ): Promise<boolean> {
   try {
     const sql = createConnection();
@@ -136,7 +142,7 @@ export async function updateClientFeature(
     `;
     return true;
   } catch (error) {
-    console.error('Error updating client feature:', error);
+    console.error("Error updating client feature:", error);
     return false;
   }
 }
@@ -148,11 +154,11 @@ export async function getClientConfig(clientId: string) {
     if (!client) return null;
 
     const features = await getClientFeatures(clientId);
-    
+
     // Convert features array to object
     const featuresConfig: Record<string, boolean> = {};
-    Object.values(AVAILABLE_FEATURES).forEach(feature => {
-      const featureData = features.find(f => f.feature_name === feature);
+    Object.values(AVAILABLE_FEATURES).forEach((feature) => {
+      const featureData = features.find((f) => f.feature_name === feature);
       featuresConfig[feature] = featureData?.enabled ?? true; // Default to enabled
     });
 
@@ -162,11 +168,11 @@ export async function getClientConfig(clientId: string) {
       slug: client.slug,
       features: featuresConfig,
       branding: {
-        primaryColor: '#346.8 77.2% 49.8%', // Default to current pink theme
-      }
+        primaryColor: "#346.8 77.2% 49.8%", // Default to current pink theme
+      },
     };
   } catch (error) {
-    console.error('Error getting client config:', error);
+    console.error("Error getting client config:", error);
     return null;
   }
 }

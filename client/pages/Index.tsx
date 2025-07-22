@@ -1298,150 +1298,152 @@ export default function Index() {
                 : ""
             }`}
           >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <button
-                onClick={() =>
-                  setIsLongTermGoalsExpanded(!isLongTermGoalsExpanded)
-                }
-                className="flex items-center gap-2 text-left hover:bg-accent/50 p-2 -m-2 rounded transition-colors"
-              >
-                <div className="flex items-center gap-2">
-                  <Binoculars className="h-5 w-5 text-gray-600" />
-                  <h2 className="text-xl font-semibold tracking-tight">
-                    Long-Term Goals
-                  </h2>
-                </div>
-                {isLongTermGoalsExpanded ? (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                ) : (
-                  <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                )}
-              </button>
-            </div>
-          </CardHeader>
-          {isLongTermGoalsExpanded && (
-            <CardContent>
-              <div className="flex justify-between items-center mb-4">
-                <Button
-                  onClick={addNewLongTermGoal}
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2"
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() =>
+                    setIsLongTermGoalsExpanded(!isLongTermGoalsExpanded)
+                  }
+                  className="flex items-center gap-2 text-left hover:bg-accent/50 p-2 -m-2 rounded transition-colors"
                 >
-                  <Plus className="h-4 w-4" />
-                  Add New
-                </Button>
-              </div>
-              <div className="space-y-3">
-                {longTermGoals.map((goal, index) => (
-                  <div
-                    key={goal.id}
-                    draggable
-                    onDragStart={(e) => handleLongTermGoalDragStart(e, goal.id)}
-                    onDragOver={handleDragOver}
-                    onDrop={(e) => handleLongTermGoalDrop(e, index)}
-                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
-                  >
-                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                    <div className="flex-1">
-                      {editingLongTermGoalTitle === goal.id ? (
-                        <Input
-                          value={editingLongTermGoalTitleValue}
-                          onChange={(e) =>
-                            setEditingLongTermGoalTitleValue(e.target.value)
-                          }
-                          onBlur={handleLongTermGoalTitleSave}
-                          onKeyDown={handleLongTermGoalTitleKeyDown}
-                          className="font-medium"
-                          autoFocus
-                        />
-                      ) : (
-                        <h4
-                          className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
-                          onClick={() =>
-                            handleLongTermGoalTitleClick(goal.id, goal.title)
-                          }
-                        >
-                          {goal.title}
-                        </h4>
-                      )}
-                      {editingLongTermGoalDescription === goal.id ? (
-                        <Input
-                          value={editingLongTermGoalDescriptionValue}
-                          onChange={(e) =>
-                            setEditingLongTermGoalDescriptionValue(
-                              e.target.value,
-                            )
-                          }
-                          onBlur={handleLongTermGoalDescriptionSave}
-                          onKeyDown={handleLongTermGoalDescriptionKeyDown}
-                          className="text-sm mt-1"
-                          autoFocus
-                        />
-                      ) : (
-                        <p
-                          className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
-                          onClick={() =>
-                            handleLongTermGoalDescriptionClick(
-                              goal.id,
-                              goal.description,
-                            )
-                          }
-                        >
-                          {goal.description}
-                        </p>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Button
-                        onClick={() =>
-                          handleLongTermGoalToAgendaClick(goal.id, goal.title)
-                        }
-                        variant="ghost"
-                        size="sm"
-                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
-                        title="Add to Agenda"
-                      >
-                        <Send className="h-4 w-4" />
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Delete Long-Term Goal
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              Are you sure you want to delete "{goal.title}"?
-                              This action cannot be undone.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction
-                              onClick={() => removeLongTermGoal(goal.id)}
-                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                            >
-                              Delete
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </div>
+                  <div className="flex items-center gap-2">
+                    <Binoculars className="h-5 w-5 text-gray-600" />
+                    <h2 className="text-xl font-semibold tracking-tight">
+                      Long-Term Goals
+                    </h2>
                   </div>
-                ))}
+                  {isLongTermGoalsExpanded ? (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
               </div>
-            </CardContent>
-          )}
+            </CardHeader>
+            {isLongTermGoalsExpanded && (
+              <CardContent>
+                <div className="flex justify-between items-center mb-4">
+                  <Button
+                    onClick={addNewLongTermGoal}
+                    variant="outline"
+                    size="sm"
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add New
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  {longTermGoals.map((goal, index) => (
+                    <div
+                      key={goal.id}
+                      draggable
+                      onDragStart={(e) =>
+                        handleLongTermGoalDragStart(e, goal.id)
+                      }
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleLongTermGoalDrop(e, index)}
+                      className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                    >
+                      <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                      <div className="flex-1">
+                        {editingLongTermGoalTitle === goal.id ? (
+                          <Input
+                            value={editingLongTermGoalTitleValue}
+                            onChange={(e) =>
+                              setEditingLongTermGoalTitleValue(e.target.value)
+                            }
+                            onBlur={handleLongTermGoalTitleSave}
+                            onKeyDown={handleLongTermGoalTitleKeyDown}
+                            className="font-medium"
+                            autoFocus
+                          />
+                        ) : (
+                          <h4
+                            className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
+                            onClick={() =>
+                              handleLongTermGoalTitleClick(goal.id, goal.title)
+                            }
+                          >
+                            {goal.title}
+                          </h4>
+                        )}
+                        {editingLongTermGoalDescription === goal.id ? (
+                          <Input
+                            value={editingLongTermGoalDescriptionValue}
+                            onChange={(e) =>
+                              setEditingLongTermGoalDescriptionValue(
+                                e.target.value,
+                              )
+                            }
+                            onBlur={handleLongTermGoalDescriptionSave}
+                            onKeyDown={handleLongTermGoalDescriptionKeyDown}
+                            className="text-sm mt-1"
+                            autoFocus
+                          />
+                        ) : (
+                          <p
+                            className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
+                            onClick={() =>
+                              handleLongTermGoalDescriptionClick(
+                                goal.id,
+                                goal.description,
+                              )
+                            }
+                          >
+                            {goal.description}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          onClick={() =>
+                            handleLongTermGoalToAgendaClick(goal.id, goal.title)
+                          }
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                          title="Add to Agenda"
+                        >
+                          <Send className="h-4 w-4" />
+                        </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Delete Long-Term Goal
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to delete "{goal.title}"?
+                                This action cannot be undone.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => removeLongTermGoal(goal.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              >
+                                Delete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            )}
           </Card>
         </LongTermGoalsFeature>
 
@@ -1669,141 +1671,141 @@ export default function Index() {
                 : ""
             }`}
           >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Compass className="h-5 w-5 text-gray-600" />
-                  Action Plan
-                </CardTitle>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Compass className="h-5 w-5 text-gray-600" />
+                    Action Plan
+                  </CardTitle>
+                </div>
+                <div className="flex items-center gap-3">
+                  {activeFocusModule === "action-plan" && (
+                    <div className="text-sm font-mono text-muted-foreground">
+                      {formatTime(timers["action-plan"]?.seconds || 0)}
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => toggleFocusMode("action-plan")}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-10 w-10 p-0 transition-colors ${
+                      activeFocusModule === "action-plan"
+                        ? "text-primary bg-primary/10 hover:bg-primary/20"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Grid3X3 className="h-8 w-8" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                {activeFocusModule === "action-plan" && (
-                  <div className="text-sm font-mono text-muted-foreground">
-                    {formatTime(timers["action-plan"]?.seconds || 0)}
-                  </div>
-                )}
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center mb-4">
                 <Button
-                  onClick={() => toggleFocusMode("action-plan")}
-                  variant="ghost"
+                  onClick={addNewActionItem}
+                  variant="outline"
                   size="sm"
-                  className={`h-10 w-10 p-0 transition-colors ${
-                    activeFocusModule === "action-plan"
-                      ? "text-primary bg-primary/10 hover:bg-primary/20"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="flex items-center gap-2"
                 >
-                  <Grid3X3 className="h-8 w-8" />
+                  <Plus className="h-4 w-4" />
+                  Add New
                 </Button>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center mb-4">
-              <Button
-                onClick={addNewActionItem}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add New
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {actionItems.map((action, index) => (
-                <div
-                  key={action.id}
-                  draggable
-                  onDragStart={(e) => handleActionDragStart(e, action.id)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleActionDrop(e, index)}
-                  className={`flex items-center gap-3 p-4 border rounded-lg transition-colors cursor-move group ${getActionItemBackground(action.status)}`}
-                >
-                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <div className="flex-1">
-                    {editingActionTitle === action.id ? (
-                      <Input
-                        value={editingTitleValue}
-                        onChange={(e) => setEditingTitleValue(e.target.value)}
-                        onBlur={handleTitleSave}
-                        onKeyDown={handleTitleKeyDown}
-                        className="font-medium"
-                        autoFocus
-                      />
-                    ) : (
-                      <h4
-                        className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() =>
-                          handleTitleClick(action.id, action.title)
+              <div className="space-y-3">
+                {actionItems.map((action, index) => (
+                  <div
+                    key={action.id}
+                    draggable
+                    onDragStart={(e) => handleActionDragStart(e, action.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleActionDrop(e, index)}
+                    className={`flex items-center gap-3 p-4 border rounded-lg transition-colors cursor-move group ${getActionItemBackground(action.status)}`}
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex-1">
+                      {editingActionTitle === action.id ? (
+                        <Input
+                          value={editingTitleValue}
+                          onChange={(e) => setEditingTitleValue(e.target.value)}
+                          onBlur={handleTitleSave}
+                          onKeyDown={handleTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleTitleClick(action.id, action.title)
+                          }
+                        >
+                          {action.title}
+                        </h4>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Select
+                        value={action.status}
+                        onValueChange={(value: "on-track" | "off-track") =>
+                          handleStatusChange(action.id, value)
                         }
                       >
-                        {action.title}
-                      </h4>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={action.status}
-                      onValueChange={(value: "on-track" | "off-track") =>
-                        handleStatusChange(action.id, value)
-                      }
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="on-track">On Track</SelectItem>
-                        <SelectItem value="off-track">Off Track</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      onClick={() =>
-                        handleActionToAgendaClick(action.id, action.title)
-                      }
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
-                      title="Add to Agenda"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete Action Item
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{action.title}"?
-                            This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => removeActionItem(action.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="on-track">On Track</SelectItem>
+                          <SelectItem value="off-track">Off Track</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Button
+                        onClick={() =>
+                          handleActionToAgendaClick(action.id, action.title)
+                        }
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                        title="Add to Agenda"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
                           >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>
+                              Delete Action Item
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{action.title}"?
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => removeActionItem(action.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
+                ))}
+              </div>
+            </CardContent>
           </Card>
         </ActionPlanFeature>
 
@@ -1811,154 +1813,156 @@ export default function Index() {
         <BlockersIssuesFeature>
           <Card
             className={`transition-all duration-500 ${
-              isModuleInactive("blockers") ? "opacity-20 pointer-events-none" : ""
+              isModuleInactive("blockers")
+                ? "opacity-20 pointer-events-none"
+                : ""
             }`}
           >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <TriangleAlert className="h-5 w-5 text-gray-600" />
-                  Blockers & Issues
-                </CardTitle>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <TriangleAlert className="h-5 w-5 text-gray-600" />
+                    Blockers & Issues
+                  </CardTitle>
+                </div>
+                <div className="flex items-center gap-3">
+                  {activeFocusModule === "blockers" && (
+                    <div className="text-sm font-mono text-muted-foreground">
+                      {formatTime(timers["blockers"]?.seconds || 0)}
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => toggleFocusMode("blockers")}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-10 w-10 p-0 transition-colors ${
+                      activeFocusModule === "blockers"
+                        ? "text-primary bg-primary/10 hover:bg-primary/20"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Grid3X3 className="h-8 w-8" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                {activeFocusModule === "blockers" && (
-                  <div className="text-sm font-mono text-muted-foreground">
-                    {formatTime(timers["blockers"]?.seconds || 0)}
-                  </div>
-                )}
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center mb-4">
                 <Button
-                  onClick={() => toggleFocusMode("blockers")}
-                  variant="ghost"
+                  onClick={addNewBlocker}
+                  variant="outline"
                   size="sm"
-                  className={`h-10 w-10 p-0 transition-colors ${
-                    activeFocusModule === "blockers"
-                      ? "text-primary bg-primary/10 hover:bg-primary/20"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="flex items-center gap-2"
                 >
-                  <Grid3X3 className="h-8 w-8" />
+                  <Plus className="h-4 w-4" />
+                  Add New
                 </Button>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center mb-4">
-              <Button
-                onClick={addNewBlocker}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add New
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {blockers.map((blocker, index) => (
-                <div
-                  key={blocker.id}
-                  draggable
-                  onDragStart={(e) => handleBlockerDragStart(e, blocker.id)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleBlockerDrop(e, index)}
-                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
-                >
-                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <div className="flex-1">
-                    {editingBlockerTitle === blocker.id ? (
-                      <Input
-                        value={editingBlockerTitleValue}
-                        onChange={(e) =>
-                          setEditingBlockerTitleValue(e.target.value)
-                        }
-                        onBlur={handleBlockerTitleSave}
-                        onKeyDown={handleBlockerTitleKeyDown}
-                        className="font-medium"
-                        autoFocus
-                      />
-                    ) : (
-                      <h4
-                        className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() =>
-                          handleBlockerTitleClick(blocker.id, blocker.title)
-                        }
-                      >
-                        {blocker.title}
-                      </h4>
-                    )}
-                    {editingBlockerDescription === blocker.id ? (
-                      <Input
-                        value={editingBlockerDescriptionValue}
-                        onChange={(e) =>
-                          setEditingBlockerDescriptionValue(e.target.value)
-                        }
-                        onBlur={handleBlockerDescriptionSave}
-                        onKeyDown={handleBlockerDescriptionKeyDown}
-                        className="text-sm mt-1"
-                        autoFocus
-                      />
-                    ) : (
-                      <p
-                        className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
-                        onClick={() =>
-                          handleBlockerDescriptionClick(
-                            blocker.id,
-                            blocker.description,
-                          )
-                        }
-                      >
-                        {blocker.description}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button
-                      onClick={() =>
-                        handleBlockerToAgendaClick(blocker.id, blocker.title)
-                      }
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
-                      title="Add to Agenda"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+              <div className="space-y-3">
+                {blockers.map((blocker, index) => (
+                  <div
+                    key={blocker.id}
+                    draggable
+                    onDragStart={(e) => handleBlockerDragStart(e, blocker.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleBlockerDrop(e, index)}
+                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex-1">
+                      {editingBlockerTitle === blocker.id ? (
+                        <Input
+                          value={editingBlockerTitleValue}
+                          onChange={(e) =>
+                            setEditingBlockerTitleValue(e.target.value)
+                          }
+                          onBlur={handleBlockerTitleSave}
+                          onKeyDown={handleBlockerTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className="font-medium cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleBlockerTitleClick(blocker.id, blocker.title)
+                          }
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Blocker</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{blocker.title}"?
-                            This action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => removeBlocker(blocker.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                          {blocker.title}
+                        </h4>
+                      )}
+                      {editingBlockerDescription === blocker.id ? (
+                        <Input
+                          value={editingBlockerDescriptionValue}
+                          onChange={(e) =>
+                            setEditingBlockerDescriptionValue(e.target.value)
+                          }
+                          onBlur={handleBlockerDescriptionSave}
+                          onKeyDown={handleBlockerDescriptionKeyDown}
+                          className="text-sm mt-1"
+                          autoFocus
+                        />
+                      ) : (
+                        <p
+                          className="text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors"
+                          onClick={() =>
+                            handleBlockerDescriptionClick(
+                              blocker.id,
+                              blocker.description,
+                            )
+                          }
+                        >
+                          {blocker.description}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        onClick={() =>
+                          handleBlockerToAgendaClick(blocker.id, blocker.title)
+                        }
+                        variant="ghost"
+                        size="sm"
+                        className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                        title="Add to Agenda"
+                      >
+                        <Send className="h-4 w-4" />
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
                           >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Blocker</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              Are you sure you want to delete "{blocker.title}"?
+                              This action cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              onClick={() => removeBlocker(blocker.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                            >
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
+                ))}
+              </div>
+            </CardContent>
           </Card>
         </BlockersIssuesFeature>
 
@@ -1969,209 +1973,209 @@ export default function Index() {
               isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
             }`}
           >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <List className="h-5 w-5 text-gray-600" />
-                  Agenda
-                </CardTitle>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <List className="h-5 w-5 text-gray-600" />
+                    Agenda
+                  </CardTitle>
+                </div>
+                <div className="flex items-center gap-3">
+                  {activeFocusModule === "agenda" && (
+                    <div className="text-sm font-mono text-muted-foreground">
+                      {formatTime(timers["agenda"]?.seconds || 0)}
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => toggleFocusMode("agenda")}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-10 w-10 p-0 transition-colors ${
+                      activeFocusModule === "agenda"
+                        ? "text-primary bg-primary/10 hover:bg-primary/20"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Grid3X3 className="h-8 w-8" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                {activeFocusModule === "agenda" && (
-                  <div className="text-sm font-mono text-muted-foreground">
-                    {formatTime(timers["agenda"]?.seconds || 0)}
-                  </div>
-                )}
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-between items-center mb-4">
                 <Button
-                  onClick={() => toggleFocusMode("agenda")}
-                  variant="ghost"
+                  onClick={addNewAgendaItem}
+                  variant="outline"
                   size="sm"
-                  className={`h-10 w-10 p-0 transition-colors ${
-                    activeFocusModule === "agenda"
-                      ? "text-primary bg-primary/10 hover:bg-primary/20"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="flex items-center gap-2"
                 >
-                  <Grid3X3 className="h-8 w-8" />
+                  <Plus className="h-4 w-4" />
+                  Add New
                 </Button>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="flex justify-between items-center mb-4">
-              <Button
-                onClick={addNewAgendaItem}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2"
-              >
-                <Plus className="h-4 w-4" />
-                Add New
-              </Button>
-            </div>
-            <div className="space-y-3">
-              {agendaItems.map((item, index) => (
-                <div
-                  key={item.id}
-                  draggable
-                  onDragStart={(e) => handleAgendaDragStart(e, item.id)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleAgendaDrop(e, index)}
-                  className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
-                >
-                  <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
-                  <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 font-medium text-sm rounded-full flex-shrink-0">
-                    {index + 1}
-                  </div>
-                  <div className="flex-1">
-                    {editingAgendaTitle === item.id ? (
-                      <Input
-                        value={editingAgendaTitleValue}
-                        onChange={(e) =>
-                          setEditingAgendaTitleValue(e.target.value)
-                        }
-                        onBlur={handleAgendaTitleSave}
-                        onKeyDown={handleAgendaTitleKeyDown}
-                        className="font-medium"
-                        autoFocus
-                      />
-                    ) : (
-                      <h4
-                        className={`font-medium cursor-pointer hover:text-blue-600 transition-colors ${
-                          item.completed
-                            ? "line-through text-muted-foreground"
-                            : ""
-                        }`}
-                        onClick={() =>
-                          handleAgendaTitleClick(item.id, item.title)
-                        }
-                      >
-                        {item.title}
-                      </h4>
-                    )}
-                    {editingAgendaDescription === item.id ? (
-                      <Input
-                        value={editingAgendaDescriptionValue}
-                        onChange={(e) =>
-                          setEditingAgendaDescriptionValue(e.target.value)
-                        }
-                        onBlur={handleAgendaDescriptionSave}
-                        onKeyDown={handleAgendaDescriptionKeyDown}
-                        className="text-sm mt-1"
-                        autoFocus
-                      />
-                    ) : (
-                      <p
-                        className={`text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors ${
-                          item.completed ? "line-through" : ""
-                        }`}
-                        onClick={() =>
-                          handleAgendaDescriptionClick(
-                            item.id,
-                            item.description || "",
-                          )
-                        }
-                      >
-                        {item.description || "Add description..."}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-end gap-2">
-                    {editingAgendaOwner === item.id ? (
-                      <Input
-                        value={editingAgendaOwnerValue}
-                        onChange={(e) =>
-                          setEditingAgendaOwnerValue(e.target.value)
-                        }
-                        onBlur={handleAgendaOwnerSave}
-                        onKeyDown={handleAgendaOwnerKeyDown}
-                        className="text-sm w-32"
-                        autoFocus
-                      />
-                    ) : (
-                      <p
-                        className={`text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors text-right ${
-                          item.completed ? "line-through" : ""
-                        }`}
-                        onClick={() =>
-                          handleAgendaOwnerClick(item.id, item.owner || "")
-                        }
-                      >
-                        {item.owner || "No Owner"}
-                      </p>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+              <div className="space-y-3">
+                {agendaItems.map((item, index) => (
+                  <div
+                    key={item.id}
+                    draggable
+                    onDragStart={(e) => handleAgendaDragStart(e, item.id)}
+                    onDragOver={handleDragOver}
+                    onDrop={(e) => handleAgendaDrop(e, index)}
+                    className="flex items-center gap-3 p-4 border rounded-lg bg-card hover:bg-accent/50 transition-colors cursor-move group"
+                  >
+                    <GripVertical className="h-4 w-4 text-muted-foreground group-hover:text-foreground transition-colors" />
+                    <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-700 font-medium text-sm rounded-full flex-shrink-0">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      {editingAgendaTitle === item.id ? (
+                        <Input
+                          value={editingAgendaTitleValue}
+                          onChange={(e) =>
+                            setEditingAgendaTitleValue(e.target.value)
+                          }
+                          onBlur={handleAgendaTitleSave}
+                          onKeyDown={handleAgendaTitleKeyDown}
+                          className="font-medium"
+                          autoFocus
+                        />
+                      ) : (
+                        <h4
+                          className={`font-medium cursor-pointer hover:text-blue-600 transition-colors ${
+                            item.completed
+                              ? "line-through text-muted-foreground"
+                              : ""
+                          }`}
+                          onClick={() =>
+                            handleAgendaTitleClick(item.id, item.title)
+                          }
                         >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>
-                            Delete Agenda Item
-                          </AlertDialogTitle>
-                          <AlertDialogDescription>
-                            Are you sure you want to delete "{item.title}"? This
-                            action cannot be undone.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => removeAgendaItem(item.id)}
-                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                          >
-                            Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                    {!item.completed && (
+                          {item.title}
+                        </h4>
+                      )}
+                      {editingAgendaDescription === item.id ? (
+                        <Input
+                          value={editingAgendaDescriptionValue}
+                          onChange={(e) =>
+                            setEditingAgendaDescriptionValue(e.target.value)
+                          }
+                          onBlur={handleAgendaDescriptionSave}
+                          onKeyDown={handleAgendaDescriptionKeyDown}
+                          className="text-sm mt-1"
+                          autoFocus
+                        />
+                      ) : (
+                        <p
+                          className={`text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors ${
+                            item.completed ? "line-through" : ""
+                          }`}
+                          onClick={() =>
+                            handleAgendaDescriptionClick(
+                              item.id,
+                              item.description || "",
+                            )
+                          }
+                        >
+                          {item.description || "Add description..."}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      {editingAgendaOwner === item.id ? (
+                        <Input
+                          value={editingAgendaOwnerValue}
+                          onChange={(e) =>
+                            setEditingAgendaOwnerValue(e.target.value)
+                          }
+                          onBlur={handleAgendaOwnerSave}
+                          onKeyDown={handleAgendaOwnerKeyDown}
+                          className="text-sm w-32"
+                          autoFocus
+                        />
+                      ) : (
+                        <p
+                          className={`text-sm text-muted-foreground cursor-pointer hover:text-foreground transition-colors text-right ${
+                            item.completed ? "line-through" : ""
+                          }`}
+                          onClick={() =>
+                            handleAgendaOwnerClick(item.id, item.owner || "")
+                          }
+                        >
+                          {item.owner || "No Owner"}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
                           >
-                            <Check className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4" />
                           </Button>
                         </AlertDialogTrigger>
                         <AlertDialogContent>
                           <AlertDialogHeader>
                             <AlertDialogTitle>
-                              Mark as Complete
+                              Delete Agenda Item
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                              Are you sure you want to mark "{item.title}" as
-                              complete?
+                              Are you sure you want to delete "{item.title}"?
+                              This action cannot be undone.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
                             <AlertDialogAction
-                              onClick={() => markAgendaItemComplete(item.id)}
-                              className="bg-green-600 text-white hover:bg-green-700"
+                              onClick={() => removeAgendaItem(item.id)}
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                             >
-                              Yes, Mark as Complete
+                              Delete
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
-                    )}
+                      {!item.completed && (
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                            >
+                              <Check className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Mark as Complete
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to mark "{item.title}" as
+                                complete?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() => markAgendaItemComplete(item.id)}
+                                className="bg-green-600 text-white hover:bg-green-700"
+                              >
+                                Yes, Mark as Complete
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
+                ))}
+              </div>
+            </CardContent>
           </Card>
         </AgendaFeature>
 

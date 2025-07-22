@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { CheckCircle, XCircle, Settings } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CheckCircle, XCircle, Settings } from "lucide-react";
 
 interface EnvTestResult {
   message: string;
@@ -19,8 +19,8 @@ export default function EnvTest() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/env-test');
-      
+      const response = await fetch("/api/env-test");
+
       if (!response.ok) {
         setError(`HTTP ${response.status}`);
         return;
@@ -28,9 +28,8 @@ export default function EnvTest() {
 
       const data = await response.json();
       setTestResult(data);
-      
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Network error');
+      setError(error instanceof Error ? error.message : "Network error");
     } finally {
       setIsLoading(false);
     }
@@ -50,13 +49,13 @@ export default function EnvTest() {
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <Button 
-          onClick={runTest} 
+        <Button
+          onClick={runTest}
           disabled={isLoading}
           className="w-full"
           size="sm"
         >
-          {isLoading ? 'Testing...' : 'Test Environment'}
+          {isLoading ? "Testing..." : "Test Environment"}
         </Button>
 
         {error && (
@@ -75,10 +74,10 @@ export default function EnvTest() {
                 <XCircle className="h-4 w-4 text-red-600" />
               )}
               <span className="text-sm">
-                Database URL: {testResult.hasDatabaseUrl ? 'Set' : 'Missing'}
+                Database URL: {testResult.hasDatabaseUrl ? "Set" : "Missing"}
               </span>
             </div>
-            
+
             {testResult.hasDatabaseUrl && (
               <div className="text-xs text-muted-foreground">
                 Length: {testResult.databaseUrlLength} characters

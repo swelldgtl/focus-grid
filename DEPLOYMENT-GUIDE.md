@@ -1,11 +1,13 @@
 # Multi-Tenant Netlify Deployment Guide
 
 ## Overview
+
 Deploy the same Focus Grid codebase to multiple Netlify sites with different client configurations.
 
 ## Sites to Create
 
 ### 1. Blue Label Packaging
+
 - **Site Name**: `blue-label-packaging-focus-grid`
 - **Domain**: `bluelabelpackaging.domain.com`
 - **Environment Variables** (copy from `.env.bluelabel`):
@@ -19,6 +21,7 @@ Deploy the same Focus Grid codebase to multiple Netlify sites with different cli
   ```
 
 ### 2. ERC
+
 - **Site Name**: `erc-focus-grid`
 - **Domain**: `erc.domain.com`
 - **Environment Variables** (copy from `.env.erc`):
@@ -32,6 +35,7 @@ Deploy the same Focus Grid codebase to multiple Netlify sites with different cli
   ```
 
 ### 3. Admin Dashboard
+
 - **Site Name**: `focus-grid-admin`
 - **Domain**: `admin.focusgrid.com`
 - **Environment Variables** (copy from `.env.admin`):
@@ -49,17 +53,20 @@ Deploy the same Focus Grid codebase to multiple Netlify sites with different cli
 ### For Each Site:
 
 1. **Create New Site in Netlify**
+
    - Go to Netlify dashboard
    - Click "Add new site" → "Import an existing project"
    - Connect to your GitHub repository
    - Choose the same branch (main) for all sites
 
 2. **Configure Build Settings**
+
    - Build command: `npm run build`
    - Publish directory: `dist/spa`
    - Functions directory: `netlify/functions`
 
 3. **Set Environment Variables**
+
    - Go to Site Settings → Environment Variables
    - Add all variables from the respective `.env.*` file above
    - Make sure `DATABASE_URL` is identical for all sites (same database)
@@ -73,16 +80,19 @@ Deploy the same Focus Grid codebase to multiple Netlify sites with different cli
 ## Expected Results
 
 ### Blue Label Packaging Site (`bluelabelpackaging.domain.com`):
+
 - Blue branding
 - Shows: Goals & Progress, Long-Term Goals, Action Plan, Agenda
 - **Hidden**: Blockers & Issues (disabled for this client)
 
 ### ERC Site (`erc.domain.com`):
-- Green branding  
+
+- Green branding
 - Shows: Goals & Progress, Action Plan, Blockers & Issues, Agenda
 - **Hidden**: Long-Term Goals (disabled for this client)
 
 ### Admin Site (`admin.focusgrid.com`):
+
 - Red branding
 - Shows: All modules + Feature Admin panel
 - Can manage all clients
@@ -90,6 +100,7 @@ Deploy the same Focus Grid codebase to multiple Netlify sites with different cli
 ## Testing
 
 After deployment, verify:
+
 1. Each site loads with correct branding
 2. Correct modules are visible/hidden per client
 3. Feature Admin works on admin site

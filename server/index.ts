@@ -3,10 +3,13 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { handleDemo } from "./routes/demo";
 import { handleDatabaseTest, handleClientConfig } from "./routes/database";
-import { handleFeatureToggle, handleGetFeatures } from "./routes/feature-toggle";
+import {
+  handleFeatureToggle,
+  handleGetFeatures,
+} from "./routes/feature-toggle";
 
 // Load environment variables
-dotenv.config({ path: '.env.local' });
+dotenv.config({ path: ".env.local" });
 dotenv.config(); // Also load .env if it exists
 
 export function createServer() {
@@ -27,7 +30,7 @@ export function createServer() {
       message: "Environment test",
       hasDatabaseUrl: !!process.env.DATABASE_URL,
       clientId: process.env.CLIENT_ID,
-      databaseUrlLength: process.env.DATABASE_URL?.length || 0
+      databaseUrlLength: process.env.DATABASE_URL?.length || 0,
     });
   });
 

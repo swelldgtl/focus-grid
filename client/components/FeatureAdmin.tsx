@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Badge } from '@/components/ui/badge';
-import { Settings, RefreshCw } from 'lucide-react';
-import { useClientConfig } from '@/hooks/use-client-config';
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
+import { Settings, RefreshCw } from "lucide-react";
+import { useClientConfig } from "@/hooks/use-client-config";
 
 interface FeatureAdminProps {
   clientId?: string;
@@ -17,33 +17,33 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
   const toggleFeature = async (feature: string, enabled: boolean) => {
     if (!config) return;
 
-    console.log('Toggling feature:', feature, 'to:', enabled);
+    console.log("Toggling feature:", feature, "to:", enabled);
     setUpdating(feature);
 
     try {
       const payload = {
         clientId: config.clientId,
         feature,
-        enabled
+        enabled,
       };
-      console.log('Sending payload:', payload);
+      console.log("Sending payload:", payload);
 
-      const response = await fetch('/api/features/toggle', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const response = await fetch("/api/features/toggle", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
       });
 
-      console.log('Toggle response status:', response.status);
+      console.log("Toggle response status:", response.status);
 
       if (response.ok) {
         const result = await response.json();
-        console.log('Toggle success:', result);
+        console.log("Toggle success:", result);
         // Refresh the configuration
         refetch();
       } else {
         const errorText = await response.text();
-        console.error('Toggle failed:', errorText);
+        console.error("Toggle failed:", errorText);
         let error;
         try {
           error = JSON.parse(errorText);
@@ -53,8 +53,11 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
         alert(`Failed to toggle feature: ${error.error || errorText}`);
       }
     } catch (error) {
-      console.error('Network error:', error);
-      alert('Network error occurred: ' + (error instanceof Error ? error.message : 'Unknown'));
+      console.error("Network error:", error);
+      alert(
+        "Network error occurred: " +
+          (error instanceof Error ? error.message : "Unknown"),
+      );
     } finally {
       setUpdating(null);
     }
@@ -118,11 +121,11 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
   }
 
   const featureLabels = {
-    long_term_goals: 'Long-Term Goals',
-    action_plan: 'Action Plan',
-    blockers_issues: 'Blockers & Issues',
-    agenda: 'Agenda',
-    focus_mode: 'Focus Mode'
+    long_term_goals: "Long-Term Goals",
+    action_plan: "Action Plan",
+    blockers_issues: "Blockers & Issues",
+    agenda: "Agenda",
+    focus_mode: "Focus Mode",
   };
 
   return (
@@ -151,7 +154,8 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
           <div key={feature} className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">
-                {featureLabels[feature as keyof typeof featureLabels] || feature}
+                {featureLabels[feature as keyof typeof featureLabels] ||
+                  feature}
               </span>
               <Badge variant={enabled ? "default" : "secondary"}>
                 {enabled ? "ON" : "OFF"}
@@ -164,7 +168,7 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
             />
           </div>
         ))}
-        
+
         <div className="pt-2 border-t space-y-2">
           <div className="text-xs text-muted-foreground">
             Toggle features above, then click Update
