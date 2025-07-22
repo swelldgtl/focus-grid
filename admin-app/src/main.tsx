@@ -1,10 +1,10 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import AdminApp from './AdminApp.tsx'
-import '../../../client/global.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import AdminApp from "./AdminApp.tsx";
+import "../../../client/global.css";
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <AdminApp />
   </React.StrictMode>,
-)
+);

@@ -2285,7 +2285,9 @@ export default function Index() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => (window.location.href = "https://admin.swellfocusgrid.com")}
+              onClick={() =>
+                (window.location.href = "https://admin.swellfocusgrid.com")
+              }
               className="text-muted-foreground hover:text-foreground"
             >
               Admin Dashboard
