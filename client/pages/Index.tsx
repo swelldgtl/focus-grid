@@ -1650,13 +1650,14 @@ export default function Index() {
         </Card>
 
         {/* Action Plan */}
-        <Card
-          className={`transition-all duration-500 ${
-            isModuleInactive("action-plan")
-              ? "opacity-20 pointer-events-none"
-              : ""
-          }`}
-        >
+        <ActionPlanFeature>
+          <Card
+            className={`transition-all duration-500 ${
+              isModuleInactive("action-plan")
+                ? "opacity-20 pointer-events-none"
+                : ""
+            }`}
+          >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -1792,7 +1793,8 @@ export default function Index() {
               ))}
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </ActionPlanFeature>
 
         {/* Blockers & Issues */}
         <Card
