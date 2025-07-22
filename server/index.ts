@@ -85,19 +85,20 @@ export function createServer() {
   app.get("/api/config", handleClientConfig);
   app.get("/api/features", handleGetFeatures);
   app.post("/api/features/toggle", handleFeatureToggle);
-  app.get("/api/clients", handleGetClients);
-  app.post("/api/clients", handleCreateClient);
-  app.put("/api/clients/:clientId", handleUpdateClient);
-  app.put("/api/clients/:clientId/features", handleUpdateClientFeatures);
-  app.delete("/api/clients/:clientId", handleDeleteClient);
-  app.post("/api/netlify/create-project", handleCreateNetlifyProject);
-  app.post("/api/netlify/set-env-vars", handleSetNetlifyEnvVars);
-  app.post("/api/netlify/deploy", handleDeployNetlifyProject);
-  app.get("/api/admin/system-config", handleGetSystemConfig);
-  app.post("/api/admin/system-config", handleUpdateSystemConfig);
-  app.get("/api/admin/feature-defaults", handleGetFeatureDefaults);
-  app.post("/api/admin/feature-defaults", handleUpdateFeatureDefaults);
-  app.get("/api/admin/health", handleSystemHealth);
+  // Protected admin routes (require authentication)
+  app.get("/api/clients", requireAuth, handleGetClients);
+  app.post("/api/clients", requireAuth, handleCreateClient);
+  app.put("/api/clients/:clientId", requireAuth, handleUpdateClient);
+  app.put("/api/clients/:clientId/features", requireAuth, handleUpdateClientFeatures);
+  app.delete("/api/clients/:clientId", requireAuth, handleDeleteClient);
+  app.post("/api/netlify/create-project", requireAuth, handleCreateNetlifyProject);
+  app.post("/api/netlify/set-env-vars", requireAuth, handleSetNetlifyEnvVars);
+  app.post("/api/netlify/deploy", requireAuth, handleDeployNetlifyProject);
+  app.get("/api/admin/system-config", requireAuth, handleGetSystemConfig);
+  app.post("/api/admin/system-config", requireAuth, handleUpdateSystemConfig);
+  app.get("/api/admin/feature-defaults", requireAuth, handleGetFeatureDefaults);
+  app.post("/api/admin/feature-defaults", requireAuth, handleUpdateFeatureDefaults);
+  app.get("/api/admin/health", requireAuth, handleSystemHealth);
 
   return app;
 }
