@@ -2283,8 +2283,7 @@ export default function Index() {
       {/* Footer */}
       <footer className="border-t bg-background py-6 mt-8">
         <div className="container mx-auto px-4">
-          <div className="flex justify-center items-center gap-6">
-            <DataManager />
+          <div className="flex justify-center">
             <Button
               variant="ghost"
               size="sm"
