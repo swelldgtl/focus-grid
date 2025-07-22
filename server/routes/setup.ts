@@ -2,8 +2,17 @@ import { RequestHandler } from "express";
 
 export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
   try {
-    const { createConnection } = await import("../lib/database");
-    const sql = createConnection();
+    const { neon } = await import("@neondatabase/serverless");
+
+    const getDatabaseUrl = () => {
+      const url = process.env.DATABASE_URL;
+      if (!url) {
+        throw new Error("DATABASE_URL environment variable is not set");
+      }
+      return url;
+    };
+
+    const sql = neon(getDatabaseUrl());
 
     // Create admin_users table
     await sql`
