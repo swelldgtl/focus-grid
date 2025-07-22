@@ -1261,11 +1261,8 @@ export default function Index() {
       style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
-        {/* Debug Components (temporary for testing) */}
-        <div className="flex gap-4">
-          <FeatureAdmin />
-          <ApiTest />
-        </div>
+        {/* Feature Admin */}
+        <FeatureAdmin />
 
         {/* Header */}
         <div className="flex items-center justify-between">
