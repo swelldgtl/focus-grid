@@ -1,5 +1,5 @@
 import React from 'react';
-import { useFeatureFlag, type ClientConfig } from '@/hooks/use-client-config';
+import { useFeatureFlag, useClientConfig, type ClientConfig } from '@/hooks/use-client-config';
 
 interface FeatureFlagProps {
   feature: keyof ClientConfig['features'];
