@@ -1279,13 +1279,14 @@ export default function Index() {
         </div>
 
         {/* Long-Term Goals */}
-        <Card
-          className={`transition-all duration-500 ${
-            isModuleInactive("long-term-goals")
-              ? "opacity-20 pointer-events-none"
-              : ""
-          }`}
-        >
+        <LongTermGoalsFeature>
+          <Card
+            className={`transition-all duration-500 ${
+              isModuleInactive("long-term-goals")
+                ? "opacity-20 pointer-events-none"
+                : ""
+            }`}
+          >
           <CardHeader>
             <div className="flex items-center justify-between">
               <button
@@ -1430,7 +1431,8 @@ export default function Index() {
               </div>
             </CardContent>
           )}
-        </Card>
+          </Card>
+        </LongTermGoalsFeature>
 
         {/* Sales Data Table */}
         <Card
