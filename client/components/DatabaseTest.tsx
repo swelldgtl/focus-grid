@@ -27,23 +27,37 @@ export default function DatabaseTest() {
     setIsLoading(true);
     try {
       const response = await fetch('/api/database/test');
-      const data = await response.json();
-      
-      if (response.ok) {
-        setTestResult({
-          success: true,
-          message: data.message,
-          connectionTime: data.connectionTime,
-          clientsCount: data.clientsCount,
-          clients: data.clients,
-          availableFeatures: data.availableFeatures
-        });
-      } else {
-        setTestResult({
-          success: false,
-          error: data.error || 'Unknown error'
-        });
+
+      // Check if response is ok first
+      if (!response.ok) {
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          setTestResult({
+            success: false,
+            error: errorData.error || `HTTP ${response.status}`
+          });
+        } catch {
+          setTestResult({
+            success: false,
+            error: `HTTP ${response.status}: ${errorText}`
+          });
+        }
+        return;
       }
+
+      // Parse JSON response
+      const data = await response.json();
+
+      setTestResult({
+        success: true,
+        message: data.message,
+        connectionTime: data.connectionTime,
+        clientsCount: data.clientsCount,
+        clients: data.clients,
+        availableFeatures: data.availableFeatures
+      });
+
     } catch (error) {
       setTestResult({
         success: false,
