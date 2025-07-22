@@ -64,6 +64,8 @@ export default function ClientManager() {
   const [clients, setClients] = useState<Client[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
   const [creating, setCreating] = useState(false);
   const [deploymentStatus, setDeploymentStatus] = useState<{
     step: 'client' | 'netlify' | 'deploy' | 'complete';
@@ -75,7 +77,17 @@ export default function ClientManager() {
     subdomain: '',
     createNetlifyProject: true
   });
+  const [editClient, setEditClient] = useState({
+    name: '',
+    slug: '',
+    subdomain: ''
+  });
   const [errors, setErrors] = useState({
+    name: '',
+    slug: '',
+    subdomain: ''
+  });
+  const [editErrors, setEditErrors] = useState({
     name: '',
     slug: '',
     subdomain: ''
