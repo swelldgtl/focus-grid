@@ -300,10 +300,7 @@ export default function FeatureManager() {
                 <TableHead>Status</TableHead>
                 {FEATURES.map((feature) => (
                   <TableHead key={feature.key} className="text-center">
-                    <div className="space-y-1">
-                      <div className="font-medium">{feature.name}</div>
-                      <div className="text-xs text-muted-foreground">{feature.description}</div>
-                    </div>
+                    <div className="font-medium">{feature.name}</div>
                   </TableHead>
                 ))}
               </TableRow>
@@ -328,7 +325,13 @@ export default function FeatureManager() {
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant={enabledFeatures === FEATURES.length ? "default" : "secondary"}>
+                      <Badge
+                        variant="outline"
+                        className={enabledFeatures === FEATURES.length
+                          ? "bg-green-100 text-green-800 border-green-300"
+                          : "bg-gray-100 text-gray-600 border-gray-300"
+                        }
+                      >
                         {enabledFeatures}/{FEATURES.length} enabled
                       </Badge>
                     </TableCell>
@@ -342,7 +345,7 @@ export default function FeatureManager() {
                             <Switch
                               checked={isEnabled}
                               onCheckedChange={(value) => handleFeatureToggle(client.id, feature.key, value)}
-                              className={hasChanged ? "ring-2 ring-yellow-400" : ""}
+                              className={`${hasChanged ? "ring-2 ring-yellow-400" : ""} ${isEnabled ? "data-[state=checked]:bg-green-600" : "data-[state=unchecked]:bg-gray-400"}`}
                             />
                             {isEnabled ? (
                               <CheckCircle className="h-4 w-4 text-green-600" />
