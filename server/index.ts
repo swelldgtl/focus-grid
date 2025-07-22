@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { handleDemo } from "./routes/demo";
 import { handleDatabaseTest, handleClientConfig } from "./routes/database";
+import { handleFeatureToggle, handleGetFeatures } from "./routes/feature-toggle";
 
 // Load environment variables
 dotenv.config({ path: '.env.local' });
