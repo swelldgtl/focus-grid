@@ -98,3 +98,24 @@ export async function deployNetlifyProject(siteId: string): Promise<boolean> {
     return false;
   }
 }
+
+// Delete a Netlify project
+export async function deleteNetlifyProject(subdomain: string): Promise<boolean> {
+  try {
+    const response = await fetch('/.netlify/functions/netlify-automation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        action: 'delete-project',
+        subdomain,
+      }),
+    });
+
+    return response.ok;
+  } catch (error) {
+    console.error('Error deleting Netlify project:', error);
+    return false;
+  }
+}
