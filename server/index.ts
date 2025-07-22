@@ -7,6 +7,7 @@ import {
   handleClientConfig,
   handleGetClients,
   handleCreateClient,
+  handleUpdateClient,
   handleDeleteClient
 } from "./routes/database";
 import {
@@ -59,6 +60,7 @@ export function createServer() {
   app.post("/api/features/toggle", handleFeatureToggle);
   app.get("/api/clients", handleGetClients);
   app.post("/api/clients", handleCreateClient);
+  app.put("/api/clients/:clientId", handleUpdateClient);
   app.delete("/api/clients/:clientId", handleDeleteClient);
   app.post("/api/netlify/create-project", handleCreateNetlifyProject);
   app.post("/api/netlify/set-env-vars", handleSetNetlifyEnvVars);
