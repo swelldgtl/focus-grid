@@ -32,8 +32,8 @@ export const useAuthCheck = () => {
 
   const checkAuth = async () => {
     try {
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
-      
+      setAuthState((prev) => ({ ...prev, loading: true, error: null }));
+
       const response = await fetch("/api/auth/session", {
         credentials: "include",
       });
@@ -58,9 +58,12 @@ export const useAuthCheck = () => {
     }
   };
 
-  const login = async (username: string, password: string): Promise<boolean> => {
+  const login = async (
+    username: string,
+    password: string,
+  ): Promise<boolean> => {
     try {
-      setAuthState(prev => ({ ...prev, loading: true, error: null }));
+      setAuthState((prev) => ({ ...prev, loading: true, error: null }));
 
       const response = await fetch("/api/auth/login", {
         method: "POST",

@@ -41,7 +41,9 @@ export default function Admin() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
-          <p className="text-muted-foreground mt-2">Checking authentication...</p>
+          <p className="text-muted-foreground mt-2">
+            Checking authentication...
+          </p>
         </div>
       </div>
     );

@@ -34,9 +34,7 @@ import {
   handleCheckSession,
   requireAuth,
 } from "./routes/auth";
-import {
-  handleSetupAdminAuth,
-} from "./routes/setup";
+import { handleSetupAdminAuth } from "./routes/setup";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
@@ -95,15 +93,27 @@ export function createServer() {
   app.get("/api/clients", requireAuth, handleGetClients);
   app.post("/api/clients", requireAuth, handleCreateClient);
   app.put("/api/clients/:clientId", requireAuth, handleUpdateClient);
-  app.put("/api/clients/:clientId/features", requireAuth, handleUpdateClientFeatures);
+  app.put(
+    "/api/clients/:clientId/features",
+    requireAuth,
+    handleUpdateClientFeatures,
+  );
   app.delete("/api/clients/:clientId", requireAuth, handleDeleteClient);
-  app.post("/api/netlify/create-project", requireAuth, handleCreateNetlifyProject);
+  app.post(
+    "/api/netlify/create-project",
+    requireAuth,
+    handleCreateNetlifyProject,
+  );
   app.post("/api/netlify/set-env-vars", requireAuth, handleSetNetlifyEnvVars);
   app.post("/api/netlify/deploy", requireAuth, handleDeployNetlifyProject);
   app.get("/api/admin/system-config", requireAuth, handleGetSystemConfig);
   app.post("/api/admin/system-config", requireAuth, handleUpdateSystemConfig);
   app.get("/api/admin/feature-defaults", requireAuth, handleGetFeatureDefaults);
-  app.post("/api/admin/feature-defaults", requireAuth, handleUpdateFeatureDefaults);
+  app.post(
+    "/api/admin/feature-defaults",
+    requireAuth,
+    handleUpdateFeatureDefaults,
+  );
   app.get("/api/admin/health", requireAuth, handleSystemHealth);
 
   return app;

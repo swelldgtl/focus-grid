@@ -57,16 +57,15 @@ export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
       defaultCredentials: {
         username: "admin",
         password: "admin123",
-        note: "Please change these credentials after first login"
-      }
+        note: "Please change these credentials after first login",
+      },
     });
-
   } catch (error) {
     console.error("Setup admin auth error:", error);
     return res.status(500).json({
       success: false,
       error: "Failed to setup admin authentication",
-      details: error instanceof Error ? error.message : "Unknown error"
+      details: error instanceof Error ? error.message : "Unknown error",
     });
   }
 };

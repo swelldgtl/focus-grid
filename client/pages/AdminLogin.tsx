@@ -58,7 +58,7 @@ export default function AdminLogin() {
           title: "Login Successful",
           description: `Welcome back, ${data.user.username}!`,
         });
-        
+
         // Redirect to admin dashboard
         window.location.href = "/admin";
       } else {
@@ -191,10 +191,12 @@ export default function AdminLogin() {
                 <div className="text-sm text-blue-800">
                   <p className="font-medium">Default Admin Credentials:</p>
                   <p className="mt-1">
-                    Username: <code className="bg-blue-100 px-1 rounded">admin</code>
+                    Username:{" "}
+                    <code className="bg-blue-100 px-1 rounded">admin</code>
                   </p>
                   <p>
-                    Password: <code className="bg-blue-100 px-1 rounded">admin123</code>
+                    Password:{" "}
+                    <code className="bg-blue-100 px-1 rounded">admin123</code>
                   </p>
                   <p className="mt-2 text-xs text-blue-600">
                     Make sure to change these credentials after first login.

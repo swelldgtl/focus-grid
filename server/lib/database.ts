@@ -182,7 +182,11 @@ export async function deleteClient(clientId: string): Promise<boolean> {
 }
 
 // Admin authentication functions
-export async function createAdminUser(username: string, email: string, passwordHash: string): Promise<AdminUser | null> {
+export async function createAdminUser(
+  username: string,
+  email: string,
+  passwordHash: string,
+): Promise<AdminUser | null> {
   try {
     const sql = createConnection();
     const result = await sql`
@@ -197,7 +201,9 @@ export async function createAdminUser(username: string, email: string, passwordH
   }
 }
 
-export async function getAdminUserByUsername(username: string): Promise<AdminUser | null> {
+export async function getAdminUserByUsername(
+  username: string,
+): Promise<AdminUser | null> {
   try {
     const sql = createConnection();
     const result = await sql`
@@ -228,7 +234,11 @@ export async function updateAdminLastLogin(userId: string): Promise<boolean> {
   }
 }
 
-export async function createAdminSession(userId: string, sessionToken: string, expiresAt: Date): Promise<AdminSession | null> {
+export async function createAdminSession(
+  userId: string,
+  sessionToken: string,
+  expiresAt: Date,
+): Promise<AdminSession | null> {
   try {
     const sql = createConnection();
     const result = await sql`
@@ -243,7 +253,9 @@ export async function createAdminSession(userId: string, sessionToken: string, e
   }
 }
 
-export async function getAdminSessionByToken(sessionToken: string): Promise<AdminSession | null> {
+export async function getAdminSessionByToken(
+  sessionToken: string,
+): Promise<AdminSession | null> {
   try {
     const sql = createConnection();
     const result = await sql`
@@ -259,7 +271,9 @@ export async function getAdminSessionByToken(sessionToken: string): Promise<Admi
   }
 }
 
-export async function deleteAdminSession(sessionToken: string): Promise<boolean> {
+export async function deleteAdminSession(
+  sessionToken: string,
+): Promise<boolean> {
   try {
     const sql = createConnection();
     await sql`

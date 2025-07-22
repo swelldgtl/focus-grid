@@ -23,8 +23,8 @@ async function setupAdminAuth() {
     // Split by semicolon and execute each statement
     const statements = sqlContent
       .split(";")
-      .map(s => s.trim())
-      .filter(s => s.length > 0);
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
 
     console.log(`Executing ${statements.length} SQL statements...`);
 
@@ -39,8 +39,9 @@ async function setupAdminAuth() {
     console.log("\nDefault admin credentials:");
     console.log("Username: admin");
     console.log("Password: admin123");
-    console.log("\n⚠️  Make sure to change these credentials after first login!");
-
+    console.log(
+      "\n⚠️  Make sure to change these credentials after first login!",
+    );
   } catch (error) {
     console.error("❌ Error setting up admin authentication:", error);
     process.exit(1);
