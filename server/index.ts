@@ -59,6 +59,7 @@ export function createServer() {
   );
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
 
   // Example API routes
   app.get("/api/ping", (_req, res) => {
