@@ -67,6 +67,25 @@ export const AVAILABLE_FEATURES = {
 export type FeatureName =
   (typeof AVAILABLE_FEATURES)[keyof typeof AVAILABLE_FEATURES];
 
+// Admin user management
+export interface AdminUser {
+  id: string;
+  username: string;
+  email: string;
+  password_hash: string;
+  created_at: string;
+  last_login?: string;
+  is_active: boolean;
+}
+
+export interface AdminSession {
+  id: string;
+  user_id: string;
+  session_token: string;
+  expires_at: string;
+  created_at: string;
+}
+
 // Client operations
 export async function getClients(): Promise<Client[]> {
   try {
