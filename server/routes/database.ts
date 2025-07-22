@@ -36,12 +36,12 @@ export const handleDatabaseTest: RequestHandler = async (req, res) => {
 
 export const handleClientConfig: RequestHandler = async (req, res) => {
   try {
-    // Import database functions
-    const { getClientConfig } = await import("../../client/lib/database");
-    
+    // Import database functions from server-side utilities
+    const { getClientConfig } = await import("../lib/database");
+
     // Get client ID from query params or environment
     const clientId = req.query.clientId as string || process.env.CLIENT_ID;
-    
+
     if (!clientId) {
       return res.status(400).json({
         error: 'Client ID is required'
@@ -49,7 +49,7 @@ export const handleClientConfig: RequestHandler = async (req, res) => {
     }
 
     const config = await getClientConfig(clientId);
-    
+
     if (!config) {
       return res.status(404).json({
         error: 'Client not found'
