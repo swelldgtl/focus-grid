@@ -26,7 +26,7 @@ export default function DatabaseTest() {
   const runTest = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/.netlify/functions/db-test');
+      const response = await fetch('/api/database/test');
       const data = await response.json();
       
       if (response.ok) {
