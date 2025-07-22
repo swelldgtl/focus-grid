@@ -16,6 +16,7 @@ import {
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
 import FeatureAdmin from "@/components/FeatureAdmin";
+import ClientSwitcher from "@/components/ClientSwitcher";
 import { Input } from "@/components/ui/input";
 import {
   Select,
