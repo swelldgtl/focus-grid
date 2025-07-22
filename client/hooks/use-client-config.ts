@@ -69,6 +69,14 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       const errorMessage = err instanceof Error ? err.message : 'Failed to load client configuration';
       setError(errorMessage);
       console.error('Error loading client config:', err);
+
+      // Try fallback configuration
+      const fallbackConfig = targetClientId ? getFallbackConfig(targetClientId) : getDefaultFallbackConfig();
+      if (fallbackConfig) {
+        console.log('Using fallback configuration for client:', targetClientId);
+        setConfig(fallbackConfig);
+        setError(errorMessage + ' (using fallback)');
+      }
     } finally {
       setLoading(false);
     }
