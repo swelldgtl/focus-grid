@@ -83,7 +83,8 @@ export const handleGetClients: RequestHandler = async (req, res) => {
 
 export const handleCreateClient: RequestHandler = async (req, res) => {
   try {
-    const { createClient, getClient, updateClientFeature, AVAILABLE_FEATURES } = await import("../lib/database");
+    const { createClient, getClient, updateClientFeature, AVAILABLE_FEATURES } =
+      await import("../lib/database");
     const { getCurrentFeatureDefaults } = await import("./admin");
     const { name, slug, subdomain } = req.body;
 
@@ -113,11 +114,31 @@ export const handleCreateClient: RequestHandler = async (req, res) => {
     const featureDefaults = getCurrentFeatureDefaults();
 
     // Set up features based on admin defaults
-    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.LONG_TERM_GOALS, featureDefaults.long_term_goals);
-    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.ACTION_PLAN, featureDefaults.action_plan);
-    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.BLOCKERS_ISSUES, featureDefaults.blockers_issues);
-    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.AGENDA, featureDefaults.agenda);
-    await updateClientFeature(newClient.id, AVAILABLE_FEATURES.FOCUS_MODE, featureDefaults.focus_mode);
+    await updateClientFeature(
+      newClient.id,
+      AVAILABLE_FEATURES.LONG_TERM_GOALS,
+      featureDefaults.long_term_goals,
+    );
+    await updateClientFeature(
+      newClient.id,
+      AVAILABLE_FEATURES.ACTION_PLAN,
+      featureDefaults.action_plan,
+    );
+    await updateClientFeature(
+      newClient.id,
+      AVAILABLE_FEATURES.BLOCKERS_ISSUES,
+      featureDefaults.blockers_issues,
+    );
+    await updateClientFeature(
+      newClient.id,
+      AVAILABLE_FEATURES.AGENDA,
+      featureDefaults.agenda,
+    );
+    await updateClientFeature(
+      newClient.id,
+      AVAILABLE_FEATURES.FOCUS_MODE,
+      featureDefaults.focus_mode,
+    );
 
     return res.status(201).json({ client: newClient });
   } catch (error) {
@@ -164,7 +185,11 @@ export const handleUpdateClient: RequestHandler = async (req, res) => {
       }
     }
 
-    const updatedClient = await updateClient(clientId, { name, slug, subdomain });
+    const updatedClient = await updateClient(clientId, {
+      name,
+      slug,
+      subdomain,
+    });
 
     if (!updatedClient) {
       return res.status(500).json({
@@ -184,7 +209,9 @@ export const handleUpdateClient: RequestHandler = async (req, res) => {
 
 export const handleUpdateClientFeatures: RequestHandler = async (req, res) => {
   try {
-    const { updateClientFeature, AVAILABLE_FEATURES } = await import("../lib/database");
+    const { updateClientFeature, AVAILABLE_FEATURES } = await import(
+      "../lib/database"
+    );
     const { clientId } = req.params;
     const { features } = req.body;
 
@@ -194,7 +221,7 @@ export const handleUpdateClientFeatures: RequestHandler = async (req, res) => {
       });
     }
 
-    if (!features || typeof features !== 'object') {
+    if (!features || typeof features !== "object") {
       return res.status(400).json({
         error: "Features object is required",
       });
@@ -215,7 +242,7 @@ export const handleUpdateClientFeatures: RequestHandler = async (req, res) => {
           await updateClientFeature(
             clientId,
             featureMap[featureKey as keyof typeof featureMap],
-            Boolean(enabled)
+            Boolean(enabled),
           );
         }
       }

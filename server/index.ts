@@ -9,19 +9,19 @@ import {
   handleCreateClient,
   handleUpdateClient,
   handleUpdateClientFeatures,
-  handleDeleteClient
+  handleDeleteClient,
 } from "./routes/database";
 import {
   handleCreateNetlifyProject,
   handleSetNetlifyEnvVars,
-  handleDeployNetlifyProject
+  handleDeployNetlifyProject,
 } from "./routes/netlify";
 import {
   handleGetSystemConfig,
   handleUpdateSystemConfig,
   handleGetFeatureDefaults,
   handleUpdateFeatureDefaults,
-  handleSystemHealth
+  handleSystemHealth,
 } from "./routes/admin";
 import {
   handleFeatureToggle,

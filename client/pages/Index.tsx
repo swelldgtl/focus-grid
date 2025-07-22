@@ -1261,8 +1261,6 @@ export default function Index() {
       style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
-
-
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -2287,7 +2285,7 @@ export default function Index() {
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => window.location.href = '/admin'}
+              onClick={() => (window.location.href = "/admin")}
               className="text-muted-foreground hover:text-foreground"
             >
               Admin Dashboard
