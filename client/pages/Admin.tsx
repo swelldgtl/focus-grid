@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import ClientManager from '@/components/admin/ClientManager';
 import FeatureManager from '@/components/admin/FeatureManager';
+import AdminSettings from '@/components/admin/AdminSettings';
 
 export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
@@ -189,22 +190,9 @@ export default function Admin() {
             <FeatureManager />
           </TabsContent>
 
-          {/* Settings Tab - Placeholder */}
+          {/* Settings Tab */}
           <TabsContent value="settings">
-            <Card>
-              <CardHeader>
-                <CardTitle>Admin Settings</CardTitle>
-                <p className="text-sm text-muted-foreground">
-                  Configure admin preferences and system settings
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="text-center py-8">
-                  <Shield className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                  <p className="text-muted-foreground">Admin settings coming next...</p>
-                </div>
-              </CardContent>
-            </Card>
+            <AdminSettings />
           </TabsContent>
         </Tabs>
       </div>
