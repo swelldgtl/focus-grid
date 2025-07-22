@@ -167,15 +167,15 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
         
         <div className="pt-2 border-t space-y-2">
           <div className="text-xs text-muted-foreground">
-            Changes take effect immediately
+            Toggle features above, then click Update
           </div>
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
             onClick={() => window.location.reload()}
-            className="w-full text-xs"
+            className="w-full"
           >
-            Force Page Refresh (if toggles not working)
+            Update
           </Button>
         </div>
       </CardContent>
