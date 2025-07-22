@@ -2,14 +2,19 @@ import { neon } from "@neondatabase/serverless";
 
 // Get database URL from environment
 const getDatabaseUrl = () => {
-  return process.env.DATABASE_URL || "";
+  const url = process.env.DATABASE_URL;
+  if (!url) {
+    console.error('DATABASE_URL environment variable is not set');
+    console.error('Available env vars:', Object.keys(process.env).filter(key => key.includes('DATABASE')));
+  }
+  return url || "";
 };
 
 // Create database connection
 const createConnection = () => {
   const url = getDatabaseUrl();
   if (!url) {
-    throw new Error("DATABASE_URL environment variable is not set");
+    throw new Error("DATABASE_URL environment variable is not set. Check deployment configuration.");
   }
   return neon(url);
 };
