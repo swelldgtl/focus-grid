@@ -1,9 +1,5 @@
-# API routes should be handled by serverless functions
+# API routes to functions
 /api/*    /.netlify/functions/api/:splat   200
 
-# Admin routes - serve admin app
-/admin/*    /admin/index.html   200
-/admin    /admin/index.html   200
-
-# Main client app SPA routing
-/*    /client/index.html   200
+# Handle SPA routing for main app and admin
+/*    /index.html   200
