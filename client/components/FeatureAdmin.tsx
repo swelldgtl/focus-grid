@@ -103,10 +103,13 @@ export default function FeatureAdmin({ clientId }: FeatureAdminProps) {
             Failed to load configuration
           </div>
           {error && (
-            <div className="text-xs text-muted-foreground mb-2">
+            <div className="text-xs text-muted-foreground mb-2 p-2 bg-red-50 rounded">
               Error: {error}
             </div>
           )}
+          <div className="text-xs text-muted-foreground mb-2">
+            Check browser console for details
+          </div>
           <Button
             variant="outline"
             size="sm"
