@@ -1267,12 +1267,7 @@ export default function Index() {
           <FeatureAdmin />
           <ClientSwitcher
             currentClientId={clientConfig?.clientId}
-            onClientChange={(clientId, clientName) => {
-              // Update the URL to test different clients
-              const url = new URL(window.location.href);
-              url.searchParams.set('clientId', clientId);
-              window.location.href = url.toString();
-            }}
+            onClientChange={() => {}} // Handled internally now
           />
         </div>
 
