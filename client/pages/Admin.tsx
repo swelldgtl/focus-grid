@@ -10,7 +10,6 @@ import {
   Plus,
   Building2,
   Briefcase,
-  Shield,
   Database,
   Globe
 } from 'lucide-react';
@@ -28,16 +27,15 @@ export default function Admin() {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-red-600 rounded-lg flex items-center justify-center">
-                <Shield className="h-5 w-5 text-white" />
+              <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
+                <Settings className="h-5 w-5 text-white" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">Focus Grid Admin</h1>
-                <p className="text-sm text-gray-600">Multi-Tenant Management Dashboard</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-red-50 text-red-700">
+              <Badge variant="outline" className="bg-gray-50 text-gray-700">
                 <Database className="h-3 w-3 mr-1" />
                 Admin Mode
               </Badge>
