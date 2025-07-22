@@ -34,6 +34,8 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
   app.get("/api/database/test", handleDatabaseTest);
   app.get("/api/config", handleClientConfig);
+  app.get("/api/features", handleGetFeatures);
+  app.post("/api/features/toggle", handleFeatureToggle);
 
   return app;
 }
