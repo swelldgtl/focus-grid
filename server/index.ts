@@ -17,6 +17,8 @@ export function createServer() {
   });
 
   app.get("/api/demo", handleDemo);
+  app.get("/api/database/test", handleDatabaseTest);
+  app.get("/api/config", handleClientConfig);
 
   return app;
 }
