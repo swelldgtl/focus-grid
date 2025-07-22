@@ -69,7 +69,7 @@ export default function Admin() {
               Features
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2">
-              <Shield className="h-4 w-4" />
+              <Settings className="h-4 w-4" />
               Settings
             </TabsTrigger>
           </TabsList>
