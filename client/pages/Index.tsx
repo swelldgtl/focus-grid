@@ -15,9 +15,7 @@ import {
   ClientConfigStatus,
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
-import FeatureAdmin from "@/components/FeatureAdmin";
-import ClientSwitcher from "@/components/ClientSwitcher";
-import ApiHealth from "@/components/ApiHealth";
+
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -1263,34 +1261,7 @@ export default function Index() {
       style={{ backgroundColor: isFocusModeActive ? "#7D7F7C" : "" }}
     >
       <div className="container mx-auto py-8 px-4 space-y-8">
-        {/* Development Testing Tools */}
-        <div className="flex gap-4 flex-wrap">
-          <FeatureAdmin />
-          <ClientSwitcher
-            currentClientId={clientConfig?.clientId}
-            onClientChange={() => {}} // Handled internally now
-          />
-          <ApiHealth />
-        </div>
 
-        {/* Admin Access */}
-        <Card className="border-red-200 bg-red-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="font-semibold text-red-900">Admin Dashboard</h3>
-                <p className="text-sm text-red-700">Manage all clients and features</p>
-              </div>
-              <Button
-                onClick={() => window.location.href = '/admin'}
-                variant="outline"
-                className="border-red-300 text-red-700 hover:bg-red-100"
-              >
-                Open Admin
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -2312,8 +2283,16 @@ export default function Index() {
       {/* Footer */}
       <footer className="border-t bg-background py-6 mt-8">
         <div className="container mx-auto px-4">
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center gap-6">
             <DataManager />
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.href = '/admin'}
+              className="text-muted-foreground hover:text-foreground"
+            >
+              Admin Dashboard
+            </Button>
           </div>
         </div>
       </footer>
