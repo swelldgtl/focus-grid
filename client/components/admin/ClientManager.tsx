@@ -409,7 +409,7 @@ export default function ClientManager() {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
+            <Button className="flex items-center gap-2 bg-green-600 hover:bg-green-700">
               <Plus className="h-4 w-4" />
               Add Client
             </Button>
