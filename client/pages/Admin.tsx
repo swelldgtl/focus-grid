@@ -85,7 +85,7 @@ export default function Admin() {
                 <CardContent>
                   <div className="text-2xl font-bold">3</div>
                   <p className="text-xs text-muted-foreground">
-                    +1 from last month
+                    Demo, Blue Label Packaging, ERC
                   </p>
                 </CardContent>
               </Card>
@@ -136,8 +136,11 @@ export default function Admin() {
                 >
                   Manage Features
                 </Button>
-                <Button variant="outline">
-                  View Analytics
+                <Button
+                  variant="outline"
+                  onClick={() => setActiveTab("settings")}
+                >
+                  Admin Settings
                 </Button>
               </CardContent>
             </Card>

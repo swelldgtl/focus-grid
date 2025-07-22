@@ -263,7 +263,7 @@ export default function ClientManager() {
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <code className="text-sm bg-gray-100 px-2 py-1 rounded">
-                          {client.subdomain}.domain.com
+                          {client.subdomain}.swellfocusgrid.com
                         </code>
                         <Button variant="ghost" size="sm" className="h-6 w-6 p-0">
                           <ExternalLink className="h-3 w-3" />
