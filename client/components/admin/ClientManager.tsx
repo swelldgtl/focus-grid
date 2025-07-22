@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { 
   Table,
@@ -51,6 +52,7 @@ import {
   getClients,
   createClient,
   updateClient,
+  updateClientFeatures,
   deleteClient,
   generateSlug,
   generateSubdomain,
@@ -464,10 +466,26 @@ export default function ClientManager() {
       });
 
       if (updatedClient) {
-        // Update local state
+        // Update features
+        const featuresUpdated = await updateClientFeatures(clientToEdit.id, editFeatures);
+
+        if (!featuresUpdated) {
+          toast({
+            title: "Warning",
+            description: "Client updated but features update failed",
+            variant: "destructive",
+          });
+        }
+
+        // Update local state with both client data and features
+        const updatedClientWithFeatures = {
+          ...updatedClient,
+          features: editFeatures
+        };
+
         setClients(prev => prev.map(client =>
           client.id === clientToEdit.id
-            ? { ...client, ...updatedClient }
+            ? updatedClientWithFeatures
             : client
         ));
         setIsEditDialogOpen(false);
@@ -487,6 +505,13 @@ export default function ClientManager() {
     } finally {
       setCreating(false);
     }
+  };
+
+  const handleEditFeatureToggle = (featureKey: string, enabled: boolean) => {
+    setEditFeatures(prev => ({
+      ...prev,
+      [featureKey]: enabled
+    }));
   };
 
   if (loading) {
