@@ -78,6 +78,9 @@ export function createServer() {
     });
   });
 
+  // Setup routes (should be removed in production)
+  app.post("/api/setup/admin-auth", handleSetupAdminAuth);
+
   // Authentication routes
   app.post("/api/auth/login", handleLogin);
   app.post("/api/auth/logout", handleLogout);
