@@ -85,6 +85,7 @@ export function createServer() {
   // Setup routes (should be removed in production)
   app.post("/api/setup/admin-auth", handleSetupAdminAuth);
   app.post("/api/setup/action-items", handleSetupActionItems);
+  app.post("/api/setup/update-action-items", handleUpdateActionItemsTable);
 
   // Authentication routes
   app.post("/api/auth/login", handleLogin);
