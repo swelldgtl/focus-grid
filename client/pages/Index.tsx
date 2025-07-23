@@ -1431,11 +1431,7 @@ export default function Index() {
         {/* Long-Term Goals */}
         <LongTermGoalsFeature>
           <Card
-            className={`transition-all duration-500 ${
-              isModuleInactive("long-term-goals")
-                ? "opacity-20 pointer-events-none"
-                : ""
-            }`}
+          className={`transition-all duration-500 ${getInactiveModuleClasses("long-term-goals")}`}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
