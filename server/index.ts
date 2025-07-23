@@ -35,6 +35,12 @@ import {
   requireAuth,
 } from "./routes/auth";
 import { handleSetupAdminAuth } from "./routes/setup";
+import {
+  handleGetActionItems,
+  handleCreateActionItem,
+  handleUpdateActionItem,
+  handleDeleteActionItem,
+} from "./routes/action-items";
 
 // Load environment variables
 dotenv.config({ path: ".env.local" });
