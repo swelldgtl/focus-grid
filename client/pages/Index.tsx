@@ -1302,7 +1302,7 @@ export default function Index() {
           <div className="text-right">
             <div className="space-y-1">
               <p className="text-lg font-medium text-muted-foreground">
-                {clientConfig?.name || "Loading..."}
+                {shouldShowClientInfo() ? clientConfig?.name : "Loading..."}
               </p>
             </div>
           </div>
