@@ -1584,9 +1584,7 @@ export default function Index() {
 
         {/* Goals & Progress (always enabled - core functionality) */}
         <Card
-          className={`transition-all duration-500 ${
-            isModuleInactive("goals") ? "opacity-20 pointer-events-none" : ""
-          }`}
+          className={`transition-all duration-500 ${getInactiveModuleClasses("goals")}`}
         >
           <CardHeader>
             <div className="flex items-center justify-between">
