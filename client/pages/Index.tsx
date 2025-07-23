@@ -15,6 +15,13 @@ import {
   FocusModeFeature,
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
+import {
+  getActionItems,
+  createActionItem,
+  updateActionItem,
+  deleteActionItem,
+  type ActionItem as ApiActionItem,
+} from "@/lib/action-items-api";
 
 import { Input } from "@/components/ui/input";
 import {
