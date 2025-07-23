@@ -1985,11 +1985,7 @@ export default function Index() {
         {/* Blockers & Issues */}
         <BlockersIssuesFeature>
           <Card
-            className={`transition-all duration-500 ${
-              isModuleInactive("blockers")
-                ? "opacity-20 pointer-events-none"
-                : ""
-            }`}
+            className={`transition-all duration-500 ${getInactiveModuleClasses("blockers")}`}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
