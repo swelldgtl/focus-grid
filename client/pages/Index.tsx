@@ -579,16 +579,27 @@ export default function Index() {
     showSaveToast();
   };
 
-  const handleStatusChange = (
+  const handleStatusChange = async (
     actionId: string,
     newStatus: "on-track" | "off-track",
   ) => {
-    setActionItems((prev) =>
-      prev.map((action) =>
-        action.id === actionId ? { ...action, status: newStatus } : action,
-      ),
-    );
-    showSaveToast();
+    try {
+      const updatedItem = await updateActionItem(actionId, {
+        status: newStatus
+      });
+
+      if (updatedItem) {
+        setActionItems((prev) =>
+          prev.map((action) =>
+            action.id === actionId ? convertApiActionItem(updatedItem) : action,
+          ),
+        );
+        showSaveToast();
+      }
+    } catch (error) {
+      console.error("Failed to update action item status:", error);
+      // Optionally show error toast
+    }
   };
 
   const handleDateChange = async (actionId: string, date: Date | undefined) => {
