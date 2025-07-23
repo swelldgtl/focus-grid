@@ -1798,11 +1798,7 @@ export default function Index() {
         {/* Action Plan */}
         <ActionPlanFeature>
           <Card
-            className={`transition-all duration-500 ${
-              isModuleInactive("action-plan")
-                ? "opacity-20 pointer-events-none"
-                : ""
-            }`}
+            className={`transition-all duration-500 ${getInactiveModuleClasses("action-plan")}`}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
