@@ -171,6 +171,59 @@ export default function Index() {
   const [actionItems, setActionItems] = useState<ActionItem[]>([]);
   const [actionItemsLoading, setActionItemsLoading] = useState(true);
 
+  // Convert API ActionItem to local ActionItem format
+  const convertApiActionItem = (apiItem: ApiActionItem): ActionItem => ({
+    id: apiItem.id,
+    title: apiItem.title,
+    status: apiItem.status,
+    dueDate: apiItem.due_date,
+    client_id: apiItem.client_id,
+    due_date: apiItem.due_date,
+    created_at: apiItem.created_at,
+    updated_at: apiItem.updated_at,
+  });
+
+  // Load action items from database
+  const loadActionItems = async () => {
+    if (!clientConfig?.clientId) return;
+
+    try {
+      setActionItemsLoading(true);
+      const apiActionItems = await getActionItems(clientConfig.clientId);
+      const convertedItems = apiActionItems.map(convertApiActionItem);
+      setActionItems(convertedItems);
+    } catch (error) {
+      console.error("Failed to load action items:", error);
+      // Fallback to default items if API fails
+      setActionItems([
+        {
+          id: "1",
+          title: "Review Q4 performance metrics",
+          status: "on-track",
+        },
+        {
+          id: "2",
+          title: "Update client documentation",
+          status: "on-track",
+        },
+        {
+          id: "3",
+          title: "Prepare monthly newsletter",
+          status: "off-track",
+        },
+      ]);
+    } finally {
+      setActionItemsLoading(false);
+    }
+  };
+
+  // Load action items when client config changes
+  useEffect(() => {
+    if (clientConfig?.clientId) {
+      loadActionItems();
+    }
+  }, [clientConfig?.clientId]);
+
   const [blockers, blockersActions] = usePersistentArray<BlockerIssue>(
     STORAGE_KEYS.BLOCKERS,
     [
