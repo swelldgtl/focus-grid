@@ -116,11 +116,11 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
   };
 
   useEffect(() => {
-    // Try to load fallback config immediately with subdomain detection
+    // Detect client from multiple sources with priority order
     const urlParams = new URLSearchParams(window.location.search);
     const urlClientId = urlParams.get("clientId");
 
-    // Detect client from subdomain
+    // Detect client from subdomain (highest priority)
     let subdomainClientId = null;
     const hostname = window.location.hostname;
     if (
@@ -137,16 +137,24 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       subdomainClientId = subdomainToClientId[subdomain];
     }
 
-    const targetClientId = urlClientId || clientId || subdomainClientId;
+    // Priority order: URL param > subdomain > provided clientId > default
+    const targetClientId = urlClientId || subdomainClientId || clientId;
 
-    const fallbackConfig = targetClientId
-      ? getFallbackConfig(targetClientId)
-      : getDefaultFallbackConfig();
-    if (fallbackConfig) {
-      console.log(
-        "Loading fallback configuration immediately for:",
-        targetClientId,
-      );
+    // Only load fallback if we have a specific client ID
+    // This prevents showing "Demo Client" when we should show a specific client
+    if (targetClientId) {
+      const fallbackConfig = getFallbackConfig(targetClientId);
+      if (fallbackConfig) {
+        console.log(
+          "Loading fallback configuration immediately for:",
+          targetClientId,
+        );
+        setConfig(fallbackConfig);
+        setLoading(false);
+      }
+    } else {
+      // If no specific client is detected, use default but keep loading state
+      const fallbackConfig = getDefaultFallbackConfig();
       setConfig(fallbackConfig);
       setLoading(false);
     }
