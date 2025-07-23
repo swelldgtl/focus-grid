@@ -1267,9 +1267,17 @@ export default function Index() {
     return activeFocusModule !== null && activeFocusModule !== moduleId;
   };
 
-  const removeActionItem = (id: string) => {
-    setActionItems((prev) => prev.filter((item) => item.id !== id));
-    showSaveToast();
+  const removeActionItem = async (id: string) => {
+    try {
+      const success = await deleteActionItem(id);
+
+      if (success) {
+        setActionItems((prev) => prev.filter((item) => item.id !== id));
+        showSaveToast();
+      }
+    } catch (error) {
+      console.error("Failed to delete action item:", error);
+    }
   };
 
   const addNewBlocker = () => {
