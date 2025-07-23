@@ -162,37 +162,9 @@ export default function Index() {
     }
   }, [clientConfig?.name]);
 
-  const [actionItems, actionItemsActions] = usePersistentArray<ActionItem>(
-    STORAGE_KEYS.ACTION_ITEMS,
-    [
-      {
-        id: "1",
-        title: "Review Q4 performance metrics",
-        status: "on-track",
-      },
-      {
-        id: "2",
-        title: "Update client documentation",
-        status: "on-track",
-      },
-      {
-        id: "3",
-        title: "Prepare monthly newsletter",
-        status: "off-track",
-      },
-      {
-        id: "4",
-        title: "Analyze user feedback",
-        status: "on-track",
-      },
-      {
-        id: "5",
-        title: "Optimize database queries",
-        status: "off-track",
-      },
-    ],
-  );
-  const setActionItems = actionItemsActions.set;
+  // Action items state (database-backed)
+  const [actionItems, setActionItems] = useState<ActionItem[]>([]);
+  const [actionItemsLoading, setActionItemsLoading] = useState(true);
 
   const [blockers, blockersActions] = usePersistentArray<BlockerIssue>(
     STORAGE_KEYS.BLOCKERS,
