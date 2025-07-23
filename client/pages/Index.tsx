@@ -2138,9 +2138,7 @@ export default function Index() {
         {/* Agenda */}
         <AgendaFeature>
           <Card
-            className={`transition-all duration-500 ${
-              isModuleInactive("agenda") ? "opacity-20 pointer-events-none" : ""
-            }`}
+            className={`transition-all duration-500 ${getInactiveModuleClasses("agenda")}`}
           >
             <CardHeader>
               <div className="flex items-center justify-between">
