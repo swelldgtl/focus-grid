@@ -360,37 +360,66 @@ export async function updateActionItem(
   try {
     const sql = createConnection();
 
-    const setParts = [];
-    const values = [];
-
-    if (updates.title !== undefined) {
-      setParts.push(`title = $${setParts.length + 1}`);
-      values.push(updates.title);
-    }
-    if (updates.status !== undefined) {
-      setParts.push(`status = $${setParts.length + 1}`);
-      values.push(updates.status);
-    }
-    if (updates.due_date !== undefined) {
-      setParts.push(`due_date = $${setParts.length + 1}`);
-      values.push(updates.due_date);
-    }
-
-    if (setParts.length === 0) {
+    // Build update query dynamically
+    if (updates.title !== undefined && updates.status !== undefined && updates.due_date !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET title = ${updates.title}, status = ${updates.status}, due_date = ${updates.due_date}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.title !== undefined && updates.status !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET title = ${updates.title}, status = ${updates.status}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.title !== undefined && updates.due_date !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET title = ${updates.title}, due_date = ${updates.due_date}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.status !== undefined && updates.due_date !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET status = ${updates.status}, due_date = ${updates.due_date}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.title !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET title = ${updates.title}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.status !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET status = ${updates.status}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else if (updates.due_date !== undefined) {
+      const result = await sql`
+        UPDATE action_items
+        SET due_date = ${updates.due_date}, updated_at = NOW()
+        WHERE id = ${actionItemId}
+        RETURNING id, client_id, title, status, due_date, created_at, updated_at
+      `;
+      return result[0] as ActionItem || null;
+    } else {
       throw new Error("No updates provided");
     }
-
-    setParts.push(`updated_at = NOW()`);
-    values.push(actionItemId);
-
-    const result = await sql`
-      UPDATE action_items
-      SET ${sql.unsafe(setParts.join(', '))}
-      WHERE id = ${actionItemId}
-      RETURNING id, client_id, title, status, due_date, created_at, updated_at
-    `;
-
-    return result[0] as ActionItem || null;
   } catch (error) {
     console.error("Error updating action item:", error);
     return null;
