@@ -115,6 +115,11 @@ interface ActionItem {
   title: string;
   status: "on-track" | "off-track";
   dueDate?: string; // ISO date string (optional)
+  // API fields (when loaded from database)
+  client_id?: string;
+  due_date?: string; // API uses snake_case
+  created_at?: string;
+  updated_at?: string;
 }
 
 interface GoalRecord {
