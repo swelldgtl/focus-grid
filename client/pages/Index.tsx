@@ -553,6 +553,17 @@ export default function Index() {
     showSaveToast();
   };
 
+  const handleDateChange = (actionId: string, date: Date | undefined) => {
+    setActionItems((prev) =>
+      prev.map((action) =>
+        action.id === actionId
+          ? { ...action, dueDate: date ? date.toISOString().split('T')[0] : undefined }
+          : action,
+      ),
+    );
+    showSaveToast();
+  };
+
   const getActionItemBackground = (status: "on-track" | "off-track") => {
     return status === "on-track"
       ? "bg-green-50 border-green-200 hover:bg-green-100"
