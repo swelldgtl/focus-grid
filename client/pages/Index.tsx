@@ -118,27 +118,28 @@ export default function Index() {
   // Load client configuration and feature flags
   const { config: clientConfig, loading: configLoading } = useClientConfig();
 
-  // Check if we should show client info (prevent flashing wrong client name)
-  const shouldShowClientInfo = () => {
-    // If still loading, don't show client info
-    if (configLoading) return false;
-
-    // Check if we have a specific client based on subdomain or URL params
+  // Get expected client based on current context to prevent wrong client flashing
+  const getExpectedClientName = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const urlClientId = urlParams.get("clientId");
 
-    // Detect subdomain
+    // Check subdomain for expected client
     const hostname = window.location.hostname;
-    const isSpecificSubdomain = hostname.includes(".swellfocusgrid.com") && !hostname.startsWith("www.");
-
-    // If we have URL param or subdomain, and config matches, show it
-    if (urlClientId || isSpecificSubdomain) {
-      return !!clientConfig;
+    if (hostname.includes(".swellfocusgrid.com") && !hostname.startsWith("www.")) {
+      const subdomain = hostname.split(".")[0];
+      const subdomainToClientName: Record<string, string> = {
+        demo: "Demo Client",
+        bluelabelpackaging: "Blue Label Packaging",
+        "blue-label-packaging": "Blue Label Packaging",
+        erc: "ERC",
+      };
+      return subdomainToClientName[subdomain];
     }
 
-    // For main domain, show default after a brief delay
-    return !!clientConfig;
+    return null; // No specific expected client
   };
+
+  const expectedClientName = getExpectedClientName();
 
   // Update page title based on client configuration
   useEffect(() => {
