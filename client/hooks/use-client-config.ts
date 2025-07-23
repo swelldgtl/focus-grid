@@ -40,10 +40,26 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       setLoading(true);
       setError(null);
 
-      // Check URL parameters first, then provided clientId, then environment default
+      // Check URL parameters first, then provided clientId, then detect from subdomain
       const urlParams = new URLSearchParams(window.location.search);
       const urlClientId = urlParams.get("clientId");
-      const targetClientId = urlClientId || clientId;
+
+      // Try to detect client from subdomain (e.g., erc.swellfocusgrid.com -> "erc")
+      let subdomainClientId = null;
+      const hostname = window.location.hostname;
+      if (hostname.includes('.swellfocusgrid.com') && !hostname.startsWith('www.')) {
+        const subdomain = hostname.split('.')[0];
+        // Map subdomain to client ID based on slug
+        const subdomainToClientId: Record<string, string> = {
+          'demo': '8323e82d-075a-496d-8861-a86d862a67bc',
+          'bluelabelpackaging': 'fbf03fbc-bf81-462b-a88f-668dfcb09acc',
+          'blue-label-packaging': 'fbf03fbc-bf81-462b-a88f-668dfcb09acc',
+          'erc': '360e6a09-c7e2-447e-8dbc-cebae72f1ff2',
+        };
+        subdomainClientId = subdomainToClientId[subdomain];
+      }
+
+      const targetClientId = urlClientId || clientId || subdomainClientId;
 
       const queryParams = targetClientId ? `?clientId=${targetClientId}` : "";
       const url = `/api/config${queryParams}`;
