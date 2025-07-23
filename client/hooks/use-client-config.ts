@@ -40,7 +40,7 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       setLoading(true);
       setError(null);
 
-      // Check URL parameters first, then provided clientId, then detect from subdomain
+      // Check URL parameters first, then subdomain, then provided clientId
       const urlParams = new URLSearchParams(window.location.search);
       const urlClientId = urlParams.get("clientId");
 
