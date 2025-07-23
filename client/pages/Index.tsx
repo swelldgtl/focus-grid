@@ -72,6 +72,7 @@ import {
   Binoculars,
   ChevronDown,
   ChevronRight,
+  CalendarDays,
 } from "lucide-react";
 
 interface Task {
