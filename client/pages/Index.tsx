@@ -659,20 +659,32 @@ export default function Index() {
     setEditingTitleValue(currentTitle);
   };
 
-  const handleTitleSave = () => {
+  const handleTitleSave = async () => {
     if (!editingActionTitle) return;
 
-    setActionItems((prev) =>
-      prev.map((action) =>
-        action.id === editingActionTitle
-          ? { ...action, title: editingTitleValue }
-          : action,
-      ),
-    );
+    try {
+      const updatedItem = await updateActionItem(editingActionTitle, {
+        title: editingTitleValue,
+      });
 
-    setEditingActionTitle(null);
-    setEditingTitleValue("");
-    showSaveToast();
+      if (updatedItem) {
+        setActionItems((prev) =>
+          prev.map((action) =>
+            action.id === editingActionTitle
+              ? convertApiActionItem(updatedItem)
+              : action,
+          ),
+        );
+
+        setEditingActionTitle(null);
+        setEditingTitleValue("");
+        showSaveToast();
+      }
+    } catch (error) {
+      console.error("Failed to update action item title:", error);
+      setEditingActionTitle(null);
+      setEditingTitleValue("");
+    }
   };
 
   const handleTitleCancel = () => {
