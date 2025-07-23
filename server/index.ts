@@ -34,7 +34,7 @@ import {
   handleCheckSession,
   requireAuth,
 } from "./routes/auth";
-import { handleSetupAdminAuth, handleSetupActionItems } from "./routes/setup";
+import { handleSetupAdminAuth, handleSetupActionItems, handleUpdateActionItemsTable } from "./routes/setup";
 import {
   handleGetActionItems,
   handleCreateActionItem,
