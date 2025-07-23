@@ -591,15 +591,28 @@ export default function Index() {
     showSaveToast();
   };
 
-  const handleDateChange = (actionId: string, date: Date | undefined) => {
-    setActionItems((prev) =>
-      prev.map((action) =>
-        action.id === actionId
-          ? { ...action, dueDate: date ? date.toISOString().split('T')[0] : undefined }
-          : action,
-      ),
-    );
-    showSaveToast();
+  const handleDateChange = async (actionId: string, date: Date | undefined) => {
+    const dateString = date ? date.toISOString().split('T')[0] : null;
+
+    try {
+      const updatedItem = await updateActionItem(actionId, {
+        dueDate: dateString
+      });
+
+      if (updatedItem) {
+        setActionItems((prev) =>
+          prev.map((action) =>
+            action.id === actionId
+              ? convertApiActionItem(updatedItem)
+              : action,
+          ),
+        );
+        showSaveToast();
+      }
+    } catch (error) {
+      console.error("Failed to update action item date:", error);
+      // Optionally show error toast
+    }
   };
 
   const getActionItemBackground = (status: "on-track" | "off-track") => {
