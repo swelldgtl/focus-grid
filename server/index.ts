@@ -122,5 +122,11 @@ export function createServer() {
   );
   app.get("/api/admin/health", requireAuth, handleSystemHealth);
 
+  // Action Items routes (protected)
+  app.get("/api/clients/:clientId/action-items", requireAuth, handleGetActionItems);
+  app.post("/api/clients/:clientId/action-items", requireAuth, handleCreateActionItem);
+  app.put("/api/action-items/:actionItemId", requireAuth, handleUpdateActionItem);
+  app.delete("/api/action-items/:actionItemId", requireAuth, handleDeleteActionItem);
+
   return app;
 }
