@@ -1782,6 +1782,30 @@ export default function Index() {
                       )}
                     </div>
                     <div className="flex items-center gap-2">
+                      {/* Date Picker */}
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            variant="outline"
+                            className="w-36 justify-start text-left font-normal"
+                          >
+                            <CalendarDays className="mr-2 h-4 w-4" />
+                            {action.dueDate
+                              ? new Date(action.dueDate).toLocaleDateString()
+                              : "Due date"
+                            }
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                          <Calendar
+                            mode="single"
+                            selected={action.dueDate ? new Date(action.dueDate) : undefined}
+                            onSelect={(date) => handleDateChange(action.id, date)}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+
                       <Select
                         value={action.status}
                         onValueChange={(value: "on-track" | "off-track") =>
