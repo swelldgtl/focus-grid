@@ -62,7 +62,8 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
         subdomainClientId = subdomainToClientId[subdomain];
       }
 
-      const targetClientId = urlClientId || clientId || subdomainClientId;
+      // Priority order: URL param > subdomain > provided clientId
+      const targetClientId = urlClientId || subdomainClientId || clientId;
 
       const queryParams = targetClientId ? `?clientId=${targetClientId}` : "";
       const url = `/api/config${queryParams}`;
