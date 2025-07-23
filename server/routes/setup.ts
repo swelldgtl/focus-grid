@@ -46,14 +46,32 @@ export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
 
     // Insert default admin user (password: admin123)
     await sql`
-      INSERT INTO admin_users (username, email, password_hash) 
+      INSERT INTO admin_users (username, email, password_hash)
       VALUES ('admin', 'admin@swellfocusgrid.com', '$2b$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
       ON CONFLICT (username) DO NOTHING
     `;
 
+    // Create action_items table
+    await sql`
+      CREATE TABLE IF NOT EXISTS action_items (
+          id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+          client_id UUID NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+          title VARCHAR(500) NOT NULL,
+          status VARCHAR(20) DEFAULT 'on-track' CHECK (status IN ('on-track', 'off-track')),
+          due_date DATE,
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `;
+
+    // Create indexes for action_items
+    await sql`CREATE INDEX IF NOT EXISTS idx_action_items_client_id ON action_items(client_id)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_action_items_status ON action_items(status)`;
+    await sql`CREATE INDEX IF NOT EXISTS idx_action_items_due_date ON action_items(due_date)`;
+
     return res.status(200).json({
       success: true,
-      message: "Admin authentication tables created successfully",
+      message: "Admin authentication and action items tables created successfully",
       defaultCredentials: {
         username: "admin",
         password: "admin123",
