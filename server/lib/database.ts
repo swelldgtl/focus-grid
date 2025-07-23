@@ -361,14 +361,18 @@ export async function updateActionItem(
     const sql = createConnection();
 
     // Build update query dynamically
-    if (updates.title !== undefined && updates.status !== undefined && updates.due_date !== undefined) {
+    if (
+      updates.title !== undefined &&
+      updates.status !== undefined &&
+      updates.due_date !== undefined
+    ) {
       const result = await sql`
         UPDATE action_items
         SET title = ${updates.title}, status = ${updates.status}, due_date = ${updates.due_date}, updated_at = NOW()
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.title !== undefined && updates.status !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -376,7 +380,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.title !== undefined && updates.due_date !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -384,7 +388,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.status !== undefined && updates.due_date !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -392,7 +396,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.title !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -400,7 +404,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.status !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -408,7 +412,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else if (updates.due_date !== undefined) {
       const result = await sql`
         UPDATE action_items
@@ -416,7 +420,7 @@ export async function updateActionItem(
         WHERE id = ${actionItemId}
         RETURNING id, client_id, title, status, due_date, created_at, updated_at
       `;
-      return result[0] as ActionItem || null;
+      return (result[0] as ActionItem) || null;
     } else {
       throw new Error("No updates provided");
     }

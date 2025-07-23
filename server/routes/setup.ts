@@ -1,9 +1,12 @@
 import { RequestHandler } from "express";
 
-export const handleUpdateActionItemsTable: RequestHandler = async (req, res) => {
+export const handleUpdateActionItemsTable: RequestHandler = async (
+  req,
+  res,
+) => {
   try {
     const { neon } = await import("@neondatabase/serverless");
-    
+
     const getDatabaseUrl = () => {
       const url = process.env.DATABASE_URL;
       if (!url) {
@@ -11,7 +14,7 @@ export const handleUpdateActionItemsTable: RequestHandler = async (req, res) => 
       }
       return url;
     };
-    
+
     const sql = neon(getDatabaseUrl());
 
     // Add due_date column if it doesn't exist
@@ -30,7 +33,6 @@ export const handleUpdateActionItemsTable: RequestHandler = async (req, res) => 
       success: true,
       message: "Action items table updated successfully",
     });
-
   } catch (error) {
     console.error("Update action items table error:", error);
     return res.status(500).json({
@@ -44,7 +46,7 @@ export const handleUpdateActionItemsTable: RequestHandler = async (req, res) => 
 export const handleSetupActionItems: RequestHandler = async (req, res) => {
   try {
     const { neon } = await import("@neondatabase/serverless");
-    
+
     const getDatabaseUrl = () => {
       const url = process.env.DATABASE_URL;
       if (!url) {
@@ -52,7 +54,7 @@ export const handleSetupActionItems: RequestHandler = async (req, res) => {
       }
       return url;
     };
-    
+
     const sql = neon(getDatabaseUrl());
 
     // Create action_items table
@@ -77,7 +79,6 @@ export const handleSetupActionItems: RequestHandler = async (req, res) => {
       success: true,
       message: "Action items table created successfully",
     });
-
   } catch (error) {
     console.error("Setup action items error:", error);
     return res.status(500).json({
@@ -91,7 +92,7 @@ export const handleSetupActionItems: RequestHandler = async (req, res) => {
 export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
   try {
     const { neon } = await import("@neondatabase/serverless");
-    
+
     const getDatabaseUrl = () => {
       const url = process.env.DATABASE_URL;
       if (!url) {
@@ -99,7 +100,7 @@ export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
       }
       return url;
     };
-    
+
     const sql = neon(getDatabaseUrl());
 
     // Create admin_users table
@@ -148,7 +149,6 @@ export const handleSetupAdminAuth: RequestHandler = async (req, res) => {
         note: "Please change these credentials after first login",
       },
     });
-
   } catch (error) {
     console.error("Setup admin auth error:", error);
     return res.status(500).json({

@@ -49,7 +49,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -142,7 +146,10 @@ export default function Index() {
 
     // Check subdomain for expected client
     const hostname = window.location.hostname;
-    if (hostname.includes(".swellfocusgrid.com") && !hostname.startsWith("www.")) {
+    if (
+      hostname.includes(".swellfocusgrid.com") &&
+      !hostname.startsWith("www.")
+    ) {
       const subdomain = hostname.split(".")[0];
       const subdomainToClientName: Record<string, string> = {
         demo: "Demo Client",
@@ -585,7 +592,7 @@ export default function Index() {
   ) => {
     try {
       const updatedItem = await updateActionItem(actionId, {
-        status: newStatus
+        status: newStatus,
       });
 
       if (updatedItem) {
@@ -603,19 +610,17 @@ export default function Index() {
   };
 
   const handleDateChange = async (actionId: string, date: Date | undefined) => {
-    const dateString = date ? date.toISOString().split('T')[0] : null;
+    const dateString = date ? date.toISOString().split("T")[0] : null;
 
     try {
       const updatedItem = await updateActionItem(actionId, {
-        dueDate: dateString
+        dueDate: dateString,
       });
 
       if (updatedItem) {
         setActionItems((prev) =>
           prev.map((action) =>
-            action.id === actionId
-              ? convertApiActionItem(updatedItem)
-              : action,
+            action.id === actionId ? convertApiActionItem(updatedItem) : action,
           ),
         );
         showSaveToast();
@@ -1407,8 +1412,10 @@ export default function Index() {
             <div className="space-y-1">
               <p className="text-lg font-medium text-muted-foreground">
                 {expectedClientName
-                  ? (clientConfig?.name === expectedClientName ? clientConfig.name : "Loading...")
-                  : (clientConfig?.name || "Loading...")}
+                  ? clientConfig?.name === expectedClientName
+                    ? clientConfig.name
+                    : "Loading..."
+                  : clientConfig?.name || "Loading..."}
               </p>
             </div>
           </div>
@@ -1882,15 +1889,20 @@ export default function Index() {
                             <CalendarDays className="mr-2 h-4 w-4" />
                             {action.dueDate
                               ? format(new Date(action.dueDate), "MMM d, yyyy")
-                              : "Due date"
-                            }
+                              : "Due date"}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-auto p-0" align="start">
                           <Calendar
                             mode="single"
-                            selected={action.dueDate ? new Date(action.dueDate) : undefined}
-                            onSelect={(date) => handleDateChange(action.id, date)}
+                            selected={
+                              action.dueDate
+                                ? new Date(action.dueDate)
+                                : undefined
+                            }
+                            onSelect={(date) =>
+                              handleDateChange(action.id, date)
+                            }
                             initialFocus
                           />
                           {action.dueDate && (
@@ -1898,7 +1910,9 @@ export default function Index() {
                               <Button
                                 variant="outline"
                                 className="w-full"
-                                onClick={() => handleDateChange(action.id, undefined)}
+                                onClick={() =>
+                                  handleDateChange(action.id, undefined)
+                                }
                               >
                                 Clear date
                               </Button>
