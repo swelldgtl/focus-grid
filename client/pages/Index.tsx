@@ -1284,6 +1284,13 @@ export default function Index() {
     return activeFocusModule !== null && activeFocusModule !== moduleId;
   };
 
+  // Get the CSS classes for inactive modules
+  const getInactiveModuleClasses = (moduleId: string) => {
+    return isModuleInactive(moduleId)
+      ? "opacity-20 pointer-events-none blur-sm"
+      : "";
+  };
+
   const removeActionItem = async (id: string) => {
     try {
       const success = await deleteActionItem(id);
