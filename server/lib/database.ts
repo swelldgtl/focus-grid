@@ -312,6 +312,105 @@ export async function cleanupExpiredSessions(): Promise<boolean> {
   }
 }
 
+// Action Items CRUD operations
+export async function getActionItems(clientId: string): Promise<ActionItem[]> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      SELECT id, client_id, title, status, due_date, created_at, updated_at
+      FROM action_items
+      WHERE client_id = ${clientId}
+      ORDER BY created_at ASC
+    `;
+    return result as ActionItem[];
+  } catch (error) {
+    console.error("Error fetching action items:", error);
+    return [];
+  }
+}
+
+export async function createActionItem(
+  clientId: string,
+  title: string,
+  status: "on-track" | "off-track" = "on-track",
+  dueDate?: string,
+): Promise<ActionItem | null> {
+  try {
+    const sql = createConnection();
+    const result = await sql`
+      INSERT INTO action_items (client_id, title, status, due_date)
+      VALUES (${clientId}, ${title}, ${status}, ${dueDate || null})
+      RETURNING id, client_id, title, status, due_date, created_at, updated_at
+    `;
+    return result[0] as ActionItem;
+  } catch (error) {
+    console.error("Error creating action item:", error);
+    return null;
+  }
+}
+
+export async function updateActionItem(
+  actionItemId: string,
+  updates: {
+    title?: string;
+    status?: "on-track" | "off-track";
+    due_date?: string | null;
+  },
+): Promise<ActionItem | null> {
+  try {
+    const sql = createConnection();
+
+    const setParts = [];
+    const values = [];
+
+    if (updates.title !== undefined) {
+      setParts.push(`title = $${setParts.length + 1}`);
+      values.push(updates.title);
+    }
+    if (updates.status !== undefined) {
+      setParts.push(`status = $${setParts.length + 1}`);
+      values.push(updates.status);
+    }
+    if (updates.due_date !== undefined) {
+      setParts.push(`due_date = $${setParts.length + 1}`);
+      values.push(updates.due_date);
+    }
+
+    if (setParts.length === 0) {
+      throw new Error("No updates provided");
+    }
+
+    setParts.push(`updated_at = NOW()`);
+    values.push(actionItemId);
+
+    const result = await sql`
+      UPDATE action_items
+      SET ${sql.unsafe(setParts.join(', '))}
+      WHERE id = ${actionItemId}
+      RETURNING id, client_id, title, status, due_date, created_at, updated_at
+    `;
+
+    return result[0] as ActionItem || null;
+  } catch (error) {
+    console.error("Error updating action item:", error);
+    return null;
+  }
+}
+
+export async function deleteActionItem(actionItemId: string): Promise<boolean> {
+  try {
+    const sql = createConnection();
+    await sql`
+      DELETE FROM action_items
+      WHERE id = ${actionItemId}
+    `;
+    return true;
+  } catch (error) {
+    console.error("Error deleting action item:", error);
+    return false;
+  }
+}
+
 // Feature management
 export async function getClientFeatures(
   clientId: string,
