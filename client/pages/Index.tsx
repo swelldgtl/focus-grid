@@ -632,20 +632,26 @@ export default function Index() {
       : "bg-red-50 border-red-200 hover:bg-red-100";
   };
 
-  const addNewActionItem = () => {
-    const newId = (
-      Math.max(...actionItems.map((item) => parseInt(item.id))) + 1
-    ).toString();
-    const newItem: ActionItem = {
-      id: newId,
-      title: "New action item",
-      status: "on-track",
-    };
-    setActionItems((prev) => [newItem, ...prev]);
-    // Auto-focus on the new item's title for editing
-    setEditingActionTitle(newId);
-    setEditingTitleValue("New action item");
-    showSaveToast();
+  const addNewActionItem = async () => {
+    if (!clientConfig?.clientId) return;
+
+    try {
+      const newItem = await createActionItem(clientConfig.clientId, {
+        title: "New action item",
+        status: "on-track",
+      });
+
+      if (newItem) {
+        const convertedItem = convertApiActionItem(newItem);
+        setActionItems((prev) => [convertedItem, ...prev]);
+        // Auto-focus on the new item's title for editing
+        setEditingActionTitle(newItem.id);
+        setEditingTitleValue("New action item");
+        showSaveToast();
+      }
+    } catch (error) {
+      console.error("Failed to create action item:", error);
+    }
   };
 
   const handleTitleClick = (actionId: string, currentTitle: string) => {
