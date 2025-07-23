@@ -118,6 +118,28 @@ export default function Index() {
   // Load client configuration and feature flags
   const { config: clientConfig, loading: configLoading } = useClientConfig();
 
+  // Check if we should show client info (prevent flashing wrong client name)
+  const shouldShowClientInfo = () => {
+    // If still loading, don't show client info
+    if (configLoading) return false;
+
+    // Check if we have a specific client based on subdomain or URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const urlClientId = urlParams.get("clientId");
+
+    // Detect subdomain
+    const hostname = window.location.hostname;
+    const isSpecificSubdomain = hostname.includes(".swellfocusgrid.com") && !hostname.startsWith("www.");
+
+    // If we have URL param or subdomain, and config matches, show it
+    if (urlClientId || isSpecificSubdomain) {
+      return !!clientConfig;
+    }
+
+    // For main domain, show default after a brief delay
+    return !!clientConfig;
+  };
+
   // Update page title based on client configuration
   useEffect(() => {
     if (clientConfig?.name) {
