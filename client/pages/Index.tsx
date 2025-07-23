@@ -103,6 +103,7 @@ interface ActionItem {
   id: string;
   title: string;
   status: "on-track" | "off-track";
+  dueDate?: string; // ISO date string (optional)
 }
 
 interface GoalRecord {
