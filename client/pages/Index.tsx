@@ -118,6 +118,15 @@ export default function Index() {
   // Load client configuration and feature flags
   const { config: clientConfig, loading: configLoading } = useClientConfig();
 
+  // Update page title based on client configuration
+  useEffect(() => {
+    if (clientConfig?.name) {
+      document.title = `swell Focus Grid - ${clientConfig.name}`;
+    } else {
+      document.title = "swell Focus Grid";
+    }
+  }, [clientConfig?.name]);
+
   const [actionItems, actionItemsActions] = usePersistentArray<ActionItem>(
     STORAGE_KEYS.ACTION_ITEMS,
     [
