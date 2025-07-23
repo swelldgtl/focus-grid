@@ -86,6 +86,17 @@ export interface AdminSession {
   created_at: string;
 }
 
+// Action Items interface for database
+export interface ActionItem {
+  id: string;
+  client_id: string;
+  title: string;
+  status: "on-track" | "off-track";
+  due_date?: string; // ISO date string
+  created_at: string;
+  updated_at: string;
+}
+
 // Client operations
 export async function getClients(): Promise<Client[]> {
   try {
