@@ -22,6 +22,11 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState("overview");
   const { isAuthenticated, loading, logout } = useAuthCheck();
 
+  // Set admin page title
+  useEffect(() => {
+    document.title = "swell Focus Grid - Admin Console";
+  }, []);
+
   // Redirect to login if not authenticated
   useEffect(() => {
     if (!loading && !isAuthenticated) {
