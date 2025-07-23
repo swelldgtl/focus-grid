@@ -1788,11 +1788,13 @@ export default function Index() {
                         <PopoverTrigger asChild>
                           <Button
                             variant="outline"
-                            className="w-36 justify-start text-left font-normal"
+                            className={`w-36 justify-start text-left font-normal ${
+                              !action.dueDate ? "text-muted-foreground" : ""
+                            }`}
                           >
                             <CalendarDays className="mr-2 h-4 w-4" />
                             {action.dueDate
-                              ? new Date(action.dueDate).toLocaleDateString()
+                              ? format(new Date(action.dueDate), "MMM d, yyyy")
                               : "Due date"
                             }
                           </Button>
@@ -1804,6 +1806,17 @@ export default function Index() {
                             onSelect={(date) => handleDateChange(action.id, date)}
                             initialFocus
                           />
+                          {action.dueDate && (
+                            <div className="p-3 border-t">
+                              <Button
+                                variant="outline"
+                                className="w-full"
+                                onClick={() => handleDateChange(action.id, undefined)}
+                              >
+                                Clear date
+                              </Button>
+                            </div>
+                          )}
                         </PopoverContent>
                       </Popover>
 
