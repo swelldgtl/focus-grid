@@ -118,7 +118,10 @@ export async function getClient(slugOrId: string): Promise<Client | null> {
     const sql = createConnection();
 
     // Check if the input looks like a UUID (simple pattern check)
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        slugOrId,
+      );
 
     let result;
     if (isUUID) {
