@@ -106,6 +106,8 @@ export default function ClientManager() {
     slug: "",
     subdomain: "",
   });
+  const [domainChecking, setDomainChecking] = useState(false);
+  const [domainAvailable, setDomainAvailable] = useState<boolean | null>(null);
   const [deleteState, setDeleteState] = useState<{
     isFirstDialogOpen: boolean;
     isSecondDialogOpen: boolean;
