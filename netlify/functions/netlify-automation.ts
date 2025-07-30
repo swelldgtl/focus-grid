@@ -85,29 +85,28 @@ async function createNetlifyProject(data: {
         friendlySiteName = `${data.subdomain}-${Date.now()}`; // Add timestamp as last resort
       }
 
-      console.log(`Attempt ${attempts}: Creating site with name: ${friendlySiteName}`);
-
-      createSiteResponse = await fetch(
-        "https://api.netlify.com/api/v1/sites",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({
-            name: friendlySiteName,
-            repo: {
-              provider: "github",
-              repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-              branch: "main",
-              dir: "/",
-              cmd: "npm run build",
-              publish_dir: "dist/spa",
-            },
-          }),
-        },
+      console.log(
+        `Attempt ${attempts}: Creating site with name: ${friendlySiteName}`,
       );
+
+      createSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          name: friendlySiteName,
+          repo: {
+            provider: "github",
+            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+            branch: "main",
+            dir: "/",
+            cmd: "npm run build",
+            publish_dir: "dist/spa",
+          },
+        }),
+      });
 
       // If successful or if it's not a uniqueness error, break out of loop
       if (createSiteResponse.ok) {
@@ -118,7 +117,10 @@ async function createNetlifyProject(data: {
         console.log(`Attempt ${attempts} failed:`, errorText);
 
         // If it's not a uniqueness error, don't retry
-        if (!errorText.includes("must be unique") && !errorText.includes("subdomain")) {
+        if (
+          !errorText.includes("must be unique") &&
+          !errorText.includes("subdomain")
+        ) {
           break;
         }
       }
@@ -383,12 +385,12 @@ async function checkDomainAvailability(data: { subdomain: string }) {
     const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
     const domainExists = sites.some(
       (site: any) =>
-        site.name === data.subdomain ||                    // Exact match
-        site.name === `${data.subdomain}-fg` ||            // With short suffix
-        site.name?.startsWith(`${data.subdomain}-`) ||     // With any suffix
-        site.custom_domain === targetDomain ||             // Custom domain
-        site.url?.includes(data.subdomain) ||              // URL contains subdomain
-        site.ssl_url?.includes(data.subdomain),            // SSL URL contains subdomain
+        site.name === data.subdomain || // Exact match
+        site.name === `${data.subdomain}-fg` || // With short suffix
+        site.name?.startsWith(`${data.subdomain}-`) || // With any suffix
+        site.custom_domain === targetDomain || // Custom domain
+        site.url?.includes(data.subdomain) || // URL contains subdomain
+        site.ssl_url?.includes(data.subdomain), // SSL URL contains subdomain
     );
 
     return {
@@ -426,27 +428,29 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
     }
 
     const sites = await listResponse.json();
-    const siteToDelete = sites.find(
-      (site: any) => {
-        // Try multiple ways to find the site
-        const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
-        return (
-          site.name === data.subdomain ||                          // Exact subdomain match (new format)
-          site.name === `${data.subdomain}-focusgrid` ||           // Old format with suffix
-          site.custom_domain === targetDomain ||                   // Custom domain match
-          site.url?.includes(data.subdomain) ||                    // URL contains subdomain
-          site.ssl_url?.includes(data.subdomain) ||                // SSL URL contains subdomain
-          (site.domain_aliases && site.domain_aliases.includes(targetDomain)) // Domain alias match
-        );
-      }
-    );
+    const siteToDelete = sites.find((site: any) => {
+      // Try multiple ways to find the site
+      const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
+      return (
+        site.name === data.subdomain || // Exact subdomain match (new format)
+        site.name === `${data.subdomain}-focusgrid` || // Old format with suffix
+        site.custom_domain === targetDomain || // Custom domain match
+        site.url?.includes(data.subdomain) || // URL contains subdomain
+        site.ssl_url?.includes(data.subdomain) || // SSL URL contains subdomain
+        (site.domain_aliases && site.domain_aliases.includes(targetDomain)) // Domain alias match
+      );
+    });
 
     console.log(`Looking for site with subdomain: ${data.subdomain}`);
     console.log(`Found ${sites.length} total sites`);
     if (siteToDelete) {
-      console.log(`Found site to delete: ${siteToDelete.name} (ID: ${siteToDelete.id})`);
+      console.log(
+        `Found site to delete: ${siteToDelete.name} (ID: ${siteToDelete.id})`,
+      );
     } else {
-      console.log(`Available sites: ${sites.map((s: any) => s.name).join(', ')}`);
+      console.log(
+        `Available sites: ${sites.map((s: any) => s.name).join(", ")}`,
+      );
     }
 
     if (!siteToDelete) {
