@@ -59,30 +59,63 @@ async function createNetlifyProject(data: {
     console.log("Creating Netlify site for:", data.subdomain);
 
     // Create the site using REST API
-    // Use the exact subdomain as the site name
-    const friendlySiteName = data.subdomain;
+    // Use the exact subdomain as the site name, with fallback for uniqueness
+    let friendlySiteName = data.subdomain;
+    let createSiteResponse;
+    let attempts = 0;
+    const maxAttempts = 3;
 
-    const createSiteResponse = await fetch(
-      "https://api.netlify.com/api/v1/sites",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-          name: friendlySiteName,
-          repo: {
-            provider: "github",
-            repo: process.env.GITHUB_REPO || "swell-digital/swell-focus-grid", // Make configurable
-            branch: "main",
-            dir: "/",
-            cmd: "npm run build",
-            publish_dir: "dist/spa",
+    // Try creating the site, with fallback naming if needed
+    while (attempts < maxAttempts) {
+      attempts++;
+
+      // Use different naming strategies for fallback
+      if (attempts === 1) {
+        friendlySiteName = data.subdomain; // Try exact subdomain first
+      } else if (attempts === 2) {
+        friendlySiteName = `${data.subdomain}-fg`; // Add short suffix
+      } else {
+        friendlySiteName = `${data.subdomain}-${Date.now()}`; // Add timestamp as last resort
+      }
+
+      console.log(`Attempt ${attempts}: Creating site with name: ${friendlySiteName}`);
+
+      createSiteResponse = await fetch(
+        "https://api.netlify.com/api/v1/sites",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        }),
-      },
-    );
+          body: JSON.stringify({
+            name: friendlySiteName,
+            repo: {
+              provider: "github",
+              repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+              branch: "main",
+              dir: "/",
+              cmd: "npm run build",
+              publish_dir: "dist/spa",
+            },
+          }),
+        },
+      );
+
+      // If successful or if it's not a uniqueness error, break out of loop
+      if (createSiteResponse.ok) {
+        console.log(`Successfully created site: ${friendlySiteName}`);
+        break;
+      } else {
+        const errorText = await createSiteResponse.text();
+        console.log(`Attempt ${attempts} failed:`, errorText);
+
+        // If it's not a uniqueness error, don't retry
+        if (!errorText.includes("must be unique") && !errorText.includes("subdomain")) {
+          break;
+        }
+      }
+    }
 
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
