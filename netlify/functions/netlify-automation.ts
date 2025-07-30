@@ -372,12 +372,16 @@ async function checkDomainAvailability(data: { subdomain: string }) {
 
     const sites = await listResponse.json();
 
-    // Check if any site has the proposed subdomain
+    // Check if any site has the proposed subdomain in any of our naming formats
+    const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
     const domainExists = sites.some(
       (site: any) =>
-        site.name === data.subdomain ||
-        site.custom_domain === `${data.subdomain}.swellfocusgrid.com` ||
-        site.url?.includes(data.subdomain),
+        site.name === data.subdomain ||                    // Exact match
+        site.name === `${data.subdomain}-fg` ||            // With short suffix
+        site.name?.startsWith(`${data.subdomain}-`) ||     // With any suffix
+        site.custom_domain === targetDomain ||             // Custom domain
+        site.url?.includes(data.subdomain) ||              // URL contains subdomain
+        site.ssl_url?.includes(data.subdomain),            // SSL URL contains subdomain
     );
 
     return {
