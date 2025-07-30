@@ -72,7 +72,7 @@ async function createNetlifyProject(data: {
           name: friendlySiteName,
           repo: {
             provider: "github",
-            repo: "swell-digital/swell-focus-grid", // Update this to your actual repo
+            repo: process.env.GITHUB_REPO || "swell-digital/swell-focus-grid", // Make configurable
             branch: "main",
             dir: "/",
             cmd: "npm run build",
