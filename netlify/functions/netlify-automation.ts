@@ -92,29 +92,31 @@ async function createNetlifyProject(data: {
     const site = await createSiteResponse.json();
     console.log("Created site:", site.id, site.url);
 
-    // Set custom domain after site creation
+    // Set custom domain after site creation using the correct API
     try {
-      const domainResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}/domains`,
+      const customDomain = `${data.subdomain}.swellfocusgrid.com`;
+
+      // Update site settings to include custom domain
+      const updateSiteResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}`,
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
           body: JSON.stringify({
-            domain: `${data.subdomain}.swellfocusgrid.com`,
+            custom_domain: customDomain,
+            force_ssl: true, // Enable HTTPS
           }),
-        },
+        }
       );
 
-      if (domainResponse.ok) {
-        console.log(
-          `Added custom domain: ${data.subdomain}.swellfocusgrid.com`,
-        );
+      if (updateSiteResponse.ok) {
+        console.log(`Added custom domain: ${customDomain} with HTTPS`);
       } else {
-        const domainError = await domainResponse.text();
-        console.warn(`Failed to add custom domain: ${domainError}`);
+        const domainError = await updateSiteResponse.text();
+        console.warn(`Failed to set custom domain: ${domainError}`);
       }
     } catch (domainError) {
       console.warn("Custom domain setup failed:", domainError);
