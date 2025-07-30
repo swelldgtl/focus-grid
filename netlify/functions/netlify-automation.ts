@@ -147,11 +147,12 @@ async function setEnvironmentVariables(data: {
 
     // Set each environment variable
     for (const [key, value] of Object.entries(data.variables)) {
-      await netlify.createOrUpdateVariable({
+      await netlify.createEnvironmentVariable({
         accountId: accountId,
         siteId: data.siteId,
         key: key,
         value: value,
+        scopes: ['builds', 'functions', 'runtime'],
       });
     }
 
