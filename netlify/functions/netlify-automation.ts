@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import { NetlifyAPI } from "netlify";
+import NetlifyAPI from "netlify";
 
 // Initialize Netlify API client
 const netlify = new NetlifyAPI(process.env.NETLIFY_ACCESS_TOKEN!);
@@ -70,7 +70,10 @@ async function createNetlifyProject(data: {
 
     console.log("Created site:", site.id, site.url);
 
-    // Set environment variables
+    // Get the account ID from the site info
+    const accountId = site.account_slug;
+
+    // Set environment variables using the correct API method
     const envVars = {
       CLIENT_ID: data.clientId,
       DATABASE_URL: data.databaseUrl,
@@ -80,15 +83,18 @@ async function createNetlifyProject(data: {
 
     // Set each environment variable
     for (const [key, value] of Object.entries(envVars)) {
-      await netlify.setEnvVar({
-        accountId: site.account_slug,
-        siteId: site.id,
-        key,
-        body: {
-          key,
-          values: [{ value, context: "all" }],
-        },
-      });
+      try {
+        await netlify.createOrUpdateVariable({
+          accountId: accountId,
+          siteId: site.id,
+          key: key,
+          value: value,
+        });
+        console.log(`Set environment variable ${key} for site ${site.id}`);
+      } catch (envError) {
+        console.warn(`Failed to set environment variable ${key}:`, envError);
+        // Continue with other variables even if one fails
+      }
     }
 
     console.log("Environment variables set for site:", site.id);
@@ -136,17 +142,15 @@ async function setEnvironmentVariables(data: {
 
     // Get site info to get account ID
     const site = await netlify.getSite({ siteId: data.siteId });
+    const accountId = site.account_slug;
 
     // Set each environment variable
     for (const [key, value] of Object.entries(data.variables)) {
-      await netlify.setEnvVar({
-        accountId: site.account_slug,
+      await netlify.createOrUpdateVariable({
+        accountId: accountId,
         siteId: data.siteId,
-        key,
-        body: {
-          key,
-          values: [{ value, context: "all" }],
-        },
+        key: key,
+        value: value,
       });
     }
 
