@@ -85,6 +85,33 @@ async function createNetlifyProject(data: {
     const site = await createSiteResponse.json();
     console.log("Created site:", site.id, site.url);
 
+    // Set custom domain after site creation
+    try {
+      const domainResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/domains`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            domain: `${data.subdomain}.swellfocusgrid.com`,
+          }),
+        }
+      );
+
+      if (domainResponse.ok) {
+        console.log(`Added custom domain: ${data.subdomain}.swellfocusgrid.com`);
+      } else {
+        const domainError = await domainResponse.text();
+        console.warn(`Failed to add custom domain: ${domainError}`);
+      }
+    } catch (domainError) {
+      console.warn("Custom domain setup failed:", domainError);
+      // Continue - site creation succeeded even if custom domain failed
+    }
+
     // Set environment variables using REST API
     const envVars = {
       CLIENT_ID: data.clientId,
