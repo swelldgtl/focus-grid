@@ -316,6 +316,55 @@ async function deployProject(data: { siteId: string }) {
   }
 }
 
+async function checkDomainAvailability(data: { subdomain: string }) {
+  try {
+    console.log("Checking domain availability for:", data.subdomain);
+
+    // List sites to check if subdomain already exists
+    const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      headers: {
+        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+      },
+    });
+
+    if (!listResponse.ok) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          available: null,
+          error: "Failed to check domain availability",
+        }),
+      };
+    }
+
+    const sites = await listResponse.json();
+
+    // Check if any site has the proposed subdomain
+    const domainExists = sites.some((site: any) =>
+      site.name === `${data.subdomain}-focusgrid` ||
+      site.custom_domain === `${data.subdomain}.swellfocusgrid.com` ||
+      site.url?.includes(data.subdomain)
+    );
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        available: !domainExists,
+        subdomain: data.subdomain
+      }),
+    };
+  } catch (error) {
+    console.error("Error checking domain availability:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        available: null,
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    };
+  }
+}
+
 async function deleteNetlifyProject(data: { subdomain: string }) {
   try {
     console.log("Deleting Netlify project for subdomain:", data.subdomain);
