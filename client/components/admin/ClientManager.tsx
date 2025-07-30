@@ -127,6 +127,48 @@ export default function ClientManager() {
   });
   const { toast } = useToast();
 
+  // Check if subdomain is available in Netlify
+  const checkDomainAvailability = async (subdomain: string) => {
+    if (!subdomain || !newClient.createNetlifyProject) {
+      setDomainAvailable(null);
+      return;
+    }
+
+    setDomainChecking(true);
+    try {
+      const response = await fetch('/.netlify/functions/netlify-automation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'check-domain',
+          subdomain: subdomain,
+        }),
+      });
+
+      const result = await response.json();
+      setDomainAvailable(result.available);
+
+      if (!result.available) {
+        setErrors((prev) => ({
+          ...prev,
+          subdomain: "This subdomain is already taken in Netlify",
+        }));
+      } else {
+        setErrors((prev) => ({
+          ...prev,
+          subdomain: "",
+        }));
+      }
+    } catch (error) {
+      console.error('Error checking domain:', error);
+      setDomainAvailable(null);
+    } finally {
+      setDomainChecking(false);
+    }
+  };
+
   // Load clients from API
   useEffect(() => {
     loadClients();
