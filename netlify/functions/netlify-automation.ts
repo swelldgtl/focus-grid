@@ -1,15 +1,15 @@
-import { Handler } from '@netlify/functions';
-import { NetlifyAPI } from 'netlify';
+import { Handler } from "@netlify/functions";
+import { NetlifyAPI } from "netlify";
 
 // Initialize Netlify API client
 const netlify = new NetlifyAPI(process.env.NETLIFY_ACCESS_TOKEN!);
 
 export const handler: Handler = async (event, context) => {
   // Only allow POST requests
-  if (event.httpMethod !== 'POST') {
+  if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      body: JSON.stringify({ error: 'Method not allowed' }),
+      body: JSON.stringify({ error: "Method not allowed" }),
     };
   }
 
@@ -17,35 +17,35 @@ export const handler: Handler = async (event, context) => {
   if (!process.env.NETLIFY_ACCESS_TOKEN) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Netlify access token not configured' }),
+      body: JSON.stringify({ error: "Netlify access token not configured" }),
     };
   }
 
   try {
-    const { action, ...data } = JSON.parse(event.body || '{}');
+    const { action, ...data } = JSON.parse(event.body || "{}");
 
     switch (action) {
-      case 'create-project':
+      case "create-project":
         return await createNetlifyProject(data);
-      case 'set-env-vars':
+      case "set-env-vars":
         return await setEnvironmentVariables(data);
-      case 'deploy':
+      case "deploy":
         return await deployProject(data);
-      case 'delete-project':
+      case "delete-project":
         return await deleteNetlifyProject(data);
       default:
         return {
           statusCode: 400,
-          body: JSON.stringify({ error: 'Invalid action' }),
+          body: JSON.stringify({ error: "Invalid action" }),
         };
     }
   } catch (error) {
-    console.error('Netlify automation error:', error);
+    console.error("Netlify automation error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      body: JSON.stringify({
+        error: "Internal server error",
+        details: error instanceof Error ? error.message : "Unknown error",
       }),
     };
   }
@@ -58,17 +58,17 @@ async function createNetlifyProject(data: {
   databaseUrl: string;
 }) {
   try {
-    console.log('Creating Netlify site for:', data.subdomain);
+    console.log("Creating Netlify site for:", data.subdomain);
 
     // Create the site
     const site = await netlify.createSite({
       body: {
         name: data.subdomain,
-        custom_domain: `${data.subdomain}.swellfocusgrid.com`
-      }
+        custom_domain: `${data.subdomain}.swellfocusgrid.com`,
+      },
     });
 
-    console.log('Created site:', site.id, site.url);
+    console.log("Created site:", site.id, site.url);
 
     // Set environment variables
     const envVars = {
@@ -86,21 +86,21 @@ async function createNetlifyProject(data: {
         key,
         body: {
           key,
-          values: [{ value, context: 'all' }]
-        }
+          values: [{ value, context: "all" }],
+        },
       });
     }
 
-    console.log('Environment variables set for site:', site.id);
+    console.log("Environment variables set for site:", site.id);
 
     // Trigger a deployment
     try {
       await netlify.createSiteBuild({
-        siteId: site.id
+        siteId: site.id,
       });
-      console.log('Deployment triggered for site:', site.id);
+      console.log("Deployment triggered for site:", site.id);
     } catch (deployError) {
-      console.warn('Site created but deployment failed:', deployError);
+      console.warn("Site created but deployment failed:", deployError);
       // Continue - the site is created even if deployment fails
     }
 
@@ -115,12 +115,13 @@ async function createNetlifyProject(data: {
       }),
     };
   } catch (error) {
-    console.error('Error creating Netlify site:', error);
+    console.error("Error creating Netlify site:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to create project',
+        error:
+          error instanceof Error ? error.message : "Failed to create project",
       }),
     };
   }
@@ -131,7 +132,7 @@ async function setEnvironmentVariables(data: {
   variables: Record<string, string>;
 }) {
   try {
-    console.log('Setting environment variables for site:', data.siteId);
+    console.log("Setting environment variables for site:", data.siteId);
 
     // Get site info to get account ID
     const site = await netlify.getSite({ siteId: data.siteId });
@@ -144,24 +145,27 @@ async function setEnvironmentVariables(data: {
         key,
         body: {
           key,
-          values: [{ value, context: 'all' }]
-        }
+          values: [{ value, context: "all" }],
+        },
       });
     }
 
-    console.log('Environment variables updated for site:', data.siteId);
-    
+    console.log("Environment variables updated for site:", data.siteId);
+
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
-    console.error('Error setting environment variables:', error);
+    console.error("Error setting environment variables:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to set environment variables',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to set environment variables",
       }),
     };
   }
@@ -169,26 +173,27 @@ async function setEnvironmentVariables(data: {
 
 async function deployProject(data: { siteId: string }) {
   try {
-    console.log('Deploying project:', data.siteId);
+    console.log("Deploying project:", data.siteId);
 
     // Trigger a new build/deployment
     await netlify.createSiteBuild({
-      siteId: data.siteId
+      siteId: data.siteId,
     });
 
-    console.log('Deployment triggered for site:', data.siteId);
+    console.log("Deployment triggered for site:", data.siteId);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
-    console.error('Error deploying project:', error);
+    console.error("Error deploying project:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to deploy project',
+        error:
+          error instanceof Error ? error.message : "Failed to deploy project",
       }),
     };
   }
@@ -196,41 +201,45 @@ async function deployProject(data: { siteId: string }) {
 
 async function deleteNetlifyProject(data: { subdomain: string }) {
   try {
-    console.log('Deleting Netlify project for subdomain:', data.subdomain);
+    console.log("Deleting Netlify project for subdomain:", data.subdomain);
 
     // Find the site by name/subdomain
     const sites = await netlify.listSites();
-    const siteToDelete = sites.find(site => 
-      site.name === data.subdomain || 
-      site.custom_domain === `${data.subdomain}.swellfocusgrid.com`
+    const siteToDelete = sites.find(
+      (site) =>
+        site.name === data.subdomain ||
+        site.custom_domain === `${data.subdomain}.swellfocusgrid.com`,
     );
 
     if (!siteToDelete) {
-      console.warn('Site not found for subdomain:', data.subdomain);
+      console.warn("Site not found for subdomain:", data.subdomain);
       return {
         statusCode: 404,
         body: JSON.stringify({
           success: false,
-          error: 'Site not found',
+          error: "Site not found",
         }),
       };
     }
 
     // Delete the site
     await netlify.deleteSite({ siteId: siteToDelete.id });
-    console.log('Deleted site:', siteToDelete.id);
+    console.log("Deleted site:", siteToDelete.id);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
-    console.error('Error deleting Netlify project:', error);
+    console.error("Error deleting Netlify project:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         success: false,
-        error: error instanceof Error ? error.message : 'Failed to delete Netlify project',
+        error:
+          error instanceof Error
+            ? error.message
+            : "Failed to delete Netlify project",
       }),
     };
   }
