@@ -340,17 +340,18 @@ async function checkDomainAvailability(data: { subdomain: string }) {
     const sites = await listResponse.json();
 
     // Check if any site has the proposed subdomain
-    const domainExists = sites.some((site: any) =>
-      site.name === data.subdomain ||
-      site.custom_domain === `${data.subdomain}.swellfocusgrid.com` ||
-      site.url?.includes(data.subdomain)
+    const domainExists = sites.some(
+      (site: any) =>
+        site.name === data.subdomain ||
+        site.custom_domain === `${data.subdomain}.swellfocusgrid.com` ||
+        site.url?.includes(data.subdomain),
     );
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         available: !domainExists,
-        subdomain: data.subdomain
+        subdomain: data.subdomain,
       }),
     };
   } catch (error) {
