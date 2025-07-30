@@ -130,10 +130,12 @@ export default function ClientManager() {
   // Check if subdomain is available in Netlify
   const checkDomainAvailability = async (subdomain: string) => {
     if (!subdomain || !newClient.createNetlifyProject) {
+      console.log("Skipping domain check:", { subdomain, createNetlifyProject: newClient.createNetlifyProject });
       setDomainAvailable(null);
       return;
     }
 
+    console.log(`Checking domain availability for: ${subdomain}`);
     setDomainChecking(true);
     try {
       const response = await fetch("/.netlify/functions/netlify-automation", {
@@ -147,7 +149,18 @@ export default function ClientManager() {
         }),
       });
 
+      console.log(`Domain check response status: ${response.status}`);
+
+      if (!response.ok) {
+        console.error(`Domain check failed with status: ${response.status}`);
+        const errorText = await response.text();
+        console.error("Error response:", errorText);
+        setDomainAvailable(null);
+        return;
+      }
+
       const result = await response.json();
+      console.log("Domain check result:", result);
       setDomainAvailable(result.available);
 
       if (!result.available) {
