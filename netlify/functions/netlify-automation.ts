@@ -64,13 +64,7 @@ async function createNetlifyProject(data: {
     const site = await netlify.createSite({
       body: {
         name: data.subdomain,
-        custom_domain: `${data.subdomain}.swellfocusgrid.com`,
-        repo: {
-          provider: 'github',
-          repo: 'swell-digital/swell-focus-grid', // Replace with your actual repo
-          branch: 'main',
-          dir: '/'
-        }
+        custom_domain: `${data.subdomain}.swellfocusgrid.com`
       }
     });
 
