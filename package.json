@@ -26,6 +26,7 @@
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.1",
+    "@netlify/functions": "^4.2.1",
     "@types/cookie-parser": "^1.4.9",
     "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.0",
