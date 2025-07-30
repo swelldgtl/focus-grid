@@ -345,17 +345,25 @@ async function checkDomainAvailability(data: { subdomain: string }) {
 
     const sites = await listResponse.json();
 
-    // Check if any site has the proposed subdomain in any of our naming formats
+    // Check if any site has the exact subdomain we want to use
     const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
     const domainExists = sites.some(
       (site: any) =>
-        site.name === data.subdomain || // Exact match
-        site.name === `${data.subdomain}-fg` || // With short suffix
-        site.name?.startsWith(`${data.subdomain}-`) || // With any suffix
-        site.custom_domain === targetDomain || // Custom domain
-        site.url?.includes(data.subdomain) || // URL contains subdomain
-        site.ssl_url?.includes(data.subdomain), // SSL URL contains subdomain
+        site.name === data.subdomain || // Exact name match
+        site.custom_domain === targetDomain || // Custom domain match
+        site.url?.includes(`${data.subdomain}.netlify.app`) // Default Netlify URL
     );
+
+    console.log(`Checking domain: ${data.subdomain}`);
+    console.log(`Target domain: ${targetDomain}`);
+    console.log(`Domain exists: ${domainExists}`);
+    if (domainExists) {
+      const conflictingSite = sites.find((site: any) =>
+        site.name === data.subdomain ||
+        site.custom_domain === targetDomain
+      );
+      console.log(`Conflicting site:`, conflictingSite?.name, conflictingSite?.custom_domain);
+    }
 
     return {
       statusCode: 200,
