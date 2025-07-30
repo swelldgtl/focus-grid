@@ -17,6 +17,13 @@ export const handler: Handler = async (event, context) => {
     };
   }
 
+  // Debug environment variables (in production)
+  console.log("Environment check:", {
+    hasNetlifyToken: !!process.env.NETLIFY_ACCESS_TOKEN,
+    hasGithubRepo: !!process.env.GITHUB_REPO,
+    githubRepo: process.env.GITHUB_REPO,
+  });
+
   try {
     const { action, ...data } = JSON.parse(event.body || "{}");
 
