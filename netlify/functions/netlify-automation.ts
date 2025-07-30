@@ -57,21 +57,26 @@ async function createNetlifyProject(data: {
     console.log("Creating Netlify site for:", data.subdomain);
 
     // Create the site using REST API
-    const createSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+    const createSiteResponse = await fetch(
+      "https://api.netlify.com/api/v1/sites",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          name: data.subdomain,
+          custom_domain: `${data.subdomain}.swellfocusgrid.com`,
+        }),
       },
-      body: JSON.stringify({
-        name: data.subdomain,
-        custom_domain: `${data.subdomain}.swellfocusgrid.com`,
-      }),
-    });
+    );
 
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
-      throw new Error(`Failed to create site: ${createSiteResponse.status} ${errorText}`);
+      throw new Error(
+        `Failed to create site: ${createSiteResponse.status} ${errorText}`,
+      );
     }
 
     const site = await createSiteResponse.json();
@@ -94,7 +99,7 @@ async function createNetlifyProject(data: {
             method: "PUT",
             headers: {
               "Content-Type": "application/json",
-              "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
             },
             body: JSON.stringify({
               key: key,
@@ -102,17 +107,19 @@ async function createNetlifyProject(data: {
                 {
                   value: value,
                   context: "all",
-                }
+                },
               ],
             }),
-          }
+          },
         );
 
         if (envResponse.ok) {
           console.log(`Set environment variable ${key} for site ${site.id}`);
         } else {
           const errorText = await envResponse.text();
-          console.warn(`Failed to set environment variable ${key}: ${errorText}`);
+          console.warn(
+            `Failed to set environment variable ${key}: ${errorText}`,
+          );
         }
       } catch (envError) {
         console.warn(`Failed to set environment variable ${key}:`, envError);
@@ -130,10 +137,10 @@ async function createNetlifyProject(data: {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
           body: JSON.stringify({}),
-        }
+        },
       );
 
       if (deployResponse.ok) {
@@ -184,7 +191,7 @@ async function setEnvironmentVariables(data: {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
           body: JSON.stringify({
             key: key,
@@ -192,10 +199,10 @@ async function setEnvironmentVariables(data: {
               {
                 value: value,
                 context: "all",
-              }
+              },
             ],
           }),
-        }
+        },
       );
 
       if (!envResponse.ok) {
@@ -236,10 +243,10 @@ async function deployProject(data: { siteId: string }) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({}),
-      }
+      },
     );
 
     if (!deployResponse.ok) {
@@ -273,7 +280,7 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
     // List sites to find the one to delete
     const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
       headers: {
-        "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
       },
     });
 
@@ -305,9 +312,9 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
       {
         method: "DELETE",
         headers: {
-          "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
-      }
+      },
     );
 
     if (!deleteResponse.ok) {
