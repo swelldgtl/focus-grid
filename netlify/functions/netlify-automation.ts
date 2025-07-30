@@ -98,11 +98,13 @@ async function createNetlifyProject(data: {
           body: JSON.stringify({
             domain: `${data.subdomain}.swellfocusgrid.com`,
           }),
-        }
+        },
       );
 
       if (domainResponse.ok) {
-        console.log(`Added custom domain: ${data.subdomain}.swellfocusgrid.com`);
+        console.log(
+          `Added custom domain: ${data.subdomain}.swellfocusgrid.com`,
+        );
       } else {
         const domainError = await domainResponse.text();
         console.warn(`Failed to add custom domain: ${domainError}`);
