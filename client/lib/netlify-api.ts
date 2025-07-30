@@ -102,6 +102,8 @@ export async function deployNetlifyProject(siteId: string): Promise<boolean> {
 // Delete a Netlify project
 export async function deleteNetlifyProject(subdomain: string): Promise<boolean> {
   try {
+    console.log(`Attempting to delete Netlify project for subdomain: ${subdomain}`);
+
     const response = await fetch('/.netlify/functions/netlify-automation', {
       method: 'POST',
       headers: {
@@ -113,7 +115,15 @@ export async function deleteNetlifyProject(subdomain: string): Promise<boolean> 
       }),
     });
 
-    return response.ok;
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+      console.error(`Netlify deletion failed (${response.status}):`, errorData);
+      return false;
+    }
+
+    const result = await response.json();
+    console.log('Netlify deletion result:', result);
+    return result.success !== false;
   } catch (error) {
     console.error('Error deleting Netlify project:', error);
     return false;
