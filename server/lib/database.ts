@@ -116,12 +116,29 @@ export async function getClients(): Promise<Client[]> {
 export async function getClient(slugOrId: string): Promise<Client | null> {
   try {
     const sql = createConnection();
-    const result = await sql`
-      SELECT id, name, slug, subdomain, database_url, created_at
-      FROM clients
-      WHERE slug = ${slugOrId} OR id = ${slugOrId}
-      LIMIT 1
-    `;
+
+    // Check if the input looks like a UUID (simple pattern check)
+    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slugOrId);
+
+    let result;
+    if (isUUID) {
+      // If it looks like a UUID, check both slug and id
+      result = await sql`
+        SELECT id, name, slug, subdomain, database_url, created_at
+        FROM clients
+        WHERE slug = ${slugOrId} OR id = ${slugOrId}
+        LIMIT 1
+      `;
+    } else {
+      // If it's not a UUID, only check slug
+      result = await sql`
+        SELECT id, name, slug, subdomain, database_url, created_at
+        FROM clients
+        WHERE slug = ${slugOrId}
+        LIMIT 1
+      `;
+    }
+
     return (result[0] as Client) || null;
   } catch (error) {
     console.error("Error fetching client:", error);
