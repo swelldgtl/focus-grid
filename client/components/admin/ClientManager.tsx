@@ -231,6 +231,12 @@ export default function ClientManager() {
       newErrors.subdomain =
         "Subdomain can only contain lowercase letters and numbers";
       isValid = false;
+    } else if (newClient.createNetlifyProject && domainAvailable === false) {
+      newErrors.subdomain = "This subdomain is already taken in Netlify";
+      isValid = false;
+    } else if (newClient.createNetlifyProject && domainChecking) {
+      newErrors.subdomain = "Please wait while we check domain availability";
+      isValid = false;
     }
 
     setErrors(newErrors);
