@@ -1,8 +1,4 @@
 import { Handler } from "@netlify/functions";
-import { NetlifyAPI } from "netlify";
-
-// Initialize Netlify API client
-const netlify = new NetlifyAPI(process.env.NETLIFY_ACCESS_TOKEN!);
 
 export const handler: Handler = async (event, context) => {
   // Only allow POST requests
@@ -60,20 +56,28 @@ async function createNetlifyProject(data: {
   try {
     console.log("Creating Netlify site for:", data.subdomain);
 
-    // Create the site
-    const site = await netlify.createSite({
-      body: {
+    // Create the site using REST API
+    const createSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+      },
+      body: JSON.stringify({
         name: data.subdomain,
         custom_domain: `${data.subdomain}.swellfocusgrid.com`,
-      },
+      }),
     });
 
+    if (!createSiteResponse.ok) {
+      const errorText = await createSiteResponse.text();
+      throw new Error(`Failed to create site: ${createSiteResponse.status} ${errorText}`);
+    }
+
+    const site = await createSiteResponse.json();
     console.log("Created site:", site.id, site.url);
 
-    // Get the account ID from the site info
-    const accountId = site.account_slug;
-
-    // Set environment variables using the correct API method
+    // Set environment variables using REST API
     const envVars = {
       CLIENT_ID: data.clientId,
       DATABASE_URL: data.databaseUrl,
@@ -84,14 +88,32 @@ async function createNetlifyProject(data: {
     // Set each environment variable
     for (const [key, value] of Object.entries(envVars)) {
       try {
-        await netlify.createEnvironmentVariable({
-          accountId: accountId,
-          siteId: site.id,
-          key: key,
-          value: value,
-          scopes: ['builds', 'functions', 'runtime'],
-        });
-        console.log(`Set environment variable ${key} for site ${site.id}`);
+        const envResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}/env/${key}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              key: key,
+              values: [
+                {
+                  value: value,
+                  context: "all",
+                }
+              ],
+            }),
+          }
+        );
+
+        if (envResponse.ok) {
+          console.log(`Set environment variable ${key} for site ${site.id}`);
+        } else {
+          const errorText = await envResponse.text();
+          console.warn(`Failed to set environment variable ${key}: ${errorText}`);
+        }
       } catch (envError) {
         console.warn(`Failed to set environment variable ${key}:`, envError);
         // Continue with other variables even if one fails
@@ -102,10 +124,23 @@ async function createNetlifyProject(data: {
 
     // Trigger a deployment
     try {
-      await netlify.createSiteBuild({
-        siteId: site.id,
-      });
-      console.log("Deployment triggered for site:", site.id);
+      const deployResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({}),
+        }
+      );
+
+      if (deployResponse.ok) {
+        console.log("Deployment triggered for site:", site.id);
+      } else {
+        console.warn("Site created but deployment failed");
+      }
     } catch (deployError) {
       console.warn("Site created but deployment failed:", deployError);
       // Continue - the site is created even if deployment fails
@@ -141,19 +176,32 @@ async function setEnvironmentVariables(data: {
   try {
     console.log("Setting environment variables for site:", data.siteId);
 
-    // Get site info to get account ID
-    const site = await netlify.getSite({ siteId: data.siteId });
-    const accountId = site.account_slug;
-
-    // Set each environment variable
+    // Set each environment variable using REST API
     for (const [key, value] of Object.entries(data.variables)) {
-      await netlify.createEnvironmentVariable({
-        accountId: accountId,
-        siteId: data.siteId,
-        key: key,
-        value: value,
-        scopes: ['builds', 'functions', 'runtime'],
-      });
+      const envResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${data.siteId}/env/${key}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            key: key,
+            values: [
+              {
+                value: value,
+                context: "all",
+              }
+            ],
+          }),
+        }
+      );
+
+      if (!envResponse.ok) {
+        const errorText = await envResponse.text();
+        console.warn(`Failed to set environment variable ${key}: ${errorText}`);
+      }
     }
 
     console.log("Environment variables updated for site:", data.siteId);
@@ -181,10 +229,23 @@ async function deployProject(data: { siteId: string }) {
   try {
     console.log("Deploying project:", data.siteId);
 
-    // Trigger a new build/deployment
-    await netlify.createSiteBuild({
-      siteId: data.siteId,
-    });
+    // Trigger a new build/deployment using REST API
+    const deployResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}/builds`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
+
+    if (!deployResponse.ok) {
+      const errorText = await deployResponse.text();
+      throw new Error(`Deploy failed: ${deployResponse.status} ${errorText}`);
+    }
 
     console.log("Deployment triggered for site:", data.siteId);
 
@@ -209,10 +270,20 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
   try {
     console.log("Deleting Netlify project for subdomain:", data.subdomain);
 
-    // Find the site by name/subdomain
-    const sites = await netlify.listSites();
+    // List sites to find the one to delete
+    const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      headers: {
+        "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+      },
+    });
+
+    if (!listResponse.ok) {
+      throw new Error(`Failed to list sites: ${listResponse.status}`);
+    }
+
+    const sites = await listResponse.json();
     const siteToDelete = sites.find(
-      (site) =>
+      (site: any) =>
         site.name === data.subdomain ||
         site.custom_domain === `${data.subdomain}.swellfocusgrid.com`,
     );
@@ -229,7 +300,21 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
     }
 
     // Delete the site
-    await netlify.deleteSite({ siteId: siteToDelete.id });
+    const deleteResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${siteToDelete.id}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Authorization": `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+      }
+    );
+
+    if (!deleteResponse.ok) {
+      const errorText = await deleteResponse.text();
+      throw new Error(`Delete failed: ${deleteResponse.status} ${errorText}`);
+    }
+
     console.log("Deleted site:", siteToDelete.id);
 
     return {
