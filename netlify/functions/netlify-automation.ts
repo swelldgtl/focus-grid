@@ -29,6 +29,8 @@ export const handler: Handler = async (event, context) => {
         return await deployProject(data);
       case "delete-project":
         return await deleteNetlifyProject(data);
+      case "check-domain":
+        return await checkDomainAvailability(data);
       default:
         return {
           statusCode: 400,
