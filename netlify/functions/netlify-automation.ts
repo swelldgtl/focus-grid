@@ -84,11 +84,12 @@ async function createNetlifyProject(data: {
     // Set each environment variable
     for (const [key, value] of Object.entries(envVars)) {
       try {
-        await netlify.createOrUpdateVariable({
+        await netlify.createEnvironmentVariable({
           accountId: accountId,
           siteId: site.id,
           key: key,
           value: value,
+          scopes: ['builds', 'functions', 'runtime'],
         });
         console.log(`Set environment variable ${key} for site ${site.id}`);
       } catch (envError) {
