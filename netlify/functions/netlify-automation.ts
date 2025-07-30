@@ -76,8 +76,8 @@ async function createNetlifyProject(data: {
             branch: "main",
             dir: "/",
             cmd: "npm run build",
-            publish_dir: "dist/spa"
-          }
+            publish_dir: "dist/spa",
+          },
         }),
       },
     );
@@ -109,7 +109,7 @@ async function createNetlifyProject(data: {
             custom_domain: customDomain,
             force_ssl: true, // Enable HTTPS
           }),
-        }
+        },
       );
 
       if (updateSiteResponse.ok) {
