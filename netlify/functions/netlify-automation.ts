@@ -1,4 +1,8 @@
 import { Handler } from '@netlify/functions';
+import { NetlifyAPI } from 'netlify';
+
+// Initialize Netlify API client
+const netlify = new NetlifyAPI(process.env.NETLIFY_ACCESS_TOKEN!);
 
 export const handler: Handler = async (event, context) => {
   // Only allow POST requests
@@ -6,6 +10,14 @@ export const handler: Handler = async (event, context) => {
     return {
       statusCode: 405,
       body: JSON.stringify({ error: 'Method not allowed' }),
+    };
+  }
+
+  // Verify token is available
+  if (!process.env.NETLIFY_ACCESS_TOKEN) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: 'Netlify access token not configured' }),
     };
   }
 
@@ -46,22 +58,70 @@ async function createNetlifyProject(data: {
   databaseUrl: string;
 }) {
   try {
-    // This would use the actual Netlify API in the function context
-    // For now, simulating the response structure
-    const projectId = `project-${data.subdomain}-${Date.now()}`;
-    const siteId = `site-${data.subdomain}-${Date.now()}`;
-    
+    console.log('Creating Netlify site for:', data.subdomain);
+
+    // Create the site
+    const site = await netlify.createSite({
+      body: {
+        name: data.subdomain,
+        custom_domain: `${data.subdomain}.swellfocusgrid.com`,
+        repo: {
+          provider: 'github',
+          repo: 'swell-digital/swell-focus-grid', // Replace with your actual repo
+          branch: 'main',
+          dir: '/'
+        }
+      }
+    });
+
+    console.log('Created site:', site.id, site.url);
+
+    // Set environment variables
+    const envVars = {
+      CLIENT_ID: data.clientId,
+      DATABASE_URL: data.databaseUrl,
+      NEXT_PUBLIC_CLIENT_NAME: data.clientName,
+      NEXT_PUBLIC_CLIENT_SUBDOMAIN: data.subdomain,
+    };
+
+    // Set each environment variable
+    for (const [key, value] of Object.entries(envVars)) {
+      await netlify.setEnvVar({
+        accountId: site.account_slug,
+        siteId: site.id,
+        key,
+        body: {
+          key,
+          values: [{ value, context: 'all' }]
+        }
+      });
+    }
+
+    console.log('Environment variables set for site:', site.id);
+
+    // Trigger a deployment
+    try {
+      await netlify.createSiteBuild({
+        siteId: site.id
+      });
+      console.log('Deployment triggered for site:', site.id);
+    } catch (deployError) {
+      console.warn('Site created but deployment failed:', deployError);
+      // Continue - the site is created even if deployment fails
+    }
+
     return {
       statusCode: 201,
       body: JSON.stringify({
         success: true,
-        projectId,
-        siteId,
+        projectId: site.id,
+        siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
-        branchUrl: `https://main--${data.subdomain}.netlify.app`,
+        branchUrl: site.url,
       }),
     };
   } catch (error) {
+    console.error('Error creating Netlify site:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -77,14 +137,32 @@ async function setEnvironmentVariables(data: {
   variables: Record<string, string>;
 }) {
   try {
-    // Environment variable setting logic would go here
-    console.log('Setting environment variables for:', data.siteId, data.variables);
+    console.log('Setting environment variables for site:', data.siteId);
+
+    // Get site info to get account ID
+    const site = await netlify.getSite({ siteId: data.siteId });
+
+    // Set each environment variable
+    for (const [key, value] of Object.entries(data.variables)) {
+      await netlify.setEnvVar({
+        accountId: site.account_slug,
+        siteId: data.siteId,
+        key,
+        body: {
+          key,
+          values: [{ value, context: 'all' }]
+        }
+      });
+    }
+
+    console.log('Environment variables updated for site:', data.siteId);
     
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
+    console.error('Error setting environment variables:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -97,14 +175,21 @@ async function setEnvironmentVariables(data: {
 
 async function deployProject(data: { siteId: string }) {
   try {
-    // Deployment logic would go here
     console.log('Deploying project:', data.siteId);
+
+    // Trigger a new build/deployment
+    await netlify.createSiteBuild({
+      siteId: data.siteId
+    });
+
+    console.log('Deployment triggered for site:', data.siteId);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
+    console.error('Error deploying project:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -117,15 +202,36 @@ async function deployProject(data: { siteId: string }) {
 
 async function deleteNetlifyProject(data: { subdomain: string }) {
   try {
-    // In a real implementation, this would find and delete the Netlify project
-    // by subdomain or project name using the Netlify API
     console.log('Deleting Netlify project for subdomain:', data.subdomain);
+
+    // Find the site by name/subdomain
+    const sites = await netlify.listSites();
+    const siteToDelete = sites.find(site => 
+      site.name === data.subdomain || 
+      site.custom_domain === `${data.subdomain}.swellfocusgrid.com`
+    );
+
+    if (!siteToDelete) {
+      console.warn('Site not found for subdomain:', data.subdomain);
+      return {
+        statusCode: 404,
+        body: JSON.stringify({
+          success: false,
+          error: 'Site not found',
+        }),
+      };
+    }
+
+    // Delete the site
+    await netlify.deleteSite({ siteId: siteToDelete.id });
+    console.log('Deleted site:', siteToDelete.id);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ success: true }),
     };
   } catch (error) {
+    console.error('Error deleting Netlify project:', error);
     return {
       statusCode: 500,
       body: JSON.stringify({
