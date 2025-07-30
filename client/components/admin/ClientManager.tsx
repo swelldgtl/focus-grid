@@ -474,6 +474,11 @@ export default function ClientManager() {
     if (errors.subdomain) {
       setErrors((prev) => ({ ...prev, subdomain: "" }));
     }
+
+    // Check domain availability after a short delay
+    setTimeout(() => {
+      checkDomainAvailability(subdomain);
+    }, 500);
   };
 
   const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
