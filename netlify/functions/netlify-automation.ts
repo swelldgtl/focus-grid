@@ -383,10 +383,27 @@ async function deleteNetlifyProject(data: { subdomain: string }) {
 
     const sites = await listResponse.json();
     const siteToDelete = sites.find(
-      (site: any) =>
-        site.name === data.subdomain ||
-        site.custom_domain === `${data.subdomain}.swellfocusgrid.com`,
+      (site: any) => {
+        // Try multiple ways to find the site
+        const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
+        return (
+          site.name === data.subdomain ||                          // Exact subdomain match (new format)
+          site.name === `${data.subdomain}-focusgrid` ||           // Old format with suffix
+          site.custom_domain === targetDomain ||                   // Custom domain match
+          site.url?.includes(data.subdomain) ||                    // URL contains subdomain
+          site.ssl_url?.includes(data.subdomain) ||                // SSL URL contains subdomain
+          (site.domain_aliases && site.domain_aliases.includes(targetDomain)) // Domain alias match
+        );
+      }
     );
+
+    console.log(`Looking for site with subdomain: ${data.subdomain}`);
+    console.log(`Found ${sites.length} total sites`);
+    if (siteToDelete) {
+      console.log(`Found site to delete: ${siteToDelete.name} (ID: ${siteToDelete.id})`);
+    } else {
+      console.log(`Available sites: ${sites.map((s: any) => s.name).join(', ')}`);
+    }
 
     if (!siteToDelete) {
       console.warn("Site not found for subdomain:", data.subdomain);
