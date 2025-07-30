@@ -502,6 +502,23 @@ export default function ClientManager() {
 
   const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
     setNewClient((prev) => ({ ...prev, createNetlifyProject }));
+
+    // Reset domain validation when toggling Netlify project creation
+    if (!createNetlifyProject) {
+      setDomainAvailable(null);
+      setDomainChecking(false);
+      setErrors((prev) => ({
+        ...prev,
+        subdomain: "",
+      }));
+    } else {
+      // Check domain availability when enabling Netlify project creation
+      if (newClient.subdomain) {
+        setTimeout(() => {
+          checkDomainAvailability(newClient.subdomain);
+        }, 100);
+      }
+    }
   };
 
   const initiateEdit = (client: Client) => {
