@@ -689,20 +689,55 @@ export default function ClientManager() {
                   Subdomain
                 </Label>
                 <div className="flex items-center gap-2">
-                  <Input
-                    id="client-subdomain"
-                    placeholder="e.g., acme"
-                    value={newClient.subdomain}
-                    onChange={(e) => handleSubdomainChange(e.target.value)}
-                    className={errors.subdomain ? "border-red-500" : ""}
-                  />
+                  <div className="relative flex-1">
+                    <Input
+                      id="client-subdomain"
+                      placeholder="e.g., acme"
+                      value={newClient.subdomain}
+                      onChange={(e) => handleSubdomainChange(e.target.value)}
+                      className={
+                        errors.subdomain ? "border-red-500" :
+                        domainAvailable === true ? "border-green-500" :
+                        domainAvailable === false ? "border-red-500" : ""
+                      }
+                    />
+                    {domainChecking && (
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
+                      </div>
+                    )}
+                    {!domainChecking && domainAvailable === true && newClient.createNetlifyProject && (
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      </div>
+                    )}
+                    {!domainChecking && domainAvailable === false && newClient.createNetlifyProject && (
+                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                        <XCircle className="h-4 w-4 text-red-600" />
+                      </div>
+                    )}
+                  </div>
                   <span className="text-sm text-muted-foreground">
                     .swellfocusgrid.com
                   </span>
                 </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Auto-generated from name, but can be customized
-                </p>
+                <div className="mt-1">
+                  <p className="text-xs text-muted-foreground">
+                    Auto-generated from name, but can be customized
+                  </p>
+                  {newClient.createNetlifyProject && domainAvailable === true && (
+                    <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
+                      <CheckCircle className="h-3 w-3" />
+                      Subdomain is available
+                    </p>
+                  )}
+                  {newClient.createNetlifyProject && domainAvailable === false && (
+                    <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
+                      <XCircle className="h-3 w-3" />
+                      Subdomain is already taken
+                    </p>
+                  )}
+                </div>
                 {errors.subdomain && (
                   <p className="text-sm text-red-500 flex items-center gap-1 mt-1">
                     <AlertCircle className="h-3 w-3" />
