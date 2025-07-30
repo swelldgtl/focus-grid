@@ -57,8 +57,8 @@ async function createNetlifyProject(data: {
     console.log("Creating Netlify site for:", data.subdomain);
 
     // Create the site using REST API
-    // Make the site name globally unique by adding timestamp
-    const uniqueSiteName = `${data.subdomain}-${Date.now()}`;
+    // Use a friendly but unique site name
+    const friendlySiteName = `${data.subdomain}-focusgrid`;
 
     const createSiteResponse = await fetch(
       "https://api.netlify.com/api/v1/sites",
@@ -69,8 +69,15 @@ async function createNetlifyProject(data: {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          name: uniqueSiteName,
-          // Don't set custom_domain during creation - set it after
+          name: friendlySiteName,
+          repo: {
+            provider: "github",
+            repo: "swell-digital/swell-focus-grid", // Update this to your actual repo
+            branch: "main",
+            dir: "/",
+            cmd: "npm run build",
+            publish_dir: "dist/spa"
+          }
         }),
       },
     );
