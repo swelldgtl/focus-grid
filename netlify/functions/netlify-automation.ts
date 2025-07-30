@@ -1,5 +1,5 @@
 import { Handler } from "@netlify/functions";
-import NetlifyAPI from "netlify";
+import { NetlifyAPI } from "netlify";
 
 // Initialize Netlify API client
 const netlify = new NetlifyAPI(process.env.NETLIFY_ACCESS_TOKEN!);
