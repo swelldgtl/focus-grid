@@ -59,8 +59,8 @@ async function createNetlifyProject(data: {
     console.log("Creating Netlify site for:", data.subdomain);
 
     // Create the site using REST API
-    // Use a friendly but unique site name
-    const friendlySiteName = `${data.subdomain}-focusgrid`;
+    // Use the exact subdomain as the site name
+    const friendlySiteName = data.subdomain;
 
     const createSiteResponse = await fetch(
       "https://api.netlify.com/api/v1/sites",
