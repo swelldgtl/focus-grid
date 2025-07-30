@@ -120,7 +120,7 @@ async function createNetlifyProject(data: {
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
       throw new Error(
-        `Failed to create site: ${createSiteResponse.status} ${errorText}`,
+        `Failed to create site after ${attempts} attempts: ${createSiteResponse.status} ${errorText}`,
       );
     }
 
