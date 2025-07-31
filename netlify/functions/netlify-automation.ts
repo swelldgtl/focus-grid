@@ -21,7 +21,9 @@ export const handler: Handler = async (event, context) => {
   console.log("Environment check:", {
     hasNetlifyToken: !!process.env.NETLIFY_ACCESS_TOKEN,
     hasGithubRepo: !!process.env.GITHUB_REPO,
+    hasGithubToken: !!process.env.GITHUB_TOKEN,
     githubRepo: process.env.GITHUB_REPO,
+    tokenLength: process.env.NETLIFY_ACCESS_TOKEN?.length || 0,
   });
 
   try {
