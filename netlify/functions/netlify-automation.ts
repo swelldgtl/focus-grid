@@ -168,7 +168,7 @@ async function createNetlifyProject(data: {
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
           body: JSON.stringify(envVarArray),
-        }
+        },
       );
 
       console.log(`Bulk env var response status: ${bulkResponse.status}`);
@@ -178,7 +178,10 @@ async function createNetlifyProject(data: {
         envVarsSet = Object.keys(envVars).length;
       } else {
         const bulkError = await bulkResponse.text();
-        console.warn("❌ Bulk method failed, trying individual method:", bulkError);
+        console.warn(
+          "❌ Bulk method failed, trying individual method:",
+          bulkError,
+        );
 
         // Fall back to individual setting
         for (const [key, value] of Object.entries(envVars)) {
@@ -241,7 +244,9 @@ async function createNetlifyProject(data: {
 
     // CRITICAL: Verify GitHub token was set before attempting deployment
     if (process.env.GITHUB_TOKEN && envVarsFailed > 0) {
-      console.error(`❌ BLOCKING DEPLOYMENT: ${envVarsFailed} environment variables failed to set`);
+      console.error(
+        `❌ BLOCKING DEPLOYMENT: ${envVarsFailed} environment variables failed to set`,
+      );
       console.error("GitHub token may not be available for deployment");
     }
 
@@ -254,7 +259,7 @@ async function createNetlifyProject(data: {
           headers: {
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        }
+        },
       );
 
       if (verifyResponse.ok) {
@@ -262,11 +267,13 @@ async function createNetlifyProject(data: {
         const setVarNames = envVarList.map((envVar: any) => envVar.key);
         console.log("Actually set environment variables:", setVarNames);
 
-        const hasGithubToken = setVarNames.includes('GITHUB_TOKEN');
+        const hasGithubToken = setVarNames.includes("GITHUB_TOKEN");
         console.log(`GitHub token present in new site: ${hasGithubToken}`);
 
         if (process.env.GITHUB_TOKEN && !hasGithubToken) {
-          console.error("❌ CRITICAL: GitHub token was NOT set on new site - deployment will fail");
+          console.error(
+            "❌ CRITICAL: GitHub token was NOT set on new site - deployment will fail",
+          );
         }
       } else {
         console.warn("Could not verify environment variables");
@@ -356,8 +363,12 @@ async function createNetlifyProject(data: {
                 deploymentResult = deployResult;
               }
             } else {
-              console.warn("❌ Skipping GitHub integration - environment variables failed to set");
-              console.warn("Falling back to file-based deployment with setup instructions");
+              console.warn(
+                "❌ Skipping GitHub integration - environment variables failed to set",
+              );
+              console.warn(
+                "Falling back to file-based deployment with setup instructions",
+              );
               const deployResult = await triggerFileBasedDeployment(
                 site.id,
                 data,
