@@ -228,76 +228,57 @@ async function setEnvironmentVariables(data: {
 
 async function deployProject(data: { siteId: string }) {
   try {
-    console.log("Setting up deployment for site:", data.siteId);
+    console.log("Providing deployment setup instructions for site:", data.siteId);
 
-    // Step 1: Update site with repository and build configuration
-    console.log("Connecting GitHub repository...");
-    const repoUpdateResponse = await fetch(
+    // Get site information to provide accurate instructions
+    const siteResponse = await fetch(
       `https://api.netlify.com/api/v1/sites/${data.siteId}`,
       {
-        method: "PATCH",
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
-        body: JSON.stringify({
-          build_settings: {
-            repo_url: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}`,
-            repo_branch: "main",
-            cmd: "npm run build:client",
-            publish_dir: "dist/spa",
-          },
-        }),
       },
     );
 
-    if (!repoUpdateResponse.ok) {
-      const repoError = await repoUpdateResponse.text();
-      throw new Error(`Repository connection failed: ${repoError}`);
+    if (!siteResponse.ok) {
+      throw new Error("Could not retrieve site information");
     }
 
-    console.log("✅ Repository connected successfully");
-
-    // Step 2: Trigger deployment
-    console.log("Triggering deployment...");
-    const deployResponse = await fetch(
-      `https://api.netlify.com/api/v1/sites/${data.siteId}/builds`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-          clear_cache: true,
-        }),
-      },
-    );
-
-    if (!deployResponse.ok) {
-      const errorText = await deployResponse.text();
-      throw new Error(`Deploy failed: ${deployResponse.status} ${errorText}`);
-    }
-
-    const deployResult = await deployResponse.json();
-    console.log("✅ Deployment triggered:", deployResult.id);
+    const site = await siteResponse.json();
+    const repoUrl = process.env.GITHUB_REPO || "swelldgtl/focus-grid";
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         success: true,
-        deployId: deployResult.id,
-        message: "Repository connected and deployment started successfully.",
+        requiresManualSetup: true,
+        siteName: site.name,
+        siteId: data.siteId,
+        adminUrl: site.admin_url,
+        repoUrl: `https://github.com/${repoUrl}`,
+        instructions: {
+          steps: [
+            `Go to your Netlify Dashboard: ${site.admin_url}`,
+            "Click 'Site settings' → 'Build & deploy'",
+            "Click 'Link to Git repository'",
+            `Select GitHub and choose: ${repoUrl}`,
+            "Set build command: npm run build:client",
+            "Set publish directory: dist/spa",
+            "Click 'Deploy site'"
+          ]
+        },
+        importUrl: `https://app.netlify.com/start/deploy?repository=https://github.com/${repoUrl}&stack=github`,
+        message: "Site created successfully. Please follow the manual setup steps for reliable deployment."
       }),
     };
   } catch (error) {
-    console.error("Error deploying project:", error);
+    console.error("Error providing deployment instructions:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
         success: false,
         error:
-          error instanceof Error ? error.message : "Failed to deploy project",
+          error instanceof Error ? error.message : "Failed to provide deployment instructions",
       }),
     };
   }
