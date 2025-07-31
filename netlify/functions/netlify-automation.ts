@@ -140,9 +140,18 @@ async function createNetlifyProject(data: {
       }),
     };
 
-    // Set each environment variable
+    // Set each environment variable with detailed debugging
+    console.log("=== SETTING ENVIRONMENT VARIABLES ===");
+    console.log("Variables to set:", Object.keys(envVars));
+    console.log("Site ID:", site.id);
+
+    let envVarsSet = 0;
+    let envVarsFailed = 0;
+
     for (const [key, value] of Object.entries(envVars)) {
       try {
+        console.log(`Setting environment variable: ${key}`);
+
         const envResponse = await fetch(
           `https://api.netlify.com/api/v1/sites/${site.id}/env/${key}`,
           {
@@ -163,19 +172,29 @@ async function createNetlifyProject(data: {
           },
         );
 
+        console.log(`Environment variable ${key} response status: ${envResponse.status}`);
+
         if (envResponse.ok) {
-          console.log(`Set environment variable ${key} for site ${site.id}`);
+          console.log(`✅ Successfully set environment variable: ${key}`);
+          envVarsSet++;
         } else {
           const errorText = await envResponse.text();
-          console.warn(
-            `Failed to set environment variable ${key}: ${errorText}`,
-          );
+          console.error(`❌ Failed to set environment variable ${key}:`, {
+            status: envResponse.status,
+            error: errorText
+          });
+          envVarsFailed++;
         }
       } catch (envError) {
-        console.warn(`Failed to set environment variable ${key}:`, envError);
-        // Continue with other variables even if one fails
+        console.error(`❌ Exception setting environment variable ${key}:`, envError);
+        envVarsFailed++;
       }
     }
+
+    console.log(`=== ENVIRONMENT VARIABLES SUMMARY ===`);
+    console.log(`✅ Set: ${envVarsSet}`);
+    console.log(`❌ Failed: ${envVarsFailed}`);
+    console.log(`=== END ENVIRONMENT VARIABLES ===`);
 
     console.log("Environment variables set for site:", site.id);
 
