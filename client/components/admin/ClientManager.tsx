@@ -560,14 +560,16 @@ export default function ClientManager() {
   const generateEnvFile = () => {
     if (!createdNetlifyProject) return;
 
-    const clientId = clients.find(c => c.name === newClient.name)?.id || 'REPLACE_WITH_CLIENT_ID';
+    const clientId =
+      clients.find((c) => c.name === newClient.name)?.id ||
+      "REPLACE_WITH_CLIENT_ID";
 
     const envContent = `# Environment Variables for ${newClient.name} - ${newClient.subdomain}
 # Generated on ${new Date().toLocaleString()}
 
 # Client Configuration
 CLIENT_ID=${clientId}
-DATABASE_URL=${process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_mfqu8lM7oDzj@ep-polished-dew-adh5wbkv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require'}
+DATABASE_URL=${process.env.DATABASE_URL || "postgresql://neondb_owner:npg_mfqu8lM7oDzj@ep-polished-dew-adh5wbkv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"}
 NEXT_PUBLIC_CLIENT_NAME=${newClient.name}
 NEXT_PUBLIC_CLIENT_SUBDOMAIN=${newClient.subdomain}
 
@@ -577,9 +579,9 @@ GITHUB_REPO=swelldgtl/focus-grid
 `;
 
     // Create and download the file
-    const blob = new Blob([envContent], { type: 'text/plain' });
+    const blob = new Blob([envContent], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
+    const link = document.createElement("a");
     link.href = url;
     link.download = `${newClient.subdomain}-env-variables.env`;
     document.body.appendChild(link);
@@ -1127,7 +1129,9 @@ GITHUB_REPO=swelldgtl/focus-grid
                       Environment Variables Ready
                     </h4>
                     <p className="text-sm text-blue-700 mb-3">
-                      All environment variables have been prepared for this client. Download the .env file and import it directly into Netlify.
+                      All environment variables have been prepared for this
+                      client. Download the .env file and import it directly into
+                      Netlify.
                     </p>
                     <Button
                       onClick={generateEnvFile}
@@ -1139,11 +1143,17 @@ GITHUB_REPO=swelldgtl/focus-grid
                     </Button>
                     <div className="text-xs text-blue-600 bg-blue-100 p-2 rounded">
                       <strong>Next steps:</strong>
-                      <br />1. Download the .env file above
-                      <br />2. Open Netlify Dashboard (button below)
-                      <br />3. Go to Site settings → Environment variables → Import from .env
-                      <br />4. Upload the downloaded file
-                      <br />5. Connect your GitHub repository
+                      <br />
+                      1. Download the .env file above
+                      <br />
+                      2. Open Netlify Dashboard (button below)
+                      <br />
+                      3. Go to Site settings → Environment variables → Import
+                      from .env
+                      <br />
+                      4. Upload the downloaded file
+                      <br />
+                      5. Connect your GitHub repository
                     </div>
                   </div>
                   <Button
