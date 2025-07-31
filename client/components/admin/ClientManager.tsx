@@ -158,19 +158,21 @@ export default function ClientManager() {
     }
   };
 
-  // Check if subdomain is available in Netlify
-  const checkDomainAvailability = async (subdomain: string) => {
-    if (!subdomain || !newClient.createNetlifyProject) {
-      console.log("Skipping domain check:", {
-        subdomain,
-        createNetlifyProject: newClient.createNetlifyProject,
+  // Check if subdomain is available in Netlify (explicit action)
+  const checkDomainAvailability = async () => {
+    if (!newClient.subdomain || !newClient.createNetlifyProject) {
+      toast({
+        title: "Cannot Check Domain",
+        description: "Please enter a subdomain and enable Netlify project creation.",
+        variant: "destructive",
       });
-      setDomainAvailable(null);
       return;
     }
 
-    console.log(`Checking domain availability for: ${subdomain}`);
+    console.log(`Checking domain availability for: ${newClient.subdomain}`);
     setDomainChecking(true);
+    setDomainValidated(false);
+
     try {
       const response = await fetch("/.netlify/functions/netlify-automation", {
         method: "POST",
@@ -179,7 +181,7 @@ export default function ClientManager() {
         },
         body: JSON.stringify({
           action: "check-domain",
-          subdomain: subdomain,
+          subdomain: newClient.subdomain,
         }),
       });
 
@@ -189,6 +191,13 @@ export default function ClientManager() {
         console.error(`Domain check failed with status: ${response.status}`);
         const errorText = await response.text();
         console.error("Error response:", errorText);
+
+        toast({
+          title: "Domain Check Failed",
+          description: "Unable to verify domain availability. Please try again.",
+          variant: "destructive",
+        });
+
         setDomainAvailable(null);
         return;
       }
@@ -196,21 +205,39 @@ export default function ClientManager() {
       const result = await response.json();
       console.log("Domain check result:", result);
       setDomainAvailable(result.available);
+      setDomainValidated(true);
 
       if (!result.available) {
         setErrors((prev) => ({
           ...prev,
           subdomain: "This subdomain is already taken in Netlify",
         }));
+
+        toast({
+          title: "Domain Unavailable",
+          description: `The subdomain "${newClient.subdomain}" is already taken. Please choose a different one.`,
+          variant: "destructive",
+        });
       } else {
         setErrors((prev) => ({
           ...prev,
           subdomain: "",
         }));
+
+        toast({
+          title: "Domain Available",
+          description: `The subdomain "${newClient.subdomain}" is available!`,
+        });
       }
     } catch (error) {
       console.error("Error checking domain:", error);
       setDomainAvailable(null);
+
+      toast({
+        title: "Check Failed",
+        description: "Error checking domain availability. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setDomainChecking(false);
     }
