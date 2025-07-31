@@ -205,7 +205,12 @@ export default function ClientManager() {
       }
 
       const result = await response.json();
-      console.log("Domain check result:", result);
+      console.log("=== CLIENT DOMAIN CHECK RESULT ===");
+      console.log("Full result:", result);
+      console.log("Available:", result.available);
+      console.log("Debug info:", result.debug);
+      console.log("=== END CLIENT RESULT ===");
+
       setDomainAvailable(result.available);
       setDomainValidated(true);
 
