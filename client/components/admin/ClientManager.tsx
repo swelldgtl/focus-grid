@@ -531,7 +531,7 @@ export default function ClientManager() {
         },
         body: JSON.stringify({
           action: "deploy",
-          siteId: deploymentInfo.primaryUrl.split('//')[1].split('.')[0], // Extract site ID from URL
+          siteId: deploymentInfo.siteId,
         }),
       });
 
