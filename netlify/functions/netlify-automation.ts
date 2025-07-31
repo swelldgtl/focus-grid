@@ -183,28 +183,79 @@ async function createNetlifyProject(data: {
 
     console.log("Environment variables set for site:", site.id);
 
-    // Trigger a deployment
-    try {
-      const deployResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({}),
-        },
-      );
+    // Trigger a deployment (retry if needed)
+    let deploymentSuccessful = false;
+    let deploymentAttempts = 0;
+    const maxDeployAttempts = 3;
 
-      if (deployResponse.ok) {
-        console.log("Deployment triggered for site:", site.id);
-      } else {
-        console.warn("Site created but deployment failed");
+    while (!deploymentSuccessful && deploymentAttempts < maxDeployAttempts) {
+      deploymentAttempts++;
+      console.log(`Deployment attempt ${deploymentAttempts} for site: ${site.id}`);
+
+      try {
+        // First, verify the site has repository configuration
+        const siteInfoResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+          }
+        );
+
+        if (siteInfoResponse.ok) {
+          const siteInfo = await siteInfoResponse.json();
+          console.log("Site repository info:", {
+            hasRepo: !!siteInfo.repo,
+            repoUrl: siteInfo.repo?.repo,
+            branch: siteInfo.repo?.branch,
+          });
+        }
+
+        // Trigger deployment
+        const deployResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              clear_cache: true, // Clear cache for fresh build
+            }),
+          },
+        );
+
+        if (deployResponse.ok) {
+          const deployResult = await deployResponse.json();
+          console.log("Deployment triggered successfully:", {
+            deployId: deployResult.id,
+            state: deployResult.state,
+            createdAt: deployResult.created_at,
+          });
+          deploymentSuccessful = true;
+        } else {
+          const deployError = await deployResponse.text();
+          console.warn(`Deployment attempt ${deploymentAttempts} failed:`, deployError);
+
+          // If it's the last attempt, log the failure but don't fail the entire creation
+          if (deploymentAttempts === maxDeployAttempts) {
+            console.warn("All deployment attempts failed, but site was created successfully");
+          } else {
+            // Wait a bit before retrying
+            await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+        }
+      } catch (deployError) {
+        console.warn(`Deployment attempt ${deploymentAttempts} error:`, deployError);
+        if (deploymentAttempts === maxDeployAttempts) {
+          console.warn("Site created but deployment failed after all attempts:", deployError);
+        } else {
+          // Wait a bit before retrying
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
       }
-    } catch (deployError) {
-      console.warn("Site created but deployment failed:", deployError);
-      // Continue - the site is created even if deployment fails
     }
 
     return {
