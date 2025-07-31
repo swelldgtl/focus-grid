@@ -221,12 +221,27 @@ async function createNetlifyProject(data: {
         if (buildSettingsResponse.ok) {
           console.log("Build settings configured");
 
-          // Try to trigger deployment via file upload
-          try {
+          // Try GitHub integration first if repository is configured
+          if (process.env.GITHUB_REPO) {
+            try {
+              const githubResult = await setupGitHubIntegration(site.id, process.env.GITHUB_REPO);
+              if (githubResult.success) {
+                deploymentResult = githubResult;
+                console.log("GitHub integration successful");
+              } else {
+                console.warn("GitHub integration failed, trying file upload");
+                const deployResult = await triggerFileBasedDeployment(site.id, data);
+                deploymentResult = deployResult;
+              }
+            } catch (githubError) {
+              console.warn("GitHub integration error, trying file upload:", githubError);
+              const deployResult = await triggerFileBasedDeployment(site.id, data);
+              deploymentResult = deployResult;
+            }
+          } else {
+            // No GitHub repo configured, use file upload
             const deployResult = await triggerFileBasedDeployment(site.id, data);
             deploymentResult = deployResult;
-          } catch (deployError) {
-            console.warn("File-based deployment failed, but site created:", deployError);
           }
         }
       }
