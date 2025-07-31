@@ -132,6 +132,37 @@ async function createNetlifyProject(data: {
 
       if (repoResponse.ok) {
         console.log("✅ GitHub repository connected with main branch");
+
+        // Explicitly enable continuous deployment
+        try {
+          const deploySettingsResponse = await fetch(
+            `https://api.netlify.com/api/v1/sites/${site.id}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+              },
+              body: JSON.stringify({
+                managed_dns: false,
+                processing_settings: {
+                  skip: false,
+                },
+                build_settings: {
+                  cmd: "npm run build:client",
+                  publish_dir: "dist/spa",
+                  stop_builds: false,
+                },
+              }),
+            },
+          );
+
+          if (deploySettingsResponse.ok) {
+            console.log("✅ Continuous deployment enabled");
+          }
+        } catch (deployError) {
+          console.warn("Deploy settings update failed:", deployError);
+        }
       } else {
         const repoError = await repoResponse.text();
         console.warn("❌ Failed to connect repository:", repoError);
