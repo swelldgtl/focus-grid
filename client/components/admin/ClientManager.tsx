@@ -1291,15 +1291,9 @@ GITHUB_REPO=swelldgtl/focus-grid`}
               {/* Action Buttons */}
               <div className="flex gap-3 pt-4">
                 <Button
-                  variant="outline"
-                  onClick={() => setShowDeploymentModal(false)}
-                  className="flex-1"
-                >
-                  Close
-                </Button>
-                <Button
                   onClick={handleDeployProject}
                   disabled={deployingProject}
+                  variant="outline"
                   className="flex-1 flex items-center gap-2"
                 >
                   {deployingProject ? (
@@ -1313,6 +1307,15 @@ GITHUB_REPO=swelldgtl/focus-grid`}
                       Open Netlify Dashboard
                     </>
                   )}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setShowDeploymentModal(false);
+                    completeClientCreation();
+                  }}
+                  className="flex-1"
+                >
+                  I'm Done
                 </Button>
               </div>
             </div>
