@@ -175,6 +175,65 @@ async function createNetlifyProject(data: {
 
     console.log("Environment variables set for site:", site.id);
 
+    // Try automatic deployment using build hooks
+    let deploymentResult = null;
+    try {
+      console.log("Setting up automatic deployment...");
+
+      // Create a build hook for webhook-based deployment
+      const buildHookResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/build_hooks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            title: "Auto Deploy Hook",
+            branch: "main",
+          }),
+        }
+      );
+
+      if (buildHookResponse.ok) {
+        const buildHook = await buildHookResponse.json();
+        console.log("Build hook created:", buildHook.url);
+
+        // Configure build settings without repository connection
+        const buildSettingsResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              build_settings: {
+                cmd: "npm run build",
+                publish_dir: "dist/spa",
+              }
+            }),
+          }
+        );
+
+        if (buildSettingsResponse.ok) {
+          console.log("Build settings configured");
+
+          // Try to trigger deployment via file upload
+          try {
+            const deployResult = await triggerFileBasedDeployment(site.id, data);
+            deploymentResult = deployResult;
+          } catch (deployError) {
+            console.warn("File-based deployment failed, but site created:", deployError);
+          }
+        }
+      }
+    } catch (deployError) {
+      console.warn("Automatic deployment setup failed:", deployError);
+    }
+
     return {
       statusCode: 201,
       body: JSON.stringify({
@@ -183,19 +242,9 @@ async function createNetlifyProject(data: {
         siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
-        manualSetupRequired: true,
-        setupInstructions: {
-          message: "Site created successfully. Manual repository connection required.",
-          steps: [
-            "1. Go to your Netlify dashboard",
-            "2. Find the site: " + friendlySiteName,
-            "3. Go to Site settings → Build & deploy",
-            "4. Connect to GitHub repository: swelldgtl/focus-grid",
-            "5. Set build command: npm run build",
-            "6. Set publish directory: dist/spa",
-            "7. Deploy site"
-          ]
-        }
+        deployed: !!deploymentResult?.success,
+        deploymentMethod: deploymentResult?.method || "manual-required",
+        manualSetupRequired: !deploymentResult?.success,
       }),
     };
   } catch (error) {
