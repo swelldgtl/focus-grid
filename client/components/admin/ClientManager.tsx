@@ -87,6 +87,7 @@ export default function ClientManager() {
     subdomain: string;
     clientId: string;
     primaryUrl: string;
+    siteId: string;
   } | null>(null);
   const [newClient, setNewClient] = useState({
     name: "",
