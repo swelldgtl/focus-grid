@@ -1270,9 +1270,8 @@ GITHUB_REPO=swelldgtl/focus-grid`}
                     <strong>Environment Variables:</strong>
                     <ul className="mt-1 ml-4 list-disc space-y-1">
                       <li>Go to Site settings → Environment variables</li>
-                      <li>
-                        Click "Import from .env" and upload the downloaded file
-                      </li>
+                      <li>Click "Add a variable" for each variable above</li>
+                      <li>Copy and paste the key and value for each one</li>
                     </ul>
                   </div>
 
