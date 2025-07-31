@@ -581,20 +581,18 @@ export default function ClientManager() {
   };
 
   const generateEnvFile = () => {
-    if (!createdNetlifyProject) return;
+    if (!deploymentInfo) return;
 
-    const clientId =
-      clients.find((c) => c.name === newClient.name)?.id ||
-      "REPLACE_WITH_CLIENT_ID";
+    const client = clients.find(c => c.id === deploymentInfo.clientId);
 
-    const envContent = `# Environment Variables for ${newClient.name} - ${newClient.subdomain}
+    const envContent = `# Environment Variables for ${client?.name || deploymentInfo.siteName} - ${deploymentInfo.subdomain}
 # Generated on ${new Date().toLocaleString()}
 
 # Client Configuration
-CLIENT_ID=${clientId}
+CLIENT_ID=${deploymentInfo.clientId}
 DATABASE_URL=${process.env.DATABASE_URL || "postgresql://neondb_owner:npg_mfqu8lM7oDzj@ep-polished-dew-adh5wbkv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"}
-NEXT_PUBLIC_CLIENT_NAME=${newClient.name}
-NEXT_PUBLIC_CLIENT_SUBDOMAIN=${newClient.subdomain}
+NEXT_PUBLIC_CLIENT_NAME=${client?.name || deploymentInfo.siteName}
+NEXT_PUBLIC_CLIENT_SUBDOMAIN=${deploymentInfo.subdomain}
 
 # Admin & Deployment Configuration
 NETLIFY_ACCESS_TOKEN=nfp_m56qdRWHHx5MjyzdqrxajMtUBwyhF4776c65
@@ -606,7 +604,7 @@ GITHUB_REPO=swelldgtl/focus-grid
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${newClient.subdomain}-env-variables.env`;
+    link.download = `${deploymentInfo.subdomain}-env-variables.env`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -614,7 +612,7 @@ GITHUB_REPO=swelldgtl/focus-grid
 
     toast({
       title: "Environment File Downloaded",
-      description: `Downloaded ${newClient.subdomain}-env-variables.env - Import this into Netlify!`,
+      description: `Downloaded ${deploymentInfo.subdomain}-env-variables.env - Import this into Netlify!`,
     });
   };
 
