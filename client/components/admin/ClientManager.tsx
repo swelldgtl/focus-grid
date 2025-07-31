@@ -1182,6 +1182,113 @@ GITHUB_REPO=swelldgtl/focus-grid
         </Dialog>
       </div>
 
+      {/* Deployment Setup Modal - shown after client creation */}
+      <Dialog open={showDeploymentModal} onOpenChange={setShowDeploymentModal}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <CheckCircle className="h-5 w-5 text-green-600" />
+              Client Created Successfully!
+            </DialogTitle>
+          </DialogHeader>
+
+          {deploymentInfo && (
+            <div className="space-y-6">
+              {/* Success Message */}
+              <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-sm text-green-800">
+                  <strong>{clients.find(c => c.id === deploymentInfo.clientId)?.name}</strong> has been created with Netlify project:
+                </p>
+                <p className="text-sm font-mono text-green-700 mt-1">
+                  {deploymentInfo.primaryUrl}
+                </p>
+              </div>
+
+              {/* Environment Variables Download */}
+              <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                  <Database className="h-4 w-4" />
+                  Step 1: Download Environment Variables
+                </h3>
+                <p className="text-sm text-blue-700 mb-3">
+                  All required environment variables are ready for download:
+                </p>
+                <Button
+                  onClick={generateEnvFile}
+                  variant="outline"
+                  className="mb-3 flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-100"
+                >
+                  <Database className="h-4 w-4" />
+                  Download {deploymentInfo.subdomain}-env-variables.env
+                </Button>
+              </div>
+
+              {/* Setup Instructions */}
+              <div className="p-4 bg-gray-50 border rounded-lg">
+                <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                  <Settings2 className="h-4 w-4" />
+                  Step 2: Complete Netlify Setup
+                </h3>
+                <div className="text-sm text-gray-700 space-y-2">
+                  <div className="bg-white p-3 rounded border-l-4 border-blue-500">
+                    <strong>Repository & Build:</strong>
+                    <ul className="mt-1 ml-4 list-disc space-y-1">
+                      <li>Connect to repository: <code className="bg-gray-100 px-1 rounded">swelldgtl/focus-grid</code></li>
+                      <li>Build command: <code className="bg-gray-100 px-1 rounded">npm run build:client</code></li>
+                      <li>Publish directory: <code className="bg-gray-100 px-1 rounded">dist/spa</code></li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white p-3 rounded border-l-4 border-green-500">
+                    <strong>Environment Variables:</strong>
+                    <ul className="mt-1 ml-4 list-disc space-y-1">
+                      <li>Go to Site settings → Environment variables</li>
+                      <li>Click "Import from .env" and upload the downloaded file</li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-white p-3 rounded border-l-4 border-purple-500">
+                    <strong>Domain Management:</strong>
+                    <ul className="mt-1 ml-4 list-disc space-y-1">
+                      <li>Add <code className="bg-gray-100 px-1 rounded">{deploymentInfo.subdomain}.swellfocusgrid.com</code> in Domain management</li>
+                      <li>Force HTTPS in Domain management</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={() => setShowDeploymentModal(false)}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={handleDeployProject}
+                  disabled={deployingProject}
+                  className="flex-1 flex items-center gap-2"
+                >
+                  {deployingProject ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Opening...
+                    </>
+                  ) : (
+                    <>
+                      <Globe className="h-4 w-4" />
+                      Open Netlify Dashboard
+                    </>
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
       {/* Edit Client Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent>
