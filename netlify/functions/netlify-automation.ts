@@ -258,6 +258,33 @@ async function createNetlifyProject(data: {
       }
     }
 
+    // Set up webhook for automatic deployments on push (optional)
+    try {
+      const webhookResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/build_hooks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            title: "Auto Deploy Hook",
+            branch: "main",
+          }),
+        }
+      );
+
+      if (webhookResponse.ok) {
+        const webhook = await webhookResponse.json();
+        console.log("Build hook created:", webhook.url);
+      } else {
+        console.warn("Failed to create build hook (not critical)");
+      }
+    } catch (webhookError) {
+      console.warn("Webhook setup failed (not critical):", webhookError);
+    }
+
     return {
       statusCode: 201,
       body: JSON.stringify({
@@ -266,6 +293,8 @@ async function createNetlifyProject(data: {
         siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
+        deployed: deploymentSuccessful,
+        deploymentAttempts: deploymentAttempts,
       }),
     };
   } catch (error) {
