@@ -628,6 +628,8 @@ GITHUB_REPO=swelldgtl/focus-grid
     setErrors({ name: "", slug: "", subdomain: "" });
     setCreatedNetlifyProject(null);
     setIsCreateDialogOpen(false);
+    setShowDeploymentModal(false);
+    setDeploymentInfo(null);
     setDomainAvailable(null);
     setDomainValidated(false);
   };
