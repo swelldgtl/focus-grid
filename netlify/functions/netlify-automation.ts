@@ -73,6 +73,7 @@ async function createNetlifyProject(data: {
 
     console.log(`Creating site with exact name: ${friendlySiteName}`);
 
+    // Create site without repo connection first to avoid authentication issues
     const createSiteResponse = await fetch(
       "https://api.netlify.com/api/v1/sites",
       {
@@ -83,14 +84,7 @@ async function createNetlifyProject(data: {
         },
         body: JSON.stringify({
           name: friendlySiteName,
-          repo: {
-            provider: "github",
-            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-            branch: "main",
-            dir: "/",
-            cmd: "npm run build",
-            publish_dir: "dist/spa",
-          },
+          // Don't connect repo during creation to avoid auth issues
         }),
       },
     );
