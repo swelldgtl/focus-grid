@@ -533,6 +533,61 @@ export default function ClientManager() {
     }
   };
 
+  const handleDeployProject = async () => {
+    if (!createdNetlifyProject) return;
+
+    setDeployingProject(true);
+
+    try {
+      const response = await fetch("/.netlify/functions/netlify-automation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "deploy",
+          siteId: createdNetlifyProject.siteId,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Deployment Started",
+          description: `Repository connected and deployment started for ${createdNetlifyProject.clientName}. Check Netlify dashboard for progress.`,
+        });
+        completeClientCreation();
+      } else {
+        throw new Error(result.error || "Failed to deploy project");
+      }
+    } catch (error) {
+      console.error("Error deploying project:", error);
+      toast({
+        title: "Deployment Failed",
+        description:
+          error instanceof Error ? error.message : "Failed to deploy project",
+        variant: "destructive",
+      });
+    } finally {
+      setDeployingProject(false);
+    }
+  };
+
+  const completeClientCreation = () => {
+    setNewClient({
+      name: "",
+      slug: "",
+      subdomain: "",
+      createNetlifyProject: true,
+    });
+    setErrors({ name: "", slug: "", subdomain: "" });
+    setCreatedNetlifyProject(null);
+    setIsCreateDialogOpen(false);
+    setDomainAvailable(null);
+    setDomainValidated(false);
+  };
+
   const initiateDelete = (client: Client) => {
     setDeleteState({
       isFirstDialogOpen: true,
