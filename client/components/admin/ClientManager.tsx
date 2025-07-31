@@ -452,7 +452,9 @@ export default function ClientManager() {
             clientName: newClient.name,
           });
         } else {
-          throw new Error(netlifyResult.error || "Failed to create Netlify project");
+          throw new Error(
+            netlifyResult.error || "Failed to create Netlify project",
+          );
         }
       }
 
@@ -1053,10 +1055,15 @@ export default function ClientManager() {
                     </h3>
                   </div>
                   <p className="text-sm text-green-700 mb-4">
-                    Site: <span className="font-mono">{createdNetlifyProject.primaryUrl}</span>
+                    Site:{" "}
+                    <span className="font-mono">
+                      {createdNetlifyProject.primaryUrl}
+                    </span>
                   </p>
                   <p className="text-sm text-gray-600 mb-4">
-                    Your Netlify project has been created and configured. Click the button below to connect the GitHub repository and start the deployment.
+                    Your Netlify project has been created and configured. Click
+                    the button below to connect the GitHub repository and start
+                    the deployment.
                   </p>
                   <Button
                     onClick={handleDeployProject}
