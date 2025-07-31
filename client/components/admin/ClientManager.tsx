@@ -1537,6 +1537,17 @@ export default function ClientManager() {
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
+                        {client.netlify_project_id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deployProject(client)}
+                            title="Deploy to Netlify"
+                            className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                          >
+                            <Play className="h-4 w-4" />
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
