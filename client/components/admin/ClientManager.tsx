@@ -75,10 +75,12 @@ export default function ClientManager() {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [clientToEdit, setClientToEdit] = useState<Client | null>(null);
   const [creating, setCreating] = useState(false);
-  const [deploymentStatus, setDeploymentStatus] = useState<{
-    step: "client" | "netlify" | "deploy" | "complete";
-    message: string;
+  const [createdNetlifyProject, setCreatedNetlifyProject] = useState<{
+    siteId: string;
+    primaryUrl: string;
+    clientName: string;
   } | null>(null);
+  const [deployingProject, setDeployingProject] = useState(false);
   const [newClient, setNewClient] = useState({
     name: "",
     slug: "",
