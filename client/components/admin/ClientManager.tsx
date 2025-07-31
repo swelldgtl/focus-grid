@@ -1099,36 +1099,34 @@ export default function ClientManager() {
                 >
                   {createdNetlifyProject ? "Skip Deployment" : "Cancel"}
                 </Button>
-                <Button
-                  onClick={handleCreateClient}
-                  disabled={
-                    !newClient.name ||
-                    !newClient.slug ||
-                    !newClient.subdomain ||
-                    creating ||
-                    (newClient.createNetlifyProject && !domainValidated) ||
-                    (newClient.createNetlifyProject && domainChecking) ||
-                    (newClient.createNetlifyProject &&
-                      domainAvailable === false)
-                  }
-                  className="flex items-center gap-2"
-                >
-                  {creating ? (
-                    <>
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      Creating...
-                    </>
-                  ) : (
-                    <>
-                      {newClient.createNetlifyProject ? (
-                        <Rocket className="h-4 w-4" />
-                      ) : (
+                {!createdNetlifyProject && (
+                  <Button
+                    onClick={handleCreateClient}
+                    disabled={
+                      !newClient.name ||
+                      !newClient.slug ||
+                      !newClient.subdomain ||
+                      creating ||
+                      (newClient.createNetlifyProject && !domainValidated) ||
+                      (newClient.createNetlifyProject && domainChecking) ||
+                      (newClient.createNetlifyProject &&
+                        domainAvailable === false)
+                    }
+                    className="flex items-center gap-2"
+                  >
+                    {creating ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Creating...
+                      </>
+                    ) : (
+                      <>
                         <Plus className="h-4 w-4" />
-                      )}
-                      Create Client
-                    </>
-                  )}
-                </Button>
+                        Create Client
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </div>
           </DialogContent>
