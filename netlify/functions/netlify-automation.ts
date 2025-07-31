@@ -437,8 +437,13 @@ async function testEnvironmentVariables() {
         hasNetlifyToken: !!process.env.NETLIFY_ACCESS_TOKEN,
         tokenLength: process.env.NETLIFY_ACCESS_TOKEN?.length || 0,
         hasGithubRepo: !!process.env.GITHUB_REPO,
+        hasGithubToken: !!process.env.GITHUB_TOKEN,
         githubRepo: process.env.GITHUB_REPO,
+        githubTokenLength: process.env.GITHUB_TOKEN?.length || 0,
         nodeEnv: process.env.NODE_ENV,
+        allEnvKeys: Object.keys(process.env).filter(key =>
+          key.includes('GITHUB') || key.includes('NETLIFY')
+        ),
       }),
     };
   } catch (error) {
