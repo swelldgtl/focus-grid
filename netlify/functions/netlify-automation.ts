@@ -395,13 +395,14 @@ async function createNetlifyProject(data: {
           console.log("Build settings configured");
 
           // Try GitHub integration first if repository is configured
-          if (process.env.GITHUB_REPO) {
+          const githubRepo = envVars.GITHUB_REPO || process.env.GITHUB_REPO;
+          if (githubRepo) {
             // Check if we have critical environment variables before attempting GitHub deployment
-            if (envVarsFailed === 0 || !process.env.GITHUB_TOKEN) {
+            if (envVarsFailed === 0 || !envVars.GITHUB_TOKEN) {
               try {
                 const githubResult = await setupGitHubIntegration(
                   site.id,
-                  process.env.GITHUB_REPO,
+                  githubRepo,
                 );
                 if (githubResult.success) {
                   deploymentResult = githubResult;
