@@ -135,7 +135,9 @@ async function createNetlifyProject(data: {
       NEXT_PUBLIC_CLIENT_NAME: data.clientName,
       NEXT_PUBLIC_CLIENT_SUBDOMAIN: data.subdomain,
       // Copy GitHub token from main site to enable deployment
-      ...(process.env.GITHUB_TOKEN && { GITHUB_TOKEN: process.env.GITHUB_TOKEN }),
+      ...(process.env.GITHUB_TOKEN && {
+        GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+      }),
     };
 
     // Set each environment variable
