@@ -227,14 +227,14 @@ async function createNetlifyProject(data: {
     console.log("=== STEP 2: COPYING ENVIRONMENT VARIABLES ===");
     let mainProjectEnvVars = {};
     try {
+      console.log("🔍 Starting environment variable fetch from main project...");
       mainProjectEnvVars = await fetchMainProjectEnvironmentVariables();
-      console.log("Successfully fetched main project environment variables");
+      console.log("✅ Successfully fetched main project environment variables:", Object.keys(mainProjectEnvVars));
+      console.log("📋 Environment variables to copy:", mainProjectEnvVars);
     } catch (envFetchError) {
-      console.error(
-        "Failed to fetch main project environment variables:",
-        envFetchError,
-      );
-      console.warn("Continuing with fallback environment variables");
+      console.error("❌ Failed to fetch main project environment variables:", envFetchError);
+      console.error("❌ Error details:", envFetchError.message);
+      console.warn("⚠️ Continuing with fallback environment variables");
     }
 
     // Set environment variables using REST API
