@@ -326,27 +326,38 @@ async function createNetlifyProject(data: {
 
           // Try GitHub integration first if repository is configured
           if (process.env.GITHUB_REPO) {
-            try {
-              const githubResult = await setupGitHubIntegration(
-                site.id,
-                process.env.GITHUB_REPO,
-              );
-              if (githubResult.success) {
-                deploymentResult = githubResult;
-                console.log("GitHub integration successful");
-              } else {
-                console.warn("GitHub integration failed, trying file upload");
+            // Check if we have critical environment variables before attempting GitHub deployment
+            if (envVarsFailed === 0 || !process.env.GITHUB_TOKEN) {
+              try {
+                const githubResult = await setupGitHubIntegration(
+                  site.id,
+                  process.env.GITHUB_REPO,
+                );
+                if (githubResult.success) {
+                  deploymentResult = githubResult;
+                  console.log("GitHub integration successful");
+                } else {
+                  console.warn("GitHub integration failed, trying file upload");
+                  const deployResult = await triggerFileBasedDeployment(
+                    site.id,
+                    data,
+                  );
+                  deploymentResult = deployResult;
+                }
+              } catch (githubError) {
+                console.warn(
+                  "GitHub integration error, trying file upload:",
+                  githubError,
+                );
                 const deployResult = await triggerFileBasedDeployment(
                   site.id,
                   data,
                 );
                 deploymentResult = deployResult;
               }
-            } catch (githubError) {
-              console.warn(
-                "GitHub integration error, trying file upload:",
-                githubError,
-              );
+            } else {
+              console.warn("❌ Skipping GitHub integration - environment variables failed to set");
+              console.warn("Falling back to file-based deployment with setup instructions");
               const deployResult = await triggerFileBasedDeployment(
                 site.id,
                 data,
