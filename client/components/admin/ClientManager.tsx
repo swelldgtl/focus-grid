@@ -411,10 +411,6 @@ export default function ClientManager() {
     }
 
     setCreating(true);
-    setDeploymentStatus({
-      step: "client",
-      message: "Creating client in database...",
-    });
 
     try {
       // Check for duplicates
