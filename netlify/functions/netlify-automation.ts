@@ -431,6 +431,104 @@ async function testEnvironmentVariables() {
   }
 }
 
+async function deploySite(data: { siteId?: string, subdomain?: string }) {
+  try {
+    let siteId = data.siteId;
+
+    // If no siteId provided, try to find site by subdomain
+    if (!siteId && data.subdomain) {
+      console.log("Finding site by subdomain:", data.subdomain);
+      const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+        headers: {
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+      });
+
+      if (listResponse.ok) {
+        const sites = await listResponse.json();
+        const targetSite = sites.find((site: any) =>
+          site.name === data.subdomain ||
+          site.custom_domain === `${data.subdomain}.swellfocusgrid.com`
+        );
+
+        if (targetSite) {
+          siteId = targetSite.id;
+          console.log("Found site ID:", siteId);
+        } else {
+          return {
+            statusCode: 404,
+            body: JSON.stringify({
+              success: false,
+              error: "Site not found for subdomain"
+            }),
+          };
+        }
+      }
+    }
+
+    if (!siteId) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          error: "Site ID or subdomain required"
+        }),
+      };
+    }
+
+    console.log("Triggering deployment for site:", siteId);
+
+    const deployResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${siteId}/builds`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          clear_cache: true,
+        }),
+      }
+    );
+
+    if (deployResponse.ok) {
+      const deployResult = await deployResponse.json();
+      console.log("Deployment triggered:", deployResult.id);
+
+      return {
+        statusCode: 200,
+        body: JSON.stringify({
+          success: true,
+          deployId: deployResult.id,
+          state: deployResult.state,
+          siteId: siteId,
+        }),
+      };
+    } else {
+      const deployError = await deployResponse.text();
+      console.error("Deployment failed:", deployError);
+
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          success: false,
+          error: `Deployment failed: ${deployError}`,
+        }),
+      };
+    }
+  } catch (error) {
+    console.error("Error triggering deployment:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    };
+  }
+}
+
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
     console.log("=== TESTING GLOBAL SITE NAME AVAILABILITY ===");
