@@ -87,9 +87,79 @@ async function createNetlifyProject(data: {
     }
 
     const site = await createSiteResponse.json();
-    console.log("Created site with GitHub integration:", site.id, site.url);
+    console.log("Created site:", site.id, site.url);
 
-    // Step 2: Set custom domain
+    // Step 2: Configure GitHub repository connection
+    try {
+      console.log("Configuring GitHub repository connection...");
+      const repoResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            repo: {
+              provider: "github",
+              repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+              branch: "master", // Try master first, common default
+              dir: "/",
+              cmd: "npm run build",
+              publish_dir: "dist/spa",
+              private: false,
+            },
+            build_settings: {
+              cmd: "npm run build",
+              publish_dir: "dist/spa",
+            },
+          }),
+        },
+      );
+
+      if (!repoResponse.ok) {
+        // If master fails, try main
+        const repoResponseMain = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              repo: {
+                provider: "github",
+                repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+                branch: "main",
+                dir: "/",
+                cmd: "npm run build",
+                publish_dir: "dist/spa",
+                private: false,
+              },
+              build_settings: {
+                cmd: "npm run build",
+                publish_dir: "dist/spa",
+              },
+            }),
+          },
+        );
+
+        if (repoResponseMain.ok) {
+          console.log("✅ GitHub repository connected with main branch");
+        } else {
+          const mainError = await repoResponseMain.text();
+          console.warn("❌ Failed to connect repository with both master and main branches:", mainError);
+        }
+      } else {
+        console.log("✅ GitHub repository connected with master branch");
+      }
+    } catch (repoError) {
+      console.warn("Repository connection failed:", repoError);
+    }
+
+    // Step 3: Set custom domain
     try {
       const customDomain = `${data.subdomain}.swellfocusgrid.com`;
       const updateSiteResponse = await fetch(
