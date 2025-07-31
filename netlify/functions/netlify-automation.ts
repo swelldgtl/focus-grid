@@ -356,17 +356,20 @@ async function checkDomainAvailability(data: { subdomain: string }) {
 
     // The only way to check global availability is to attempt site creation
     // We'll try to create a site and see if it fails with uniqueness error
-    const testSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+    const testSiteResponse = await fetch(
+      "https://api.netlify.com/api/v1/sites",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          name: data.subdomain,
+          // Don't set up repo or other configs for test
+        }),
       },
-      body: JSON.stringify({
-        name: data.subdomain,
-        // Don't set up repo or other configs for test
-      }),
-    });
+    );
 
     console.log("Test site creation response status:", testSiteResponse.status);
 
@@ -384,13 +387,15 @@ async function checkDomainAvailability(data: { subdomain: string }) {
           headers: {
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        }
+        },
       );
 
       if (deleteResponse.ok) {
         console.log("Test site deleted successfully");
       } else {
-        console.warn("Failed to delete test site - you may need to delete manually");
+        console.warn(
+          "Failed to delete test site - you may need to delete manually",
+        );
       }
 
       return {
@@ -417,8 +422,8 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       const isUniquenessError =
         testSiteResponse.status === 422 &&
         (errorText.includes("must be unique") ||
-         errorText.includes("subdomain") ||
-         errorData.errors?.subdomain);
+          errorText.includes("subdomain") ||
+          errorData.errors?.subdomain);
 
       if (isUniquenessError) {
         console.log("Subdomain is not available (uniqueness constraint)");
