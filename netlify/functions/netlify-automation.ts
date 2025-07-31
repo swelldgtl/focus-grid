@@ -89,7 +89,9 @@ async function getMainSiteId() {
 
       // Log all sites for debugging
       sites.forEach((site: any, index: number) => {
-        console.log(`Site ${index + 1}: ${site.name} - Repo: ${site.build_settings?.repo || 'none'}`);
+        console.log(
+          `Site ${index + 1}: ${site.name} - Repo: ${site.build_settings?.repo || "none"}`,
+        );
       });
 
       const mainSite = sites.find(
@@ -136,7 +138,10 @@ async function fetchMainProjectEnvironmentVariables() {
       },
     );
 
-    console.log("📡 Environment variables API response status:", response.status);
+    console.log(
+      "📡 Environment variables API response status:",
+      response.status,
+    );
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -147,11 +152,15 @@ async function fetchMainProjectEnvironmentVariables() {
     }
 
     const envVars = await response.json();
-    console.log(`📋 Found ${envVars.length} environment variables in main project`);
+    console.log(
+      `📋 Found ${envVars.length} environment variables in main project`,
+    );
 
     // Log all environment variables for debugging
     envVars.forEach((envVar: any, index: number) => {
-      console.log(`Env Var ${index + 1}: ${envVar.key} (has ${envVar.values?.length || 0} values)`);
+      console.log(
+        `Env Var ${index + 1}: ${envVar.key} (has ${envVar.values?.length || 0} values)`,
+      );
     });
 
     // Convert to key-value pairs and filter for variables we want to copy
@@ -161,7 +170,9 @@ async function fetchMainProjectEnvironmentVariables() {
     console.log("🔍 Looking for variables to copy:", variablesToCopy);
 
     envVars.forEach((envVar: any) => {
-      console.log(`🔍 Checking: ${envVar.key}, in copy list: ${variablesToCopy.includes(envVar.key)}, has values: ${envVar.values && envVar.values.length > 0}`);
+      console.log(
+        `🔍 Checking: ${envVar.key}, in copy list: ${variablesToCopy.includes(envVar.key)}, has values: ${envVar.values && envVar.values.length > 0}`,
+      );
 
       if (
         variablesToCopy.includes(envVar.key) &&
@@ -170,15 +181,25 @@ async function fetchMainProjectEnvironmentVariables() {
       ) {
         // Get the first value (usually 'all' context)
         envVarMap[envVar.key] = envVar.values[0].value;
-        console.log(`✅ Will copy: ${envVar.key} = ${envVar.values[0].value.substring(0, 10)}...`);
+        console.log(
+          `✅ Will copy: ${envVar.key} = ${envVar.values[0].value.substring(0, 10)}...`,
+        );
       }
     });
 
-    console.log(`=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`);
-    console.log("🎯 Final environment variables to copy:", Object.keys(envVarMap));
+    console.log(
+      `=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`,
+    );
+    console.log(
+      "🎯 Final environment variables to copy:",
+      Object.keys(envVarMap),
+    );
     return envVarMap;
   } catch (error) {
-    console.error("❌ Error fetching main project environment variables:", error);
+    console.error(
+      "❌ Error fetching main project environment variables:",
+      error,
+    );
     throw error;
   }
 }
@@ -257,12 +278,20 @@ async function createNetlifyProject(data: {
     console.log("=== STEP 2: COPYING ENVIRONMENT VARIABLES ===");
     let mainProjectEnvVars = {};
     try {
-      console.log("🔍 Starting environment variable fetch from main project...");
+      console.log(
+        "🔍 Starting environment variable fetch from main project...",
+      );
       mainProjectEnvVars = await fetchMainProjectEnvironmentVariables();
-      console.log("✅ Successfully fetched main project environment variables:", Object.keys(mainProjectEnvVars));
+      console.log(
+        "✅ Successfully fetched main project environment variables:",
+        Object.keys(mainProjectEnvVars),
+      );
       console.log("📋 Environment variables to copy:", mainProjectEnvVars);
     } catch (envFetchError) {
-      console.error("❌ Failed to fetch main project environment variables:", envFetchError);
+      console.error(
+        "❌ Failed to fetch main project environment variables:",
+        envFetchError,
+      );
       console.error("❌ Error details:", envFetchError.message);
       console.warn("⚠️ Continuing with fallback environment variables");
     }
@@ -287,7 +316,10 @@ async function createNetlifyProject(data: {
     console.log("Variables to set:", Object.keys(envVars));
     console.log("Variables with values:", envVars);
     console.log("Site ID:", site.id);
-    console.log("Number of variables from main project:", Object.keys(mainProjectEnvVars).length);
+    console.log(
+      "Number of variables from main project:",
+      Object.keys(mainProjectEnvVars).length,
+    );
     console.log("Main project variables:", mainProjectEnvVars);
 
     let envVarsSet = 0;
