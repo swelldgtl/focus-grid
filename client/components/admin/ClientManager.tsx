@@ -1054,7 +1054,6 @@ export default function ClientManager() {
                       createNetlifyProject: true,
                     });
                     setErrors({ name: "", slug: "", subdomain: "" });
-                    setDeploymentStatus(null);
                   }}
                   disabled={creating}
                 >
