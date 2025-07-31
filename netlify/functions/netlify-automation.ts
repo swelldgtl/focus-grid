@@ -17,13 +17,7 @@ export const handler: Handler = async (event, context) => {
     };
   }
 
-  // Verify main site ID is available for copying environment variables
-  if (!process.env.MAIN_SITE_ID) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "Main site ID not configured for environment variable copying" }),
-    };
-  }
+
 
   // Debug environment variables (in production)
   console.log("Environment check:", {
