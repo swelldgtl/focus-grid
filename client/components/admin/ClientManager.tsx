@@ -1150,7 +1150,7 @@ GITHUB_REPO=swelldgtl/focus-grid
                   }}
                   disabled={creating || deployingProject}
                 >
-                  {createdNetlifyProject ? "Skip Deployment" : "Cancel"}
+                  Cancel
                 </Button>
                 {!createdNetlifyProject && (
                   <Button
