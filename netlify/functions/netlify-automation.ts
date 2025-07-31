@@ -245,7 +245,7 @@ async function deployProject(data: { siteId: string }) {
             repo: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}`,
             branch: "main",
             cmd: "npm run build:client",
-            dir: "/",
+            dir: "",
             public_repo: true,
           },
           build_settings: {
