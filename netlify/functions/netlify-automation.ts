@@ -387,7 +387,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
     const siteNames = sites.slice(0, 5).map((s: any) => ({
       name: s.name,
       custom_domain: s.custom_domain,
-      url: s.url
+      url: s.url,
     }));
     console.log("Sample sites:", siteNames);
 
@@ -408,7 +408,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
           url: site.url,
           nameMatch,
           customDomainMatch,
-          urlMatch
+          urlMatch,
         });
         return true;
       }
@@ -430,7 +430,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
           totalSites: sites.length,
           conflictingSites: conflictingSites.length,
           conflictingNames: conflictingSites.map((s: any) => s.name),
-        }
+        },
       }),
     };
   } catch (error) {
