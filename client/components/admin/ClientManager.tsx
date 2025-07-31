@@ -128,6 +128,45 @@ export default function ClientManager() {
   });
   const { toast } = useToast();
 
+  // Deploy project to Netlify
+  const deployProject = async (client: Client) => {
+    try {
+      toast({
+        title: "Deploying Project",
+        description: `Starting deployment for ${client.name}...`,
+      });
+
+      const response = await fetch("/.netlify/functions/netlify-automation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "deploy",
+          siteId: client.netlify_project_id,
+        }),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        toast({
+          title: "Deployment Started",
+          description: `Repository connected and deployment started for ${client.name}. Check Netlify dashboard for progress.`,
+        });
+      } else {
+        throw new Error(result.error || "Failed to deploy project");
+      }
+    } catch (error) {
+      console.error("Error deploying project:", error);
+      toast({
+        title: "Deployment Failed",
+        description: error instanceof Error ? error.message : "Failed to deploy project",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Test environment variables
   const testEnvironmentVariables = async () => {
     try {
