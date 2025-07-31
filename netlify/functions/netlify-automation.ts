@@ -106,15 +106,15 @@ async function createNetlifyProject(data: {
               repo: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}`,
               branch: "main",
               dir: "/",
-              cmd: "npm run build",
-              publish_dir: "dist/spa",
+              cmd: "npm run build:client",
+              publish_dir: "dist/client",
               private: false,
               installation_id: null, // For public repos
               deploy_key_id: null, // Not needed for public repos
             },
             build_settings: {
-              cmd: "npm run build",
-              publish_dir: "dist/spa",
+              cmd: "npm run build:client",
+              publish_dir: "dist/client",
               stop_builds: false, // Enable builds
             },
             auto_deploy: true, // Enable automatic deployments
