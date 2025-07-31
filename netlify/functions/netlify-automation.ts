@@ -204,9 +204,9 @@ async function createNetlifyProject(data: {
               build_settings: {
                 cmd: "npm run build",
                 publish_dir: "dist/spa",
-              }
+              },
             }),
-          }
+          },
         );
 
         if (repoSetupResponse.ok) {
@@ -223,16 +223,21 @@ async function createNetlifyProject(data: {
                   Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
                 },
                 body: JSON.stringify({}),
-              }
+              },
             );
 
             if (deployResponse.ok) {
               console.log("Deployment triggered successfully");
             } else {
-              console.warn("Repository connected but deployment trigger failed");
+              console.warn(
+                "Repository connected but deployment trigger failed",
+              );
             }
           } catch (deployError) {
-            console.warn("Repository connected but deployment failed:", deployError);
+            console.warn(
+              "Repository connected but deployment failed:",
+              deployError,
+            );
           }
         } else {
           const repoError = await repoSetupResponse.text();
@@ -243,7 +248,9 @@ async function createNetlifyProject(data: {
         // Continue - site is created even if repo setup fails
       }
     } else {
-      console.log("No GITHUB_REPO configured - site created without repository connection");
+      console.log(
+        "No GITHUB_REPO configured - site created without repository connection",
+      );
     }
 
     return {
@@ -424,9 +431,9 @@ async function setupDeployment(data: { siteId: string; repoUrl?: string }) {
           build_settings: {
             cmd: "npm run build",
             publish_dir: "dist/spa",
-          }
+          },
         }),
-      }
+      },
     );
 
     if (!updateResponse.ok) {
@@ -450,7 +457,7 @@ async function setupDeployment(data: { siteId: string; repoUrl?: string }) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({}),
-      }
+      },
     );
 
     const deploySuccess = deployResponse.ok;
