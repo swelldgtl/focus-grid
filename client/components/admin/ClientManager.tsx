@@ -420,6 +420,7 @@ export default function ClientManager() {
           ...prev,
           slug: "A client with this slug already exists",
         }));
+        setCreating(false);
         return;
       }
 
