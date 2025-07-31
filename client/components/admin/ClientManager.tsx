@@ -1042,6 +1042,42 @@ export default function ClientManager() {
                   </div>
                 )}
               </div>
+
+              {/* Deploy Section - shown after Netlify project is created */}
+              {createdNetlifyProject && (
+                <div className="mt-6 p-4 border rounded-lg bg-green-50">
+                  <div className="flex items-center gap-2 mb-3">
+                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <h3 className="font-semibold text-green-800">
+                      Netlify Project Created Successfully!
+                    </h3>
+                  </div>
+                  <p className="text-sm text-green-700 mb-4">
+                    Site: <span className="font-mono">{createdNetlifyProject.primaryUrl}</span>
+                  </p>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Your Netlify project has been created and configured. Click the button below to connect the GitHub repository and start the deployment.
+                  </p>
+                  <Button
+                    onClick={handleDeployProject}
+                    disabled={deployingProject}
+                    className="flex items-center gap-2"
+                  >
+                    {deployingProject ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Deploying...
+                      </>
+                    ) : (
+                      <>
+                        <Play className="h-4 w-4" />
+                        Deploy Project in Netlify
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
               <div className="flex justify-end gap-2">
                 <Button
                   variant="outline"
