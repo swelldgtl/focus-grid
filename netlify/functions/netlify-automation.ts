@@ -180,7 +180,9 @@ async function createNetlifyProject(data: {
         const deployResult = await deployResponse.json();
         console.log("✅ Deployment triggered:", deployResult.id);
       } else {
-        console.warn("Deployment trigger failed - site created but needs manual deployment");
+        console.warn(
+          "Deployment trigger failed - site created but needs manual deployment",
+        );
       }
     } catch (deployError) {
       console.warn("Deployment trigger error:", deployError);
@@ -340,7 +342,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
 
     if (testSiteResponse.ok) {
       const createdSite = await testSiteResponse.json();
-      
+
       // Delete the test site immediately
       const deleteResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${createdSite.id}`,
@@ -362,8 +364,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
     } else {
       const errorText = await testSiteResponse.text();
       const isUniquenessError =
-        testSiteResponse.status === 422 &&
-        errorText.includes("must be unique");
+        testSiteResponse.status === 422 && errorText.includes("must be unique");
 
       if (isUniquenessError) {
         return {
