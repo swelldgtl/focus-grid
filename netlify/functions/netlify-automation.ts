@@ -351,90 +351,100 @@ async function testEnvironmentVariables() {
 
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
-    console.log("=== DOMAIN AVAILABILITY CHECK ===");
-    console.log("Checking domain for subdomain:", data.subdomain);
-    console.log("Environment check:", {
-      hasToken: !!process.env.NETLIFY_ACCESS_TOKEN,
-      tokenPrefix: process.env.NETLIFY_ACCESS_TOKEN?.substring(0, 8) + "...",
-    });
+    console.log("=== TESTING GLOBAL SITE NAME AVAILABILITY ===");
+    console.log("Testing subdomain:", data.subdomain);
 
-    // List sites to check if subdomain already exists
-    console.log("Fetching sites from Netlify API...");
-    const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+    // The only way to check global availability is to attempt site creation
+    // We'll try to create a site and see if it fails with uniqueness error
+    const testSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      method: "POST",
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
       },
+      body: JSON.stringify({
+        name: data.subdomain,
+        // Don't set up repo or other configs for test
+      }),
     });
 
-    console.log("Netlify API response status:", listResponse.status);
+    console.log("Test site creation response status:", testSiteResponse.status);
 
-    if (!listResponse.ok) {
-      const errorText = await listResponse.text();
-      console.error("Netlify API error:", errorText);
+    if (testSiteResponse.ok) {
+      // Site was created successfully, meaning the name is available
+      const createdSite = await testSiteResponse.json();
+      console.log("Test site created successfully with ID:", createdSite.id);
+
+      // Delete the test site immediately since we only wanted to test availability
+      console.log("Deleting test site...");
+      const deleteResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${createdSite.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+        }
+      );
+
+      if (deleteResponse.ok) {
+        console.log("Test site deleted successfully");
+      } else {
+        console.warn("Failed to delete test site - you may need to delete manually");
+      }
+
       return {
-        statusCode: 500,
+        statusCode: 200,
         body: JSON.stringify({
-          available: null,
-          error: `Netlify API error: ${listResponse.status} - ${errorText}`,
+          available: true,
+          subdomain: data.subdomain,
+          method: "test-creation",
         }),
       };
-    }
+    } else {
+      // Site creation failed - check if it's due to name uniqueness
+      const errorText = await testSiteResponse.text();
+      console.log("Site creation failed with:", errorText);
 
-    const sites = await listResponse.json();
-    console.log(`Found ${sites.length} total sites in Netlify account`);
-
-    // Log first few site names for debugging
-    const siteNames = sites.slice(0, 5).map((s: any) => ({
-      name: s.name,
-      custom_domain: s.custom_domain,
-      url: s.url,
-    }));
-    console.log("Sample sites:", siteNames);
-
-    // Check if any site has the exact subdomain we want to use
-    const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
-    console.log("Target domain to check:", targetDomain);
-    console.log("Subdomain to check:", data.subdomain);
-
-    const conflictingSites = sites.filter((site: any) => {
-      const nameMatch = site.name === data.subdomain;
-      const customDomainMatch = site.custom_domain === targetDomain;
-      const urlMatch = site.url?.includes(`${data.subdomain}.netlify.app`);
-
-      if (nameMatch || customDomainMatch || urlMatch) {
-        console.log("Found conflicting site:", {
-          name: site.name,
-          custom_domain: site.custom_domain,
-          url: site.url,
-          nameMatch,
-          customDomainMatch,
-          urlMatch,
-        });
-        return true;
+      let errorData;
+      try {
+        errorData = JSON.parse(errorText);
+      } catch {
+        errorData = { message: errorText };
       }
-      return false;
-    });
 
-    const domainExists = conflictingSites.length > 0;
+      // Check if the error is specifically about subdomain uniqueness
+      const isUniquenessError =
+        testSiteResponse.status === 422 &&
+        (errorText.includes("must be unique") ||
+         errorText.includes("subdomain") ||
+         errorData.errors?.subdomain);
 
-    console.log(`Domain exists: ${domainExists}`);
-    console.log(`Conflicting sites count: ${conflictingSites.length}`);
-    console.log("=== END DOMAIN CHECK ===");
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        available: !domainExists,
-        subdomain: data.subdomain,
-        debug: {
-          totalSites: sites.length,
-          conflictingSites: conflictingSites.length,
-          conflictingNames: conflictingSites.map((s: any) => s.name),
-        },
-      }),
-    };
+      if (isUniquenessError) {
+        console.log("Subdomain is not available (uniqueness constraint)");
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            available: false,
+            subdomain: data.subdomain,
+            method: "test-creation",
+            reason: "Name already taken globally",
+          }),
+        };
+      } else {
+        // Some other error (permissions, API issues, etc.)
+        console.error("Unexpected error during site creation test:", errorData);
+        return {
+          statusCode: 500,
+          body: JSON.stringify({
+            available: null,
+            error: `Unable to test domain availability: ${errorData.message || errorText}`,
+          }),
+        };
+      }
+    }
   } catch (error) {
-    console.error("Error checking domain availability:", error);
+    console.error("Error testing domain availability:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({
