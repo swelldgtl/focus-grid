@@ -517,7 +517,7 @@ export default function ClientManager() {
   };
 
   const handleDeployProject = async () => {
-    if (!createdNetlifyProject) return;
+    if (!deploymentInfo) return;
 
     setDeployingProject(true);
 
