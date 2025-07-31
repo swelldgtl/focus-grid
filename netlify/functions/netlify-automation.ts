@@ -40,13 +40,6 @@ export const handler: Handler = async (event, context) => {
         return await checkDomainAvailability(data);
       case "test-env":
         return await testEnvironmentVariables();
-<<<<<<< HEAD
-      case "setup-deployment":
-        return await setupDeployment(data);
-=======
-      case "deploy-site":
-        return await deploySite(data);
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
       default:
         return {
           statusCode: 400,
@@ -74,13 +67,11 @@ async function createNetlifyProject(data: {
   try {
     console.log("Creating Netlify site for:", data.subdomain);
 
-    // Create the site using REST API
-    // Use the exact subdomain as the site name - no fallbacks
+    // Create site without repository connection to avoid auth issues
     const friendlySiteName = data.subdomain;
-
+    
     console.log(`Creating site with exact name: ${friendlySiteName}`);
 
-    // Create site without repo connection first to avoid authentication issues
     const createSiteResponse = await fetch(
       "https://api.netlify.com/api/v1/sites",
       {
@@ -91,7 +82,7 @@ async function createNetlifyProject(data: {
         },
         body: JSON.stringify({
           name: friendlySiteName,
-          // Don't connect repo during creation to avoid auth issues
+          // Create without repository connection to avoid authentication issues
         }),
       },
     );
@@ -106,10 +97,10 @@ async function createNetlifyProject(data: {
     const site = await createSiteResponse.json();
     console.log("Created site:", site.id, site.url);
 
-    // Set custom domain after site creation using the correct API
+    // Set custom domain using the correct API
     try {
       const customDomain = `${data.subdomain}.swellfocusgrid.com`;
-
+      
       // Update site settings to include custom domain
       const updateSiteResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${site.id}`,
@@ -123,7 +114,7 @@ async function createNetlifyProject(data: {
             custom_domain: customDomain,
             force_ssl: true, // Enable HTTPS
           }),
-        },
+        }
       );
 
       if (updateSiteResponse.ok) {
@@ -184,196 +175,6 @@ async function createNetlifyProject(data: {
 
     console.log("Environment variables set for site:", site.id);
 
-<<<<<<< HEAD
-    // Try to set up repository connection if GITHUB_REPO is configured
-    if (process.env.GITHUB_REPO) {
-      try {
-        console.log("Setting up repository connection...");
-
-        const repoSetupResponse = await fetch(
-          `https://api.netlify.com/api/v1/sites/${site.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-            },
-            body: JSON.stringify({
-              repo: {
-                provider: "github",
-                repo: process.env.GITHUB_REPO,
-                branch: "main",
-                dir: "/",
-                cmd: "npm run build",
-                publish_dir: "dist/spa",
-              },
-              build_settings: {
-                cmd: "npm run build",
-                publish_dir: "dist/spa",
-              },
-            }),
-          },
-        );
-
-        if (repoSetupResponse.ok) {
-          console.log("Repository connection configured successfully");
-
-          // Try to trigger deployment
-          try {
-            const deployResponse = await fetch(
-              `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-                },
-                body: JSON.stringify({}),
-              },
-            );
-
-            if (deployResponse.ok) {
-              console.log("Deployment triggered successfully");
-            } else {
-              console.warn(
-                "Repository connected but deployment trigger failed",
-              );
-            }
-          } catch (deployError) {
-            console.warn(
-              "Repository connected but deployment failed:",
-              deployError,
-            );
-          }
-        } else {
-          const repoError = await repoSetupResponse.text();
-          console.warn("Failed to connect repository:", repoError);
-        }
-      } catch (repoError) {
-        console.warn("Repository setup failed:", repoError);
-        // Continue - site is created even if repo setup fails
-      }
-    } else {
-      console.log(
-        "No GITHUB_REPO configured - site created without repository connection",
-      );
-=======
-    // Trigger a deployment (retry if needed)
-    let deploymentSuccessful = false;
-    let deploymentAttempts = 0;
-    const maxDeployAttempts = 3;
-
-    while (!deploymentSuccessful && deploymentAttempts < maxDeployAttempts) {
-      deploymentAttempts++;
-      console.log(
-        `Deployment attempt ${deploymentAttempts} for site: ${site.id}`,
-      );
-
-      try {
-        // First, verify the site has repository configuration
-        const siteInfoResponse = await fetch(
-          `https://api.netlify.com/api/v1/sites/${site.id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-            },
-          },
-        );
-
-        if (siteInfoResponse.ok) {
-          const siteInfo = await siteInfoResponse.json();
-          console.log("Site repository info:", {
-            hasRepo: !!siteInfo.repo,
-            repoUrl: siteInfo.repo?.repo,
-            branch: siteInfo.repo?.branch,
-          });
-        }
-
-        // Trigger deployment
-        const deployResponse = await fetch(
-          `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-            },
-            body: JSON.stringify({
-              clear_cache: true, // Clear cache for fresh build
-            }),
-          },
-        );
-
-        if (deployResponse.ok) {
-          const deployResult = await deployResponse.json();
-          console.log("Deployment triggered successfully:", {
-            deployId: deployResult.id,
-            state: deployResult.state,
-            createdAt: deployResult.created_at,
-          });
-          deploymentSuccessful = true;
-        } else {
-          const deployError = await deployResponse.text();
-          console.warn(
-            `Deployment attempt ${deploymentAttempts} failed:`,
-            deployError,
-          );
-
-          // If it's the last attempt, log the failure but don't fail the entire creation
-          if (deploymentAttempts === maxDeployAttempts) {
-            console.warn(
-              "All deployment attempts failed, but site was created successfully",
-            );
-          } else {
-            // Wait a bit before retrying
-            await new Promise((resolve) => setTimeout(resolve, 2000));
-          }
-        }
-      } catch (deployError) {
-        console.warn(
-          `Deployment attempt ${deploymentAttempts} error:`,
-          deployError,
-        );
-        if (deploymentAttempts === maxDeployAttempts) {
-          console.warn(
-            "Site created but deployment failed after all attempts:",
-            deployError,
-          );
-        } else {
-          // Wait a bit before retrying
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-        }
-      }
-    }
-
-    // Set up webhook for automatic deployments on push (optional)
-    try {
-      const webhookResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}/build_hooks`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({
-            title: "Auto Deploy Hook",
-            branch: "main",
-          }),
-        },
-      );
-
-      if (webhookResponse.ok) {
-        const webhook = await webhookResponse.json();
-        console.log("Build hook created:", webhook.url);
-      } else {
-        console.warn("Failed to create build hook (not critical)");
-      }
-    } catch (webhookError) {
-      console.warn("Webhook setup failed (not critical):", webhookError);
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
-    }
-
     return {
       statusCode: 201,
       body: JSON.stringify({
@@ -382,8 +183,19 @@ async function createNetlifyProject(data: {
         siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
-        deployed: deploymentSuccessful,
-        deploymentAttempts: deploymentAttempts,
+        manualSetupRequired: true,
+        setupInstructions: {
+          message: "Site created successfully. Manual repository connection required.",
+          steps: [
+            "1. Go to your Netlify dashboard",
+            "2. Find the site: " + friendlySiteName,
+            "3. Go to Site settings → Build & deploy",
+            "4. Connect to GitHub repository: swelldgtl/focus-grid",
+            "5. Set build command: npm run build",
+            "6. Set publish directory: dist/spa",
+            "7. Deploy site"
+          ]
+        }
       }),
     };
   } catch (error) {
@@ -406,7 +218,21 @@ async function setEnvironmentVariables(data: {
   try {
     console.log("Setting environment variables for site:", data.siteId);
 
-    // Set each environment variable using REST API
+    // Get site info to get account ID
+    const site = await fetch(`https://api.netlify.com/api/v1/sites/${data.siteId}`, {
+      headers: {
+        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+      },
+    });
+
+    if (!site.ok) {
+      throw new Error(`Failed to get site info: ${site.status}`);
+    }
+
+    const siteData = await site.json();
+    const accountId = siteData.account_slug;
+
+    // Set each environment variable
     for (const [key, value] of Object.entries(data.variables)) {
       const envResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${data.siteId}/env/${key}`,
@@ -425,7 +251,7 @@ async function setEnvironmentVariables(data: {
               },
             ],
           }),
-        },
+        }
       );
 
       if (!envResponse.ok) {
@@ -469,7 +295,7 @@ async function deployProject(data: { siteId: string }) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({}),
-      },
+      }
     );
 
     if (!deployResponse.ok) {
@@ -518,181 +344,6 @@ async function testEnvironmentVariables() {
   }
 }
 
-<<<<<<< HEAD
-async function setupDeployment(data: { siteId: string; repoUrl?: string }) {
-  try {
-    console.log("Setting up deployment for site:", data.siteId);
-
-    const repoUrl = data.repoUrl || process.env.GITHUB_REPO;
-    if (!repoUrl) {
-=======
-async function deploySite(data: { siteId?: string; subdomain?: string }) {
-  try {
-    let siteId = data.siteId;
-
-    // If no siteId provided, try to find site by subdomain
-    if (!siteId && data.subdomain) {
-      console.log("Finding site by subdomain:", data.subdomain);
-      const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
-        headers: {
-          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-        },
-      });
-
-      if (listResponse.ok) {
-        const sites = await listResponse.json();
-        const targetSite = sites.find(
-          (site: any) =>
-            site.name === data.subdomain ||
-            site.custom_domain === `${data.subdomain}.swellfocusgrid.com`,
-        );
-
-        if (targetSite) {
-          siteId = targetSite.id;
-          console.log("Found site ID:", siteId);
-        } else {
-          return {
-            statusCode: 404,
-            body: JSON.stringify({
-              success: false,
-              error: "Site not found for subdomain",
-            }),
-          };
-        }
-      }
-    }
-
-    if (!siteId) {
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          success: false,
-<<<<<<< HEAD
-          error: "No repository URL provided",
-=======
-          error: "Site ID or subdomain required",
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
-        }),
-      };
-    }
-
-<<<<<<< HEAD
-    // Update site with repository connection
-    const updateResponse = await fetch(
-      `https://api.netlify.com/api/v1/sites/${data.siteId}`,
-      {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-        },
-        body: JSON.stringify({
-          repo: {
-            provider: "github",
-            repo: repoUrl,
-            branch: "main",
-            dir: "/",
-            cmd: "npm run build",
-            publish_dir: "dist/spa",
-          },
-          build_settings: {
-            cmd: "npm run build",
-            publish_dir: "dist/spa",
-          },
-        }),
-      },
-    );
-
-    if (!updateResponse.ok) {
-      const errorText = await updateResponse.text();
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          success: false,
-          error: `Failed to setup repository: ${errorText}`,
-        }),
-      };
-    }
-
-    // Trigger deployment
-    const deployResponse = await fetch(
-      `https://api.netlify.com/api/v1/sites/${data.siteId}/builds`,
-=======
-    console.log("Triggering deployment for site:", siteId);
-
-    const deployResponse = await fetch(
-      `https://api.netlify.com/api/v1/sites/${siteId}/builds`,
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-        },
-<<<<<<< HEAD
-        body: JSON.stringify({}),
-      },
-    );
-
-    const deploySuccess = deployResponse.ok;
-
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        success: true,
-        repoSetup: true,
-        deploymentTriggered: deploySuccess,
-        siteId: data.siteId,
-      }),
-    };
-  } catch (error) {
-    console.error("Error setting up deployment:", error);
-=======
-        body: JSON.stringify({
-          clear_cache: true,
-        }),
-      },
-    );
-
-    if (deployResponse.ok) {
-      const deployResult = await deployResponse.json();
-      console.log("Deployment triggered:", deployResult.id);
-
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          success: true,
-          deployId: deployResult.id,
-          state: deployResult.state,
-          siteId: siteId,
-        }),
-      };
-    } else {
-      const deployError = await deployResponse.text();
-      console.error("Deployment failed:", deployError);
-
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          success: false,
-          error: `Deployment failed: ${deployError}`,
-        }),
-      };
-    }
-  } catch (error) {
-    console.error("Error triggering deployment:", error);
->>>>>>> 79cb901dc9af2c9b9e95f32305b86ada31c7df30
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        success: false,
-        error: error instanceof Error ? error.message : "Unknown error",
-      }),
-    };
-  }
-}
-
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
     console.log("=== TESTING GLOBAL SITE NAME AVAILABILITY ===");
@@ -721,7 +372,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       // Site was created successfully, meaning the name is available
       const createdSite = await testSiteResponse.json();
       console.log("Test site created successfully with ID:", createdSite.id);
-
+      
       // Delete the test site immediately since we only wanted to test availability
       console.log("Deleting test site...");
       const deleteResponse = await fetch(
@@ -731,7 +382,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
           headers: {
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        },
+        }
       );
 
       if (deleteResponse.ok) {
@@ -763,11 +414,11 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       }
 
       // Check if the error is specifically about subdomain uniqueness
-      const isUniquenessError =
+      const isUniquenessError = 
         testSiteResponse.status === 422 &&
-        (errorText.includes("must be unique") ||
-          errorText.includes("subdomain") ||
-          errorData.errors?.subdomain);
+        (errorText.includes("must be unique") || 
+         errorText.includes("subdomain") ||
+         errorData.errors?.subdomain);
 
       if (isUniquenessError) {
         console.log("Subdomain is not available (uniqueness constraint)");
