@@ -228,7 +228,10 @@ async function setEnvironmentVariables(data: {
 
 async function deployProject(data: { siteId: string }) {
   try {
-    console.log("Providing deployment setup instructions for site:", data.siteId);
+    console.log(
+      "Providing deployment setup instructions for site:",
+      data.siteId,
+    );
 
     // Get site information to provide accurate instructions
     const siteResponse = await fetch(
@@ -264,11 +267,12 @@ async function deployProject(data: { siteId: string }) {
             `Select GitHub and choose: ${repoUrl}`,
             "Set build command: npm run build:client",
             "Set publish directory: dist/spa",
-            "Click 'Deploy site'"
-          ]
+            "Click 'Deploy site'",
+          ],
         },
         importUrl: `https://app.netlify.com/start/deploy?repository=https://github.com/${repoUrl}&stack=github`,
-        message: "Site created successfully. Please follow the manual setup steps for reliable deployment."
+        message:
+          "Site created successfully. Please follow the manual setup steps for reliable deployment.",
       }),
     };
   } catch (error) {
@@ -278,7 +282,9 @@ async function deployProject(data: { siteId: string }) {
       body: JSON.stringify({
         success: false,
         error:
-          error instanceof Error ? error.message : "Failed to provide deployment instructions",
+          error instanceof Error
+            ? error.message
+            : "Failed to provide deployment instructions",
       }),
     };
   }

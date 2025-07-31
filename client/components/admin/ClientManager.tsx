@@ -530,7 +530,7 @@ export default function ClientManager() {
         });
 
         // Open Netlify admin in a new tab
-        window.open(result.adminUrl, '_blank');
+        window.open(result.adminUrl, "_blank");
 
         completeClientCreation();
       } else if (result.success) {
@@ -547,7 +547,9 @@ export default function ClientManager() {
       toast({
         title: "Deployment Setup Failed",
         description:
-          error instanceof Error ? error.message : "Failed to provide deployment setup",
+          error instanceof Error
+            ? error.message
+            : "Failed to provide deployment setup",
         variant: "destructive",
       });
     } finally {
