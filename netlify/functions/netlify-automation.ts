@@ -161,7 +161,8 @@ async function createNetlifyProject(data: {
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
         needsDeployment: true,
-        message: "Site created successfully. Click 'Deploy' to connect repository and start deployment.",
+        message:
+          "Site created successfully. Click 'Deploy' to connect repository and start deployment.",
       }),
     };
   } catch (error) {
@@ -292,7 +293,7 @@ async function deployProject(data: { siteId: string }) {
       body: JSON.stringify({
         success: true,
         deployId: deployResult.id,
-        message: "Repository connected and deployment started successfully."
+        message: "Repository connected and deployment started successfully.",
       }),
     };
   } catch (error) {

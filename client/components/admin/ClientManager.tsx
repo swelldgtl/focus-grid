@@ -162,7 +162,8 @@ export default function ClientManager() {
       console.error("Error deploying project:", error);
       toast({
         title: "Deployment Failed",
-        description: error instanceof Error ? error.message : "Failed to deploy project",
+        description:
+          error instanceof Error ? error.message : "Failed to deploy project",
         variant: "destructive",
       });
     }
