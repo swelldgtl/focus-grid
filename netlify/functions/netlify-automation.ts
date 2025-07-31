@@ -124,8 +124,9 @@ async function fetchMainProjectEnvironmentVariables() {
     console.log("=== FETCHING MAIN PROJECT ENVIRONMENT VARIABLES ===");
 
     const mainSiteId = await getMainSiteId();
-    console.log("Using main site ID:", mainSiteId);
+    console.log("✅ Using main site ID:", mainSiteId);
 
+    console.log("📡 Fetching environment variables from main site...");
     const response = await fetch(
       `https://api.netlify.com/api/v1/sites/${mainSiteId}/env`,
       {
@@ -135,23 +136,33 @@ async function fetchMainProjectEnvironmentVariables() {
       },
     );
 
+    console.log("📡 Environment variables API response status:", response.status);
+
     if (!response.ok) {
       const errorText = await response.text();
+      console.error("❌ Environment variables API error:", errorText);
       throw new Error(
         `Failed to fetch main project env vars: ${response.status} ${errorText}`,
       );
     }
 
     const envVars = await response.json();
-    console.log(
-      `Found ${envVars.length} environment variables in main project`,
-    );
+    console.log(`📋 Found ${envVars.length} environment variables in main project`);
+
+    // Log all environment variables for debugging
+    envVars.forEach((envVar: any, index: number) => {
+      console.log(`Env Var ${index + 1}: ${envVar.key} (has ${envVar.values?.length || 0} values)`);
+    });
 
     // Convert to key-value pairs and filter for variables we want to copy
     const envVarMap: Record<string, string> = {};
     const variablesToCopy = ["GITHUB_TOKEN", "GITHUB_REPO"]; // Add more as needed
 
+    console.log("🔍 Looking for variables to copy:", variablesToCopy);
+
     envVars.forEach((envVar: any) => {
+      console.log(`🔍 Checking: ${envVar.key}, in copy list: ${variablesToCopy.includes(envVar.key)}, has values: ${envVar.values && envVar.values.length > 0}`);
+
       if (
         variablesToCopy.includes(envVar.key) &&
         envVar.values &&
@@ -159,16 +170,15 @@ async function fetchMainProjectEnvironmentVariables() {
       ) {
         // Get the first value (usually 'all' context)
         envVarMap[envVar.key] = envVar.values[0].value;
-        console.log(`✅ Will copy: ${envVar.key}`);
+        console.log(`✅ Will copy: ${envVar.key} = ${envVar.values[0].value.substring(0, 10)}...`);
       }
     });
 
-    console.log(
-      `=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`,
-    );
+    console.log(`=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`);
+    console.log("🎯 Final environment variables to copy:", Object.keys(envVarMap));
     return envVarMap;
   } catch (error) {
-    console.error("Error fetching main project environment variables:", error);
+    console.error("❌ Error fetching main project environment variables:", error);
     throw error;
   }
 }
