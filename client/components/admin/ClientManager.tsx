@@ -529,7 +529,7 @@ export default function ClientManager() {
         },
         body: JSON.stringify({
           action: "deploy",
-          siteId: createdNetlifyProject.siteId,
+          siteId: deploymentInfo.primaryUrl.split('//')[1].split('.')[0], // Extract site ID from URL
         }),
       });
 
