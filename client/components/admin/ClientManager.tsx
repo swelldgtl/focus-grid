@@ -895,7 +895,9 @@ export default function ClientManager() {
                     !newClient.name ||
                     !newClient.slug ||
                     !newClient.subdomain ||
-                    creating
+                    creating ||
+                    (newClient.createNetlifyProject && domainChecking) ||
+                    (newClient.createNetlifyProject && domainAvailable === false)
                   }
                   className="flex items-center gap-2"
                 >
