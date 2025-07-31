@@ -127,44 +127,7 @@ async function createNetlifyProject(data: {
       }
     }
 
-    // Step 3: Configure GitHub repository connection using simple API
-    try {
-      console.log("Connecting GitHub repository...");
-      const repoUpdateResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({
-            repo: {
-              repo: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}`,
-              branch: "main",
-              cmd: "npm run build:client",
-              dir: "/",
-              public_repo: true,
-            },
-            build_settings: {
-              cmd: "npm run build:client",
-              publish_dir: "dist/spa",
-            },
-          }),
-        },
-      );
-
-      if (repoUpdateResponse.ok) {
-        console.log("✅ Repository connected successfully");
-      } else {
-        const repoError = await repoUpdateResponse.text();
-        console.warn("Repository connection warning:", repoError);
-      }
-    } catch (repoError) {
-      console.warn("Repository connection failed:", repoError);
-    }
-
-    // Step 4: Set custom domain
+    // Step 3: Set custom domain
     try {
       const customDomain = `${data.subdomain}.swellfocusgrid.com`;
       const domainResponse = await fetch(
@@ -189,29 +152,6 @@ async function createNetlifyProject(data: {
       console.warn("Custom domain setup failed:", domainError);
     }
 
-    // Step 5: Trigger deployment
-    try {
-      console.log("Triggering deployment...");
-      const deployResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({}),
-        },
-      );
-
-      if (deployResponse.ok) {
-        const deployResult = await deployResponse.json();
-        console.log("✅ Deployment triggered:", deployResult.id);
-      }
-    } catch (deployError) {
-      console.warn("Deployment trigger failed:", deployError);
-    }
-
     return {
       statusCode: 201,
       body: JSON.stringify({
@@ -220,8 +160,8 @@ async function createNetlifyProject(data: {
         siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
-        message:
-          "Site created successfully. Repository connection and deployment may take a few minutes to complete.",
+        needsDeployment: true,
+        message: "Site created successfully. Click 'Deploy' to connect repository and start deployment.",
       }),
     };
   } catch (error) {
