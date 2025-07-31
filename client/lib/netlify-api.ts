@@ -103,6 +103,43 @@ export async function deployNetlifyProject(siteId: string): Promise<boolean> {
   }
 }
 
+// Deploy a Netlify site
+export async function deployNetlifySite(
+  siteId?: string,
+  subdomain?: string,
+): Promise<boolean> {
+  try {
+    console.log(`Triggering deployment for:`, { siteId, subdomain });
+
+    const response = await fetch("/.netlify/functions/netlify-automation", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        action: "deploy-site",
+        siteId,
+        subdomain,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: "Unknown error" }));
+      console.error(`Deployment failed (${response.status}):`, errorData);
+      return false;
+    }
+
+    const result = await response.json();
+    console.log("Deployment result:", result);
+    return result.success !== false;
+  } catch (error) {
+    console.error("Error deploying Netlify site:", error);
+    return false;
+  }
+}
+
 // Delete a Netlify project
 export async function deleteNetlifyProject(
   subdomain: string,
