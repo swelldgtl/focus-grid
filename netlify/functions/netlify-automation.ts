@@ -174,7 +174,9 @@ async function createNetlifyProject(data: {
           },
         );
 
-        console.log(`Environment variable ${key} response status: ${envResponse.status}`);
+        console.log(
+          `Environment variable ${key} response status: ${envResponse.status}`,
+        );
 
         if (envResponse.ok) {
           console.log(`✅ Successfully set environment variable: ${key}`);
@@ -183,12 +185,15 @@ async function createNetlifyProject(data: {
           const errorText = await envResponse.text();
           console.error(`❌ Failed to set environment variable ${key}:`, {
             status: envResponse.status,
-            error: errorText
+            error: errorText,
           });
           envVarsFailed++;
         }
       } catch (envError) {
-        console.error(`❌ Exception setting environment variable ${key}:`, envError);
+        console.error(
+          `❌ Exception setting environment variable ${key}:`,
+          envError,
+        );
         envVarsFailed++;
       }
     }
@@ -441,8 +446,8 @@ async function testEnvironmentVariables() {
         githubRepo: process.env.GITHUB_REPO,
         githubTokenLength: process.env.GITHUB_TOKEN?.length || 0,
         nodeEnv: process.env.NODE_ENV,
-        allEnvKeys: Object.keys(process.env).filter(key =>
-          key.includes('GITHUB') || key.includes('NETLIFY')
+        allEnvKeys: Object.keys(process.env).filter(
+          (key) => key.includes("GITHUB") || key.includes("NETLIFY"),
         ),
       }),
     };
