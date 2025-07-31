@@ -243,7 +243,7 @@ async function deployProject(data: { siteId: string }) {
         body: JSON.stringify({
           repo: {
             provider: "github",
-            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+            repo: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}.git`,
             branch: "main",
             private: false,
           },
