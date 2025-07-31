@@ -452,12 +452,28 @@ export default function ClientManager() {
         });
 
         if (netlifyResult.success) {
-          // Store Netlify project info and show deploy option
-          setCreatedNetlifyProject({
-            siteId: netlifyResult.siteId,
+          // Store deployment info and show dedicated deployment modal
+          setDeploymentInfo({
+            siteName: newClient.subdomain,
+            subdomain: newClient.subdomain,
+            clientId: newClientData.id,
             primaryUrl: netlifyResult.primaryUrl,
-            clientName: newClient.name,
           });
+
+          // Close create modal and open deployment modal
+          setIsCreateDialogOpen(false);
+          setShowDeploymentModal(true);
+
+          // Reset create form
+          setNewClient({
+            name: "",
+            slug: "",
+            subdomain: "",
+            createNetlifyProject: true,
+          });
+          setErrors({ name: "", slug: "", subdomain: "" });
+          setDomainAvailable(null);
+          setDomainValidated(false);
         } else {
           throw new Error(
             netlifyResult.error || "Failed to create Netlify project",
