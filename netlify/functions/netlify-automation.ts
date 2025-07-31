@@ -629,7 +629,7 @@ async function triggerFileBasedDeployment(siteId: string, clientData: any) {
   try {
     console.log("Attempting file-based deployment for site:", siteId);
 
-    // Create a simple HTML page for the site while build is set up
+    // Create a better temporary site with instructions
     const deployFiles = {
       "index.html": `<!DOCTYPE html>
 <html lang="en">
@@ -650,30 +650,70 @@ async function triggerFileBasedDeployment(siteId: string, clientData: any) {
             justify-content: center;
             text-align: center;
         }
-        .container { max-width: 600px; }
+        .container { max-width: 700px; }
         h1 { font-size: 2.5rem; margin-bottom: 1rem; }
         p { font-size: 1.1rem; opacity: 0.9; line-height: 1.6; }
         .status {
             background: rgba(255,255,255,0.1);
-            padding: 1rem;
+            padding: 1.5rem;
             border-radius: 8px;
-            margin-top: 2rem;
+            margin: 2rem 0;
+            text-align: left;
+        }
+        .steps {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        .steps ol {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        .steps li {
+            margin: 0.5rem 0;
+            line-height: 1.4;
+        }
+        .highlight {
+            background: rgba(255,255,255,0.2);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Welcome to ${clientData.clientName}</h1>
-        <p>Your Focus Grid site is being set up and will be available shortly.</p>
+        <p>Your Focus Grid site has been created successfully! To complete the setup and deploy your full application, please follow these steps:</p>
+
         <div class="status">
-            <strong>Status:</strong> Site created successfully<br>
-            <strong>Subdomain:</strong> ${clientData.subdomain}.swellfocusgrid.com<br>
-            <strong>Next Step:</strong> Deployment configuration in progress
+            <strong>✅ Site Created:</strong> ${clientData.subdomain}.swellfocusgrid.com<br>
+            <strong>✅ Custom Domain:</strong> Configured<br>
+            <strong>✅ Environment Variables:</strong> Set<br>
+            <strong>⏳ Deployment:</strong> Requires repository connection
         </div>
+
+        <div class="steps">
+            <strong>Next Steps to Deploy:</strong>
+            <ol>
+                <li>Go to your <a href="https://app.netlify.com" style="color: #90cdf4;">Netlify Dashboard</a></li>
+                <li>Find site: <span class="highlight">${clientData.subdomain}</span></li>
+                <li>Go to <strong>Site settings → Build & deploy</strong></li>
+                <li>Click <strong>Link to Git repository</strong></li>
+                <li>Connect to: <span class="highlight">swelldgtl/focus-grid</span></li>
+                <li>Set build command: <span class="highlight">npm run build</span></li>
+                <li>Set publish directory: <span class="highlight">dist/spa</span></li>
+                <li>Click <strong>Deploy site</strong></li>
+            </ol>
+        </div>
+
+        <p>Once connected, your site will automatically deploy and be fully functional!</p>
     </div>
 </body>
 </html>`,
-      _redirects: `# Redirect all requests to main app when ready
+      _redirects: `# Netlify redirects
 /*    /index.html   200`,
     };
 
