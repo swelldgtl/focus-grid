@@ -817,46 +817,67 @@ export default function ClientManager() {
                 >
                   Subdomain
                 </Label>
-                <div className="flex items-center gap-2">
-                  <div className="relative flex-1">
-                    <Input
-                      id="client-subdomain"
-                      placeholder="e.g., acme"
-                      value={newClient.subdomain}
-                      onChange={(e) => handleSubdomainChange(e.target.value)}
-                      className={
-                        errors.subdomain
-                          ? "border-red-500"
-                          : domainAvailable === true
-                            ? "border-green-500"
-                            : domainAvailable === false
-                              ? "border-red-500"
-                              : ""
-                      }
-                    />
-                    {domainChecking && (
-                      <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                      </div>
-                    )}
-                    {!domainChecking &&
-                      domainAvailable === true &&
-                      newClient.createNetlifyProject && (
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                          <CheckCircle className="h-4 w-4 text-green-600" />
-                        </div>
-                      )}
-                    {!domainChecking &&
-                      domainAvailable === false &&
-                      newClient.createNetlifyProject && (
-                        <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
-                          <XCircle className="h-4 w-4 text-red-600" />
-                        </div>
-                      )}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <div className="relative flex-1">
+                      <Input
+                        id="client-subdomain"
+                        placeholder="e.g., acme"
+                        value={newClient.subdomain}
+                        onChange={(e) => handleSubdomainChange(e.target.value)}
+                        className={
+                          errors.subdomain
+                            ? "border-red-500"
+                            : domainAvailable === true && domainValidated
+                              ? "border-green-500"
+                              : domainAvailable === false && domainValidated
+                                ? "border-red-500"
+                                : ""
+                        }
+                      />
+                      {!domainChecking &&
+                        domainValidated &&
+                        domainAvailable === true &&
+                        newClient.createNetlifyProject && (
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <CheckCircle className="h-4 w-4 text-green-600" />
+                          </div>
+                        )}
+                      {!domainChecking &&
+                        domainValidated &&
+                        domainAvailable === false &&
+                        newClient.createNetlifyProject && (
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2">
+                            <XCircle className="h-4 w-4 text-red-600" />
+                          </div>
+                        )}
+                    </div>
+                    <span className="text-sm text-muted-foreground">
+                      .swellfocusgrid.com
+                    </span>
                   </div>
-                  <span className="text-sm text-muted-foreground">
-                    .swellfocusgrid.com
-                  </span>
+                  {newClient.createNetlifyProject && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={checkDomainAvailability}
+                      disabled={!newClient.subdomain || domainChecking}
+                      className="w-full"
+                    >
+                      {domainChecking ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Checking Domain...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="h-4 w-4 mr-2" />
+                          Check Domain Availability
+                        </>
+                      )}
+                    </Button>
+                  )}
                 </div>
                 <div className="mt-1">
                   <p className="text-xs text-muted-foreground">
