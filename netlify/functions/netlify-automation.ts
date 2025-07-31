@@ -17,8 +17,6 @@ export const handler: Handler = async (event, context) => {
     };
   }
 
-
-
   // Debug environment variables (in production)
   console.log("Environment check:", {
     hasNetlifyToken: !!process.env.NETLIFY_ACCESS_TOKEN,
@@ -64,7 +62,10 @@ export const handler: Handler = async (event, context) => {
 
 async function getMainSiteId() {
   // If MAIN_SITE_ID is explicitly set, use it
-  if (process.env.MAIN_SITE_ID && process.env.MAIN_SITE_ID !== 'YOUR_MAIN_SITE_ID') {
+  if (
+    process.env.MAIN_SITE_ID &&
+    process.env.MAIN_SITE_ID !== "YOUR_MAIN_SITE_ID"
+  ) {
     return process.env.MAIN_SITE_ID;
   }
 
@@ -79,9 +80,11 @@ async function getMainSiteId() {
 
     if (sitesResponse.ok) {
       const sites = await sitesResponse.json();
-      const mainSite = sites.find((site: any) =>
-        site.build_settings?.repo === process.env.GITHUB_REPO ||
-        site.build_settings?.repo === `https://github.com/${process.env.GITHUB_REPO}`
+      const mainSite = sites.find(
+        (site: any) =>
+          site.build_settings?.repo === process.env.GITHUB_REPO ||
+          site.build_settings?.repo ===
+            `https://github.com/${process.env.GITHUB_REPO}`,
       );
 
       if (mainSite) {
@@ -109,30 +112,40 @@ async function fetchMainProjectEnvironmentVariables() {
         headers: {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
-      }
+      },
     );
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(`Failed to fetch main project env vars: ${response.status} ${errorText}`);
+      throw new Error(
+        `Failed to fetch main project env vars: ${response.status} ${errorText}`,
+      );
     }
 
     const envVars = await response.json();
-    console.log(`Found ${envVars.length} environment variables in main project`);
+    console.log(
+      `Found ${envVars.length} environment variables in main project`,
+    );
 
     // Convert to key-value pairs and filter for variables we want to copy
     const envVarMap: Record<string, string> = {};
-    const variablesToCopy = ['GITHUB_TOKEN', 'GITHUB_REPO']; // Add more as needed
+    const variablesToCopy = ["GITHUB_TOKEN", "GITHUB_REPO"]; // Add more as needed
 
     envVars.forEach((envVar: any) => {
-      if (variablesToCopy.includes(envVar.key) && envVar.values && envVar.values.length > 0) {
+      if (
+        variablesToCopy.includes(envVar.key) &&
+        envVar.values &&
+        envVar.values.length > 0
+      ) {
         // Get the first value (usually 'all' context)
         envVarMap[envVar.key] = envVar.values[0].value;
         console.log(`✅ Will copy: ${envVar.key}`);
       }
     });
 
-    console.log(`=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`);
+    console.log(
+      `=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`,
+    );
     return envVarMap;
   } catch (error) {
     console.error("Error fetching main project environment variables:", error);
@@ -217,7 +230,10 @@ async function createNetlifyProject(data: {
       mainProjectEnvVars = await fetchMainProjectEnvironmentVariables();
       console.log("Successfully fetched main project environment variables");
     } catch (envFetchError) {
-      console.error("Failed to fetch main project environment variables:", envFetchError);
+      console.error(
+        "Failed to fetch main project environment variables:",
+        envFetchError,
+      );
       console.warn("Continuing with fallback environment variables");
     }
 
@@ -230,9 +246,10 @@ async function createNetlifyProject(data: {
       // Copy environment variables from main project (GitHub token, etc.)
       ...mainProjectEnvVars,
       // Fallback to process.env if main project fetch failed
-      ...(Object.keys(mainProjectEnvVars).length === 0 && process.env.GITHUB_TOKEN && {
-        GITHUB_TOKEN: process.env.GITHUB_TOKEN,
-      }),
+      ...(Object.keys(mainProjectEnvVars).length === 0 &&
+        process.env.GITHUB_TOKEN && {
+          GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+        }),
     };
 
     // Set each environment variable with detailed debugging
