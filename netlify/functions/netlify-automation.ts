@@ -388,6 +388,94 @@ async function testEnvironmentVariables() {
   }
 }
 
+async function setupDeployment(data: { siteId: string; repoUrl?: string }) {
+  try {
+    console.log("Setting up deployment for site:", data.siteId);
+
+    const repoUrl = data.repoUrl || process.env.GITHUB_REPO;
+    if (!repoUrl) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          success: false,
+          error: "No repository URL provided",
+        }),
+      };
+    }
+
+    // Update site with repository connection
+    const updateResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          repo: {
+            provider: "github",
+            repo: repoUrl,
+            branch: "main",
+            dir: "/",
+            cmd: "npm run build",
+            publish_dir: "dist/spa",
+          },
+          build_settings: {
+            cmd: "npm run build",
+            publish_dir: "dist/spa",
+          }
+        }),
+      }
+    );
+
+    if (!updateResponse.ok) {
+      const errorText = await updateResponse.text();
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          success: false,
+          error: `Failed to setup repository: ${errorText}`,
+        }),
+      };
+    }
+
+    // Trigger deployment
+    const deployResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}/builds`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({}),
+      }
+    );
+
+    const deploySuccess = deployResponse.ok;
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        success: true,
+        repoSetup: true,
+        deploymentTriggered: deploySuccess,
+        siteId: data.siteId,
+      }),
+    };
+  } catch (error) {
+    console.error("Error setting up deployment:", error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        success: false,
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    };
+  }
+}
+
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
     console.log("=== TESTING GLOBAL SITE NAME AVAILABILITY ===");
