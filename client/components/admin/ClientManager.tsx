@@ -1086,9 +1086,7 @@ export default function ClientManager() {
                       ) : (
                         <Plus className="h-4 w-4" />
                       )}
-                      {newClient.createNetlifyProject
-                        ? "Create Client & Deploy"
-                        : "Create Client"}
+                      Create Client
                     </>
                   )}
                 </Button>
