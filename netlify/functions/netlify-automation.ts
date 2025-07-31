@@ -239,6 +239,43 @@ async function createNetlifyProject(data: {
     console.log(`❌ Failed: ${envVarsFailed}`);
     console.log(`=== END ENVIRONMENT VARIABLES ===`);
 
+    // CRITICAL: Verify GitHub token was set before attempting deployment
+    if (process.env.GITHUB_TOKEN && envVarsFailed > 0) {
+      console.error(`❌ BLOCKING DEPLOYMENT: ${envVarsFailed} environment variables failed to set`);
+      console.error("GitHub token may not be available for deployment");
+    }
+
+    // Verify environment variables were actually set by reading them back
+    try {
+      console.log("=== VERIFYING ENVIRONMENT VARIABLES ===");
+      const verifyResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/env`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+        }
+      );
+
+      if (verifyResponse.ok) {
+        const envVarList = await verifyResponse.json();
+        const setVarNames = envVarList.map((envVar: any) => envVar.key);
+        console.log("Actually set environment variables:", setVarNames);
+
+        const hasGithubToken = setVarNames.includes('GITHUB_TOKEN');
+        console.log(`GitHub token present in new site: ${hasGithubToken}`);
+
+        if (process.env.GITHUB_TOKEN && !hasGithubToken) {
+          console.error("❌ CRITICAL: GitHub token was NOT set on new site - deployment will fail");
+        }
+      } else {
+        console.warn("Could not verify environment variables");
+      }
+    } catch (verifyError) {
+      console.warn("Environment variable verification failed:", verifyError);
+    }
+    console.log("=== ENVIRONMENT VERIFICATION COMPLETE ===");
+
     console.log("Environment variables set for site:", site.id);
 
     // Try automatic deployment using build hooks
