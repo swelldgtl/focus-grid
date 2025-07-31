@@ -66,20 +66,32 @@ async function getMainSiteId() {
     process.env.MAIN_SITE_ID &&
     process.env.MAIN_SITE_ID !== "YOUR_MAIN_SITE_ID"
   ) {
+    console.log("🎯 Using configured MAIN_SITE_ID:", process.env.MAIN_SITE_ID);
     return process.env.MAIN_SITE_ID;
   }
 
   // Otherwise, find the main site by looking for the one with the GitHub repository
   try {
-    console.log("Auto-detecting main site ID...");
+    console.log("🔍 Auto-detecting main site ID...");
+    console.log("🔍 Looking for GitHub repo:", process.env.GITHUB_REPO);
+
     const sitesResponse = await fetch("https://api.netlify.com/api/v1/sites", {
       headers: {
         Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
       },
     });
 
+    console.log("📡 Sites API response status:", sitesResponse.status);
+
     if (sitesResponse.ok) {
       const sites = await sitesResponse.json();
+      console.log(`📋 Found ${sites.length} total sites in account`);
+
+      // Log all sites for debugging
+      sites.forEach((site: any, index: number) => {
+        console.log(`Site ${index + 1}: ${site.name} - Repo: ${site.build_settings?.repo || 'none'}`);
+      });
+
       const mainSite = sites.find(
         (site: any) =>
           site.build_settings?.repo === process.env.GITHUB_REPO ||
@@ -88,12 +100,20 @@ async function getMainSiteId() {
       );
 
       if (mainSite) {
-        console.log(`Found main site: ${mainSite.name} (${mainSite.id})`);
+        console.log(`✅ Found main site: ${mainSite.name} (${mainSite.id})`);
         return mainSite.id;
+      } else {
+        console.log("❌ No site found matching GitHub repo");
+        console.log("Expected repo patterns:");
+        console.log(`  - ${process.env.GITHUB_REPO}`);
+        console.log(`  - https://github.com/${process.env.GITHUB_REPO}`);
       }
+    } else {
+      const errorText = await sitesResponse.text();
+      console.error("❌ Failed to fetch sites:", errorText);
     }
   } catch (error) {
-    console.warn("Could not auto-detect main site ID:", error);
+    console.error("❌ Error in main site detection:", error);
   }
 
   throw new Error("Main site ID not configured and could not be auto-detected");
