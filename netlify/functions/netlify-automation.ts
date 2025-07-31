@@ -68,6 +68,48 @@ export const handler: Handler = async (event, context) => {
   }
 };
 
+async function fetchMainProjectEnvironmentVariables() {
+  try {
+    console.log("=== FETCHING MAIN PROJECT ENVIRONMENT VARIABLES ===");
+    console.log("Main site ID:", process.env.MAIN_SITE_ID);
+
+    const response = await fetch(
+      `https://api.netlify.com/api/v1/sites/${process.env.MAIN_SITE_ID}/env`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Failed to fetch main project env vars: ${response.status} ${errorText}`);
+    }
+
+    const envVars = await response.json();
+    console.log(`Found ${envVars.length} environment variables in main project`);
+
+    // Convert to key-value pairs and filter for variables we want to copy
+    const envVarMap: Record<string, string> = {};
+    const variablesToCopy = ['GITHUB_TOKEN', 'GITHUB_REPO']; // Add more as needed
+
+    envVars.forEach((envVar: any) => {
+      if (variablesToCopy.includes(envVar.key) && envVar.values && envVar.values.length > 0) {
+        // Get the first value (usually 'all' context)
+        envVarMap[envVar.key] = envVar.values[0].value;
+        console.log(`✅ Will copy: ${envVar.key}`);
+      }
+    });
+
+    console.log(`=== MAIN PROJECT ENV VARS FETCHED: ${Object.keys(envVarMap).length} variables ===`);
+    return envVarMap;
+  } catch (error) {
+    console.error("Error fetching main project environment variables:", error);
+    throw error;
+  }
+}
+
 async function createNetlifyProject(data: {
   clientId: string;
   clientName: string;
