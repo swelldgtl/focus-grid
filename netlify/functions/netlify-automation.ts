@@ -230,9 +230,9 @@ async function deployProject(data: { siteId: string }) {
   try {
     console.log("Setting up deployment for site:", data.siteId);
 
-    // Step 1: Configure GitHub repository connection
-    console.log("Connecting GitHub repository...");
-    const repoUpdateResponse = await fetch(
+    // Step 1: Configure build settings first
+    console.log("Setting up build configuration...");
+    const buildConfigResponse = await fetch(
       `https://api.netlify.com/api/v1/sites/${data.siteId}`,
       {
         method: "PATCH",
@@ -241,14 +241,6 @@ async function deployProject(data: { siteId: string }) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({
-          repo: {
-            provider: "github",
-            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-            branch: "main",
-            private: false,
-            installation_id: null,
-            deploy_key_id: null,
-          },
           build_settings: {
             cmd: "npm run build:client",
             publish_dir: "dist/spa",
@@ -257,12 +249,38 @@ async function deployProject(data: { siteId: string }) {
       },
     );
 
-    if (!repoUpdateResponse.ok) {
-      const repoError = await repoUpdateResponse.text();
-      throw new Error(`Repository connection failed: ${repoError}`);
+    if (!buildConfigResponse.ok) {
+      const buildError = await buildConfigResponse.text();
+      throw new Error(`Build configuration failed: ${buildError}`);
     }
 
-    console.log("✅ Repository connected successfully");
+    console.log("✅ Build settings configured");
+
+    // Step 2: Link GitHub repository using the repo endpoint
+    console.log("Linking GitHub repository...");
+    const repoLinkResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}/repo`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          provider: "github",
+          repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+          branch: "main",
+          private: false,
+        }),
+      },
+    );
+
+    if (!repoLinkResponse.ok) {
+      const repoError = await repoLinkResponse.text();
+      throw new Error(`Repository linking failed: ${repoError}`);
+    }
+
+    console.log("✅ Repository linked successfully");
 
     // Step 2: Trigger deployment
     console.log("Triggering deployment...");
