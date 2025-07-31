@@ -145,7 +145,7 @@ export default function ClientManager() {
 
       toast({
         title: "Environment Test",
-        description: `Netlify Token: ${result.hasNetlifyToken ? 'Found' : 'Missing'}, GitHub Repo: ${result.githubRepo || 'Missing'}`,
+        description: `Netlify Token: ${result.hasNetlifyToken ? "Found" : "Missing"}, GitHub Repo: ${result.githubRepo || "Missing"}`,
       });
     } catch (error) {
       console.error("Environment test failed:", error);
@@ -296,7 +296,8 @@ export default function ClientManager() {
     if (newClient.createNetlifyProject && domainAvailable === false) {
       toast({
         title: "Cannot Create Client",
-        description: "The subdomain is already taken. Please choose a different subdomain.",
+        description:
+          "The subdomain is already taken. Please choose a different subdomain.",
         variant: "destructive",
       });
       return;
@@ -306,14 +307,19 @@ export default function ClientManager() {
     if (newClient.createNetlifyProject && domainChecking) {
       toast({
         title: "Please Wait",
-        description: "Domain availability is still being checked. Please wait a moment.",
+        description:
+          "Domain availability is still being checked. Please wait a moment.",
         variant: "destructive",
       });
       return;
     }
 
     // Additional check: If we don't know domain availability yet, check it first
-    if (newClient.createNetlifyProject && domainAvailable === null && newClient.subdomain) {
+    if (
+      newClient.createNetlifyProject &&
+      domainAvailable === null &&
+      newClient.subdomain
+    ) {
       toast({
         title: "Checking Domain",
         description: "Please wait while we verify domain availability.",
@@ -927,7 +933,8 @@ export default function ClientManager() {
                     !newClient.subdomain ||
                     creating ||
                     (newClient.createNetlifyProject && domainChecking) ||
-                    (newClient.createNetlifyProject && domainAvailable === false)
+                    (newClient.createNetlifyProject &&
+                      domainAvailable === false)
                   }
                   className="flex items-center gap-2"
                 >
