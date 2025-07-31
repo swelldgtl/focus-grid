@@ -554,10 +554,8 @@ export default function ClientManager() {
           description: `Site created at ${result.siteName}. Check console for setup instructions or click the admin link provided.`,
         });
 
-        // Open Netlify admin in a new tab
+        // Open Netlify admin in a new tab (modal stays open)
         window.open(result.adminUrl, "_blank");
-
-        completeClientCreation();
       } else if (result.success) {
         toast({
           title: "Deployment Started",
