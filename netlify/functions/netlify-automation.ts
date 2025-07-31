@@ -72,7 +72,7 @@ async function createNetlifyProject(data: {
         body: JSON.stringify({
           name: data.subdomain,
           build_settings: {
-            cmd: "npm run build",
+            cmd: "npm run build:client",
             publish_dir: "dist/spa",
           },
         }),
