@@ -512,7 +512,28 @@ export default function ClientManager() {
 
       const result = await response.json();
 
-      if (result.success) {
+      if (result.success && result.requiresManualSetup) {
+        // Show manual setup instructions
+        console.log("=== NETLIFY DEPLOYMENT SETUP ===");
+        console.log(`Site: ${result.siteName}`);
+        console.log(`Admin URL: ${result.adminUrl}`);
+        console.log("Manual setup steps:");
+        result.instructions.steps.forEach((step: string, index: number) => {
+          console.log(`${index + 1}. ${step}`);
+        });
+        console.log(`One-click import: ${result.importUrl}`);
+        console.log("=== END SETUP INSTRUCTIONS ===");
+
+        toast({
+          title: "Manual Setup Required",
+          description: `Site created at ${result.siteName}. Check console for setup instructions or click the admin link provided.`,
+        });
+
+        // Open Netlify admin in a new tab
+        window.open(result.adminUrl, '_blank');
+
+        completeClientCreation();
+      } else if (result.success) {
         toast({
           title: "Deployment Started",
           description: `Repository connected and deployment started for ${createdNetlifyProject.clientName}. Check Netlify dashboard for progress.`,
@@ -524,9 +545,9 @@ export default function ClientManager() {
     } catch (error) {
       console.error("Error deploying project:", error);
       toast({
-        title: "Deployment Failed",
+        title: "Deployment Setup Failed",
         description:
-          error instanceof Error ? error.message : "Failed to deploy project",
+          error instanceof Error ? error.message : "Failed to provide deployment setup",
         variant: "destructive",
       });
     } finally {
