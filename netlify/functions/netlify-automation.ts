@@ -255,7 +255,10 @@ async function createNetlifyProject(data: {
     // Set each environment variable with detailed debugging
     console.log("=== SETTING ENVIRONMENT VARIABLES ===");
     console.log("Variables to set:", Object.keys(envVars));
+    console.log("Variables with values:", envVars);
     console.log("Site ID:", site.id);
+    console.log("Number of variables from main project:", Object.keys(mainProjectEnvVars).length);
+    console.log("Main project variables:", mainProjectEnvVars);
 
     let envVarsSet = 0;
     let envVarsFailed = 0;
