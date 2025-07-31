@@ -351,56 +351,86 @@ async function testEnvironmentVariables() {
 
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
-    console.log("Checking domain availability for:", data.subdomain);
+    console.log("=== DOMAIN AVAILABILITY CHECK ===");
+    console.log("Checking domain for subdomain:", data.subdomain);
+    console.log("Environment check:", {
+      hasToken: !!process.env.NETLIFY_ACCESS_TOKEN,
+      tokenPrefix: process.env.NETLIFY_ACCESS_TOKEN?.substring(0, 8) + "...",
+    });
 
     // List sites to check if subdomain already exists
+    console.log("Fetching sites from Netlify API...");
     const listResponse = await fetch("https://api.netlify.com/api/v1/sites", {
       headers: {
         Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
       },
     });
 
+    console.log("Netlify API response status:", listResponse.status);
+
     if (!listResponse.ok) {
+      const errorText = await listResponse.text();
+      console.error("Netlify API error:", errorText);
       return {
         statusCode: 500,
         body: JSON.stringify({
           available: null,
-          error: "Failed to check domain availability",
+          error: `Netlify API error: ${listResponse.status} - ${errorText}`,
         }),
       };
     }
 
     const sites = await listResponse.json();
+    console.log(`Found ${sites.length} total sites in Netlify account`);
+
+    // Log first few site names for debugging
+    const siteNames = sites.slice(0, 5).map((s: any) => ({
+      name: s.name,
+      custom_domain: s.custom_domain,
+      url: s.url
+    }));
+    console.log("Sample sites:", siteNames);
 
     // Check if any site has the exact subdomain we want to use
     const targetDomain = `${data.subdomain}.swellfocusgrid.com`;
-    const domainExists = sites.some(
-      (site: any) =>
-        site.name === data.subdomain || // Exact name match
-        site.custom_domain === targetDomain || // Custom domain match
-        site.url?.includes(`${data.subdomain}.netlify.app`), // Default Netlify URL
-    );
+    console.log("Target domain to check:", targetDomain);
+    console.log("Subdomain to check:", data.subdomain);
 
-    console.log(`Checking domain: ${data.subdomain}`);
-    console.log(`Target domain: ${targetDomain}`);
+    const conflictingSites = sites.filter((site: any) => {
+      const nameMatch = site.name === data.subdomain;
+      const customDomainMatch = site.custom_domain === targetDomain;
+      const urlMatch = site.url?.includes(`${data.subdomain}.netlify.app`);
+
+      if (nameMatch || customDomainMatch || urlMatch) {
+        console.log("Found conflicting site:", {
+          name: site.name,
+          custom_domain: site.custom_domain,
+          url: site.url,
+          nameMatch,
+          customDomainMatch,
+          urlMatch
+        });
+        return true;
+      }
+      return false;
+    });
+
+    const domainExists = conflictingSites.length > 0;
+
     console.log(`Domain exists: ${domainExists}`);
-    if (domainExists) {
-      const conflictingSite = sites.find(
-        (site: any) =>
-          site.name === data.subdomain || site.custom_domain === targetDomain,
-      );
-      console.log(
-        `Conflicting site:`,
-        conflictingSite?.name,
-        conflictingSite?.custom_domain,
-      );
-    }
+    console.log(`Conflicting sites count: ${conflictingSites.length}`);
+    console.log("=== END DOMAIN CHECK ===");
 
     return {
       statusCode: 200,
       body: JSON.stringify({
         available: !domainExists,
         subdomain: data.subdomain,
+        debug: {
+          totalSites: sites.length,
+          conflictingSites: conflictingSites.length,
+          conflictingNames: conflictingSites.map((s: any) => s.name),
+        }
       }),
     };
   } catch (error) {
