@@ -519,6 +519,92 @@ async function checkDomainAvailability(data: { subdomain: string }) {
   }
 }
 
+async function setupGitHubIntegration(siteId: string, repoUrl: string) {
+  try {
+    console.log("Attempting GitHub integration for:", repoUrl);
+
+    // Try to configure the site with GitHub repository
+    const repoConfig = {
+      repo: {
+        provider: "github",
+        repo: repoUrl,
+        branch: "main",
+        dir: "/",
+        cmd: "npm run build",
+        publish_dir: "dist/spa",
+        private: false, // Try as public first
+      },
+      build_settings: {
+        cmd: "npm run build",
+        publish_dir: "dist/spa",
+      }
+    };
+
+    const updateResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${siteId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify(repoConfig),
+      }
+    );
+
+    if (updateResponse.ok) {
+      console.log("Repository configured successfully");
+
+      // Try to trigger a build
+      const buildResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${siteId}/builds`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            clear_cache: true,
+          }),
+        }
+      );
+
+      if (buildResponse.ok) {
+        const buildResult = await buildResponse.json();
+        console.log("Build triggered successfully:", buildResult.id);
+
+        return {
+          success: true,
+          method: "github-integration",
+          buildId: buildResult.id,
+          state: buildResult.state,
+        };
+      } else {
+        const buildError = await buildResponse.text();
+        console.warn("Repository configured but build failed:", buildError);
+        return {
+          success: false,
+          error: `Build failed: ${buildError}`,
+        };
+      }
+    } else {
+      const repoError = await updateResponse.text();
+      console.warn("GitHub integration failed:", repoError);
+      return {
+        success: false,
+        error: `Repository configuration failed: ${repoError}`,
+      };
+    }
+  } catch (error) {
+    console.error("Error in GitHub integration:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
 async function triggerFileBasedDeployment(siteId: string, clientData: any) {
   try {
     console.log("Attempting file-based deployment for site:", siteId);
