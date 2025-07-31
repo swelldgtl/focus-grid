@@ -588,14 +588,14 @@ export default function ClientManager() {
 
   const handleSubdomainChange = (subdomain: string) => {
     setNewClient((prev) => ({ ...prev, subdomain }));
+
+    // Reset domain validation when subdomain changes
+    setDomainAvailable(null);
+    setDomainValidated(false);
+
     if (errors.subdomain) {
       setErrors((prev) => ({ ...prev, subdomain: "" }));
     }
-
-    // Check domain availability after a short delay
-    setTimeout(() => {
-      checkDomainAvailability(subdomain);
-    }, 500);
   };
 
   const handleCreateNetlifyProjectChange = (createNetlifyProject: boolean) => {
