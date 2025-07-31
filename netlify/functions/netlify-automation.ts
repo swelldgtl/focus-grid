@@ -40,6 +40,8 @@ export const handler: Handler = async (event, context) => {
         return await checkDomainAvailability(data);
       case "test-env":
         return await testEnvironmentVariables();
+      case "setup-deployment":
+        return await setupDeployment(data);
       default:
         return {
           statusCode: 400,
