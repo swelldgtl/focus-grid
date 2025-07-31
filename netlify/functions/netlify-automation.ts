@@ -184,7 +184,7 @@ async function createNetlifyProject(data: {
       console.warn("Custom domain setup failed:", domainError);
     }
 
-    // Step 3: Set environment variables
+    // Step 4: Set environment variables
     const envVars = {
       CLIENT_ID: data.clientId,
       DATABASE_URL: data.databaseUrl,
