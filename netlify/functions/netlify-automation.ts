@@ -71,24 +71,27 @@ async function createNetlifyProject(data: {
 
     console.log(`Creating site with exact name: ${friendlySiteName}`);
 
-    const createSiteResponse = await fetch("https://api.netlify.com/api/v1/sites", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-      },
-      body: JSON.stringify({
-        name: friendlySiteName,
-        repo: {
-          provider: "github",
-          repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-          branch: "main",
-          dir: "/",
-          cmd: "npm run build",
-          publish_dir: "dist/spa",
+    const createSiteResponse = await fetch(
+      "https://api.netlify.com/api/v1/sites",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
-      }),
-    });
+        body: JSON.stringify({
+          name: friendlySiteName,
+          repo: {
+            provider: "github",
+            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
+            branch: "main",
+            dir: "/",
+            cmd: "npm run build",
+            publish_dir: "dist/spa",
+          },
+        }),
+      },
+    );
 
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
@@ -351,18 +354,22 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       (site: any) =>
         site.name === data.subdomain || // Exact name match
         site.custom_domain === targetDomain || // Custom domain match
-        site.url?.includes(`${data.subdomain}.netlify.app`) // Default Netlify URL
+        site.url?.includes(`${data.subdomain}.netlify.app`), // Default Netlify URL
     );
 
     console.log(`Checking domain: ${data.subdomain}`);
     console.log(`Target domain: ${targetDomain}`);
     console.log(`Domain exists: ${domainExists}`);
     if (domainExists) {
-      const conflictingSite = sites.find((site: any) =>
-        site.name === data.subdomain ||
-        site.custom_domain === targetDomain
+      const conflictingSite = sites.find(
+        (site: any) =>
+          site.name === data.subdomain || site.custom_domain === targetDomain,
       );
-      console.log(`Conflicting site:`, conflictingSite?.name, conflictingSite?.custom_domain);
+      console.log(
+        `Conflicting site:`,
+        conflictingSite?.name,
+        conflictingSite?.custom_domain,
+      );
     }
 
     return {

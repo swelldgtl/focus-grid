@@ -130,7 +130,10 @@ export default function ClientManager() {
   // Check if subdomain is available in Netlify
   const checkDomainAvailability = async (subdomain: string) => {
     if (!subdomain || !newClient.createNetlifyProject) {
-      console.log("Skipping domain check:", { subdomain, createNetlifyProject: newClient.createNetlifyProject });
+      console.log("Skipping domain check:", {
+        subdomain,
+        createNetlifyProject: newClient.createNetlifyProject,
+      });
       setDomainAvailable(null);
       return;
     }
