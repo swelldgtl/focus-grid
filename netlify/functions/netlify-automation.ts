@@ -60,7 +60,7 @@ async function createNetlifyProject(data: {
   try {
     console.log("Creating Netlify site for:", data.subdomain);
 
-    // Step 1: Create site with GitHub repository connection (public repo)
+    // Step 1: Create site first without repository connection
     const createSiteResponse = await fetch(
       "https://api.netlify.com/api/v1/sites",
       {
@@ -71,15 +71,6 @@ async function createNetlifyProject(data: {
         },
         body: JSON.stringify({
           name: data.subdomain,
-          repo: {
-            provider: "github",
-            repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-            branch: "main",
-            dir: "/",
-            cmd: "npm run build",
-            publish_dir: "dist/spa",
-            private: false, // Public repository
-          },
           build_settings: {
             cmd: "npm run build",
             publish_dir: "dist/spa",
