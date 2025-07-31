@@ -585,7 +585,7 @@ export default function ClientManager() {
   const generateEnvFile = () => {
     if (!deploymentInfo) return;
 
-    const client = clients.find(c => c.id === deploymentInfo.clientId);
+    const client = clients.find((c) => c.id === deploymentInfo.clientId);
 
     const envContent = `# Environment Variables for ${client?.name || deploymentInfo.siteName} - ${deploymentInfo.subdomain}
 # Generated on ${new Date().toLocaleString()}
@@ -1197,7 +1197,13 @@ GITHUB_REPO=swelldgtl/focus-grid
               {/* Success Message */}
               <div className="p-4 bg-green-50 border border-green-200 rounded-lg">
                 <p className="text-sm text-green-800">
-                  <strong>{clients.find(c => c.id === deploymentInfo.clientId)?.name}</strong> has been created with Netlify project:
+                  <strong>
+                    {
+                      clients.find((c) => c.id === deploymentInfo.clientId)
+                        ?.name
+                    }
+                  </strong>{" "}
+                  has been created with Netlify project:
                 </p>
                 <p className="text-sm font-mono text-green-700 mt-1">
                   {deploymentInfo.primaryUrl}
@@ -1233,9 +1239,24 @@ GITHUB_REPO=swelldgtl/focus-grid
                   <div className="bg-white p-3 rounded border-l-4 border-blue-500">
                     <strong>Repository & Build:</strong>
                     <ul className="mt-1 ml-4 list-disc space-y-1">
-                      <li>Connect to repository: <code className="bg-gray-100 px-1 rounded">swelldgtl/focus-grid</code></li>
-                      <li>Build command: <code className="bg-gray-100 px-1 rounded">npm run build:client</code></li>
-                      <li>Publish directory: <code className="bg-gray-100 px-1 rounded">dist/spa</code></li>
+                      <li>
+                        Connect to repository:{" "}
+                        <code className="bg-gray-100 px-1 rounded">
+                          swelldgtl/focus-grid
+                        </code>
+                      </li>
+                      <li>
+                        Build command:{" "}
+                        <code className="bg-gray-100 px-1 rounded">
+                          npm run build:client
+                        </code>
+                      </li>
+                      <li>
+                        Publish directory:{" "}
+                        <code className="bg-gray-100 px-1 rounded">
+                          dist/spa
+                        </code>
+                      </li>
                     </ul>
                   </div>
 
@@ -1243,14 +1264,22 @@ GITHUB_REPO=swelldgtl/focus-grid
                     <strong>Environment Variables:</strong>
                     <ul className="mt-1 ml-4 list-disc space-y-1">
                       <li>Go to Site settings → Environment variables</li>
-                      <li>Click "Import from .env" and upload the downloaded file</li>
+                      <li>
+                        Click "Import from .env" and upload the downloaded file
+                      </li>
                     </ul>
                   </div>
 
                   <div className="bg-white p-3 rounded border-l-4 border-purple-500">
                     <strong>Domain Management:</strong>
                     <ul className="mt-1 ml-4 list-disc space-y-1">
-                      <li>Add <code className="bg-gray-100 px-1 rounded">{deploymentInfo.subdomain}.swellfocusgrid.com</code> in Domain management</li>
+                      <li>
+                        Add{" "}
+                        <code className="bg-gray-100 px-1 rounded">
+                          {deploymentInfo.subdomain}.swellfocusgrid.com
+                        </code>{" "}
+                        in Domain management
+                      </li>
                       <li>Force HTTPS in Domain management</li>
                     </ul>
                   </div>
