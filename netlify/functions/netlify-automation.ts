@@ -104,7 +104,7 @@ async function createNetlifyProject(data: {
             repo: {
               provider: "github",
               repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-              branch: "master", // Try master first, common default
+              branch: "main",
               dir: "/",
               cmd: "npm run build",
               publish_dir: "dist/spa",
@@ -118,42 +118,11 @@ async function createNetlifyProject(data: {
         },
       );
 
-      if (!repoResponse.ok) {
-        // If master fails, try main
-        const repoResponseMain = await fetch(
-          `https://api.netlify.com/api/v1/sites/${site.id}`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-            },
-            body: JSON.stringify({
-              repo: {
-                provider: "github",
-                repo: process.env.GITHUB_REPO || "swelldgtl/focus-grid",
-                branch: "main",
-                dir: "/",
-                cmd: "npm run build",
-                publish_dir: "dist/spa",
-                private: false,
-              },
-              build_settings: {
-                cmd: "npm run build",
-                publish_dir: "dist/spa",
-              },
-            }),
-          },
-        );
-
-        if (repoResponseMain.ok) {
-          console.log("✅ GitHub repository connected with main branch");
-        } else {
-          const mainError = await repoResponseMain.text();
-          console.warn("❌ Failed to connect repository with both master and main branches:", mainError);
-        }
+      if (repoResponse.ok) {
+        console.log("✅ GitHub repository connected with main branch");
       } else {
-        console.log("✅ GitHub repository connected with master branch");
+        const repoError = await repoResponse.text();
+        console.warn("❌ Failed to connect repository:", repoError);
       }
     } catch (repoError) {
       console.warn("Repository connection failed:", repoError);
