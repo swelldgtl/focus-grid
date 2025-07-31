@@ -457,7 +457,8 @@ export default function ClientManager() {
           // Show detailed setup instructions
           toast({
             title: "Manual Setup Required",
-            description: "Site created successfully. Check console for setup instructions.",
+            description:
+              "Site created successfully. Check console for setup instructions.",
           });
 
           console.log("=== NETLIFY SETUP INSTRUCTIONS ===");

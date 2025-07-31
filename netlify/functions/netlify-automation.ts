@@ -69,7 +69,7 @@ async function createNetlifyProject(data: {
 
     // Create site without repository connection to avoid auth issues
     const friendlySiteName = data.subdomain;
-    
+
     console.log(`Creating site with exact name: ${friendlySiteName}`);
 
     const createSiteResponse = await fetch(
@@ -100,7 +100,7 @@ async function createNetlifyProject(data: {
     // Set custom domain using the correct API
     try {
       const customDomain = `${data.subdomain}.swellfocusgrid.com`;
-      
+
       // Update site settings to include custom domain
       const updateSiteResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${site.id}`,
@@ -114,7 +114,7 @@ async function createNetlifyProject(data: {
             custom_domain: customDomain,
             force_ssl: true, // Enable HTTPS
           }),
-        }
+        },
       );
 
       if (updateSiteResponse.ok) {
@@ -193,7 +193,7 @@ async function createNetlifyProject(data: {
             title: "Auto Deploy Hook",
             branch: "main",
           }),
-        }
+        },
       );
 
       if (buildHookResponse.ok) {
@@ -213,9 +213,9 @@ async function createNetlifyProject(data: {
               build_settings: {
                 cmd: "npm run build",
                 publish_dir: "dist/spa",
-              }
+              },
             }),
-          }
+          },
         );
 
         if (buildSettingsResponse.ok) {
@@ -224,23 +224,38 @@ async function createNetlifyProject(data: {
           // Try GitHub integration first if repository is configured
           if (process.env.GITHUB_REPO) {
             try {
-              const githubResult = await setupGitHubIntegration(site.id, process.env.GITHUB_REPO);
+              const githubResult = await setupGitHubIntegration(
+                site.id,
+                process.env.GITHUB_REPO,
+              );
               if (githubResult.success) {
                 deploymentResult = githubResult;
                 console.log("GitHub integration successful");
               } else {
                 console.warn("GitHub integration failed, trying file upload");
-                const deployResult = await triggerFileBasedDeployment(site.id, data);
+                const deployResult = await triggerFileBasedDeployment(
+                  site.id,
+                  data,
+                );
                 deploymentResult = deployResult;
               }
             } catch (githubError) {
-              console.warn("GitHub integration error, trying file upload:", githubError);
-              const deployResult = await triggerFileBasedDeployment(site.id, data);
+              console.warn(
+                "GitHub integration error, trying file upload:",
+                githubError,
+              );
+              const deployResult = await triggerFileBasedDeployment(
+                site.id,
+                data,
+              );
               deploymentResult = deployResult;
             }
           } else {
             // No GitHub repo configured, use file upload
-            const deployResult = await triggerFileBasedDeployment(site.id, data);
+            const deployResult = await triggerFileBasedDeployment(
+              site.id,
+              data,
+            );
             deploymentResult = deployResult;
           }
         }
@@ -283,11 +298,14 @@ async function setEnvironmentVariables(data: {
     console.log("Setting environment variables for site:", data.siteId);
 
     // Get site info to get account ID
-    const site = await fetch(`https://api.netlify.com/api/v1/sites/${data.siteId}`, {
-      headers: {
-        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+    const site = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
       },
-    });
+    );
 
     if (!site.ok) {
       throw new Error(`Failed to get site info: ${site.status}`);
@@ -315,7 +333,7 @@ async function setEnvironmentVariables(data: {
               },
             ],
           }),
-        }
+        },
       );
 
       if (!envResponse.ok) {
@@ -359,7 +377,7 @@ async function deployProject(data: { siteId: string }) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify({}),
-      }
+      },
     );
 
     if (!deployResponse.ok) {
@@ -436,7 +454,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       // Site was created successfully, meaning the name is available
       const createdSite = await testSiteResponse.json();
       console.log("Test site created successfully with ID:", createdSite.id);
-      
+
       // Delete the test site immediately since we only wanted to test availability
       console.log("Deleting test site...");
       const deleteResponse = await fetch(
@@ -446,7 +464,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
           headers: {
             Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        }
+        },
       );
 
       if (deleteResponse.ok) {
@@ -478,11 +496,11 @@ async function checkDomainAvailability(data: { subdomain: string }) {
       }
 
       // Check if the error is specifically about subdomain uniqueness
-      const isUniquenessError = 
+      const isUniquenessError =
         testSiteResponse.status === 422 &&
-        (errorText.includes("must be unique") || 
-         errorText.includes("subdomain") ||
-         errorData.errors?.subdomain);
+        (errorText.includes("must be unique") ||
+          errorText.includes("subdomain") ||
+          errorData.errors?.subdomain);
 
       if (isUniquenessError) {
         console.log("Subdomain is not available (uniqueness constraint)");
@@ -537,7 +555,7 @@ async function setupGitHubIntegration(siteId: string, repoUrl: string) {
       build_settings: {
         cmd: "npm run build",
         publish_dir: "dist/spa",
-      }
+      },
     };
 
     const updateResponse = await fetch(
@@ -549,7 +567,7 @@ async function setupGitHubIntegration(siteId: string, repoUrl: string) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: JSON.stringify(repoConfig),
-      }
+      },
     );
 
     if (updateResponse.ok) {
@@ -567,7 +585,7 @@ async function setupGitHubIntegration(siteId: string, repoUrl: string) {
           body: JSON.stringify({
             clear_cache: true,
           }),
-        }
+        },
       );
 
       if (buildResponse.ok) {
@@ -653,8 +671,8 @@ async function triggerFileBasedDeployment(siteId: string, clientData: any) {
     </div>
 </body>
 </html>`,
-      "_redirects": `# Redirect all requests to main app when ready
-/*    /index.html   200`
+      _redirects: `# Redirect all requests to main app when ready
+/*    /index.html   200`,
     };
 
     // Create form data for file upload
@@ -662,7 +680,7 @@ async function triggerFileBasedDeployment(siteId: string, clientData: any) {
 
     // Add files to form data
     Object.entries(deployFiles).forEach(([filename, content]) => {
-      const blob = new Blob([content], { type: 'text/html' });
+      const blob = new Blob([content], { type: "text/html" });
       formData.append(filename, blob, filename);
     });
 
@@ -675,7 +693,7 @@ async function triggerFileBasedDeployment(siteId: string, clientData: any) {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
         body: formData,
-      }
+      },
     );
 
     if (deployResponse.ok) {
