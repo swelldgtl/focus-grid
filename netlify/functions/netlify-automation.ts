@@ -107,14 +107,14 @@ async function createNetlifyProject(data: {
               branch: "main",
               dir: "/",
               cmd: "npm run build:client",
-              publish_dir: "dist/client",
+              publish_dir: "dist/spa",
               private: false,
               installation_id: null, // For public repos
               deploy_key_id: null, // Not needed for public repos
             },
             build_settings: {
               cmd: "npm run build:client",
-              publish_dir: "dist/client",
+              publish_dir: "dist/spa",
               stop_builds: false, // Enable builds
             },
             auto_deploy: true, // Enable automatic deployments
