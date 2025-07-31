@@ -108,6 +108,7 @@ export default function ClientManager() {
   });
   const [domainChecking, setDomainChecking] = useState(false);
   const [domainAvailable, setDomainAvailable] = useState<boolean | null>(null);
+  const [domainValidated, setDomainValidated] = useState(false);
   const [deleteState, setDeleteState] = useState<{
     isFirstDialogOpen: boolean;
     isSecondDialogOpen: boolean;
