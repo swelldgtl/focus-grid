@@ -220,7 +220,7 @@ async function createNetlifyProject(data: {
       }
     }
 
-    // Step 4: Trigger initial deployment
+    // Step 5: Trigger initial deployment
     try {
       console.log("Triggering initial deployment...");
       const deployResponse = await fetch(
