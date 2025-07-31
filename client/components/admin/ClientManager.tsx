@@ -1120,48 +1120,32 @@ GITHUB_REPO=swelldgtl/focus-grid
                     </span>
                   </p>
 
-                  {/* Environment Variables Section */}
-                  <div className="mt-4 mb-4 p-3 bg-white border rounded">
-                    <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                      <Settings2 className="h-4 w-4" />
-                      Environment Variables to Add in Netlify:
+                  {/* Environment Variables Download Section */}
+                  <div className="mt-4 mb-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                    <h4 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
+                      <Database className="h-4 w-4" />
+                      Environment Variables Ready
                     </h4>
-                    <div className="space-y-2 text-sm font-mono">
-                      <div className="grid grid-cols-1 gap-1">
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">CLIENT_ID=</span>
-                          <span className="select-all">{clients.find(c => c.name === newClient.name)?.id || 'TO_BE_UPDATED'}</span>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">DATABASE_URL=</span>
-                          <span className="select-all">{process.env.DATABASE_URL || 'postgresql://...'}</span>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">NEXT_PUBLIC_CLIENT_NAME=</span>
-                          <span className="select-all">{newClient.name}</span>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">NEXT_PUBLIC_CLIENT_SUBDOMAIN=</span>
-                          <span className="select-all">{newClient.subdomain}</span>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">NETLIFY_ACCESS_TOKEN=</span>
-                          <span className="select-all">nfp_m56qdRWHHx5MjyzdqrxajMtUBwyhF4776c65</span>
-                        </div>
-                        <div className="bg-gray-50 p-2 rounded">
-                          <span className="font-semibold text-blue-600">GITHUB_REPO=</span>
-                          <span className="select-all">swelldgtl/focus-grid</span>
-                        </div>
-                      </div>
-                    </div>
-                    <p className="text-xs text-gray-600 mt-2">
-                      💡 Click on any value to select it for copying
+                    <p className="text-sm text-blue-700 mb-3">
+                      All environment variables have been prepared for this client. Download the .env file and import it directly into Netlify.
                     </p>
+                    <Button
+                      onClick={generateEnvFile}
+                      variant="outline"
+                      className="mb-3 flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-100"
+                    >
+                      <Database className="h-4 w-4" />
+                      Download .env File
+                    </Button>
+                    <div className="text-xs text-blue-600 bg-blue-100 p-2 rounded">
+                      <strong>Next steps:</strong>
+                      <br />1. Download the .env file above
+                      <br />2. Open Netlify Dashboard (button below)
+                      <br />3. Go to Site settings → Environment variables → Import from .env
+                      <br />4. Upload the downloaded file
+                      <br />5. Connect your GitHub repository
+                    </div>
                   </div>
-
-                  <p className="text-sm text-gray-600 mb-4">
-                    Copy the environment variables above into your Netlify site settings, then click below to open Netlify and complete the setup.
-                  </p>
                   <Button
                     onClick={handleDeployProject}
                     disabled={deployingProject}
