@@ -327,6 +327,28 @@ async function deployProject(data: { siteId: string }) {
   }
 }
 
+async function testEnvironmentVariables() {
+  try {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        hasNetlifyToken: !!process.env.NETLIFY_ACCESS_TOKEN,
+        tokenLength: process.env.NETLIFY_ACCESS_TOKEN?.length || 0,
+        hasGithubRepo: !!process.env.GITHUB_REPO,
+        githubRepo: process.env.GITHUB_REPO,
+        nodeEnv: process.env.NODE_ENV,
+      }),
+    };
+  } catch (error) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    };
+  }
+}
+
 async function checkDomainAvailability(data: { subdomain: string }) {
   try {
     console.log("Checking domain availability for:", data.subdomain);
