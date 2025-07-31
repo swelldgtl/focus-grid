@@ -68,13 +68,49 @@ export const handler: Handler = async (event, context) => {
   }
 };
 
+async function getMainSiteId() {
+  // If MAIN_SITE_ID is explicitly set, use it
+  if (process.env.MAIN_SITE_ID && process.env.MAIN_SITE_ID !== 'YOUR_MAIN_SITE_ID') {
+    return process.env.MAIN_SITE_ID;
+  }
+
+  // Otherwise, find the main site by looking for the one with the GitHub repository
+  try {
+    console.log("Auto-detecting main site ID...");
+    const sitesResponse = await fetch("https://api.netlify.com/api/v1/sites", {
+      headers: {
+        Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+      },
+    });
+
+    if (sitesResponse.ok) {
+      const sites = await sitesResponse.json();
+      const mainSite = sites.find((site: any) =>
+        site.build_settings?.repo === process.env.GITHUB_REPO ||
+        site.build_settings?.repo === `https://github.com/${process.env.GITHUB_REPO}`
+      );
+
+      if (mainSite) {
+        console.log(`Found main site: ${mainSite.name} (${mainSite.id})`);
+        return mainSite.id;
+      }
+    }
+  } catch (error) {
+    console.warn("Could not auto-detect main site ID:", error);
+  }
+
+  throw new Error("Main site ID not configured and could not be auto-detected");
+}
+
 async function fetchMainProjectEnvironmentVariables() {
   try {
     console.log("=== FETCHING MAIN PROJECT ENVIRONMENT VARIABLES ===");
-    console.log("Main site ID:", process.env.MAIN_SITE_ID);
+
+    const mainSiteId = await getMainSiteId();
+    console.log("Using main site ID:", mainSiteId);
 
     const response = await fetch(
-      `https://api.netlify.com/api/v1/sites/${process.env.MAIN_SITE_ID}/env`,
+      `https://api.netlify.com/api/v1/sites/${mainSiteId}/env`,
       {
         headers: {
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
