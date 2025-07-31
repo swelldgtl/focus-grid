@@ -602,21 +602,13 @@ export default function ClientManager() {
     setNewClient((prev) => ({ ...prev, createNetlifyProject }));
 
     // Reset domain validation when toggling Netlify project creation
-    if (!createNetlifyProject) {
-      setDomainAvailable(null);
-      setDomainChecking(false);
-      setErrors((prev) => ({
-        ...prev,
-        subdomain: "",
-      }));
-    } else {
-      // Check domain availability when enabling Netlify project creation
-      if (newClient.subdomain) {
-        setTimeout(() => {
-          checkDomainAvailability(newClient.subdomain);
-        }, 100);
-      }
-    }
+    setDomainAvailable(null);
+    setDomainValidated(false);
+    setDomainChecking(false);
+    setErrors((prev) => ({
+      ...prev,
+      subdomain: "",
+    }));
   };
 
   const initiateEdit = (client: Client) => {
