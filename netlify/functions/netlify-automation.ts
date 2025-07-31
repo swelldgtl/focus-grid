@@ -227,8 +227,44 @@ async function setEnvironmentVariables(data: {
 
 async function deployProject(data: { siteId: string }) {
   try {
-    console.log("Deploying project:", data.siteId);
+    console.log("Setting up deployment for site:", data.siteId);
 
+    // Step 1: Configure GitHub repository connection
+    console.log("Connecting GitHub repository...");
+    const repoUpdateResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${data.siteId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: JSON.stringify({
+          repo: {
+            repo: `https://github.com/${process.env.GITHUB_REPO || "swelldgtl/focus-grid"}`,
+            branch: "main",
+            cmd: "npm run build:client",
+            dir: "/",
+            public_repo: true,
+          },
+          build_settings: {
+            cmd: "npm run build:client",
+            publish_dir: "dist/spa",
+            stop_builds: false,
+          },
+        }),
+      },
+    );
+
+    if (!repoUpdateResponse.ok) {
+      const repoError = await repoUpdateResponse.text();
+      throw new Error(`Repository connection failed: ${repoError}`);
+    }
+
+    console.log("✅ Repository connected successfully");
+
+    // Step 2: Trigger deployment
+    console.log("Triggering deployment...");
     const deployResponse = await fetch(
       `https://api.netlify.com/api/v1/sites/${data.siteId}/builds`,
       {
@@ -237,7 +273,9 @@ async function deployProject(data: { siteId: string }) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
         },
-        body: JSON.stringify({}),
+        body: JSON.stringify({
+          clear_cache: true,
+        }),
       },
     );
 
@@ -246,9 +284,16 @@ async function deployProject(data: { siteId: string }) {
       throw new Error(`Deploy failed: ${deployResponse.status} ${errorText}`);
     }
 
+    const deployResult = await deployResponse.json();
+    console.log("✅ Deployment triggered:", deployResult.id);
+
     return {
       statusCode: 200,
-      body: JSON.stringify({ success: true }),
+      body: JSON.stringify({
+        success: true,
+        deployId: deployResult.id,
+        message: "Repository connected and deployment started successfully."
+      }),
     };
   } catch (error) {
     console.error("Error deploying project:", error);
