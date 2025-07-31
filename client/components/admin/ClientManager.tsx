@@ -479,7 +479,7 @@ export default function ClientManager() {
       }
       // If Netlify project was created, modal stays open to show deploy option
     } catch (error) {
-      setDeploymentStatus(null);
+      console.error("Error creating client:", error);
       toast({
         title: "Error",
         description:
