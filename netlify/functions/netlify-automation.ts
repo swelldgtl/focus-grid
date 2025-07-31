@@ -77,14 +77,14 @@ async function createNetlifyProject(data: {
 
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
-      
+
       // Handle rate limiting specifically
       if (createSiteResponse.status === 429) {
         throw new Error(
           "Netlify API rate limit exceeded. Please wait a few minutes before creating another client.",
         );
       }
-      
+
       throw new Error(
         `Failed to create site: ${createSiteResponse.status} ${errorText}`,
       );
@@ -220,7 +220,8 @@ async function createNetlifyProject(data: {
         siteId: site.id,
         primaryUrl: `https://${data.subdomain}.swellfocusgrid.com`,
         branchUrl: site.url,
-        message: "Site created successfully. Repository connection and deployment may take a few minutes to complete.",
+        message:
+          "Site created successfully. Repository connection and deployment may take a few minutes to complete.",
       }),
     };
   } catch (error) {
@@ -364,7 +365,7 @@ async function checkDomainAvailability(data: { subdomain: string }) {
 
     if (testSiteResponse.ok) {
       const createdSite = await testSiteResponse.json();
-      
+
       // Delete the test site immediately
       const deleteResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${createdSite.id}`,
