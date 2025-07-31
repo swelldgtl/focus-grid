@@ -180,14 +180,27 @@ async function createNetlifyProject(data: {
       // Continue - site creation succeeded even if custom domain failed
     }
 
+    // Fetch environment variables from main project
+    console.log("=== STEP 2: COPYING ENVIRONMENT VARIABLES ===");
+    let mainProjectEnvVars = {};
+    try {
+      mainProjectEnvVars = await fetchMainProjectEnvironmentVariables();
+      console.log("Successfully fetched main project environment variables");
+    } catch (envFetchError) {
+      console.error("Failed to fetch main project environment variables:", envFetchError);
+      console.warn("Continuing with fallback environment variables");
+    }
+
     // Set environment variables using REST API
     const envVars = {
       CLIENT_ID: data.clientId,
       DATABASE_URL: data.databaseUrl,
       NEXT_PUBLIC_CLIENT_NAME: data.clientName,
       NEXT_PUBLIC_CLIENT_SUBDOMAIN: data.subdomain,
-      // Copy GitHub token from main site to enable deployment
-      ...(process.env.GITHUB_TOKEN && {
+      // Copy environment variables from main project (GitHub token, etc.)
+      ...mainProjectEnvVars,
+      // Fallback to process.env if main project fetch failed
+      ...(Object.keys(mainProjectEnvVars).length === 0 && process.env.GITHUB_TOKEN && {
         GITHUB_TOKEN: process.env.GITHUB_TOKEN,
       }),
     };
