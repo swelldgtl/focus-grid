@@ -81,6 +81,14 @@ async function createNetlifyProject(data: {
 
     if (!createSiteResponse.ok) {
       const errorText = await createSiteResponse.text();
+
+      // Handle rate limiting specifically
+      if (createSiteResponse.status === 429) {
+        throw new Error(
+          "Netlify API rate limit exceeded. Please wait a few minutes before creating another client."
+        );
+      }
+
       throw new Error(
         `Failed to create site: ${createSiteResponse.status} ${errorText}`,
       );
