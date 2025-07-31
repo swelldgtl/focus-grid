@@ -192,7 +192,9 @@ async function createNetlifyProject(data: {
 
     while (!deploymentSuccessful && deploymentAttempts < maxDeployAttempts) {
       deploymentAttempts++;
-      console.log(`Deployment attempt ${deploymentAttempts} for site: ${site.id}`);
+      console.log(
+        `Deployment attempt ${deploymentAttempts} for site: ${site.id}`,
+      );
 
       try {
         // First, verify the site has repository configuration
@@ -202,7 +204,7 @@ async function createNetlifyProject(data: {
             headers: {
               Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
             },
-          }
+          },
         );
 
         if (siteInfoResponse.ok) {
@@ -239,23 +241,34 @@ async function createNetlifyProject(data: {
           deploymentSuccessful = true;
         } else {
           const deployError = await deployResponse.text();
-          console.warn(`Deployment attempt ${deploymentAttempts} failed:`, deployError);
+          console.warn(
+            `Deployment attempt ${deploymentAttempts} failed:`,
+            deployError,
+          );
 
           // If it's the last attempt, log the failure but don't fail the entire creation
           if (deploymentAttempts === maxDeployAttempts) {
-            console.warn("All deployment attempts failed, but site was created successfully");
+            console.warn(
+              "All deployment attempts failed, but site was created successfully",
+            );
           } else {
             // Wait a bit before retrying
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            await new Promise((resolve) => setTimeout(resolve, 2000));
           }
         }
       } catch (deployError) {
-        console.warn(`Deployment attempt ${deploymentAttempts} error:`, deployError);
+        console.warn(
+          `Deployment attempt ${deploymentAttempts} error:`,
+          deployError,
+        );
         if (deploymentAttempts === maxDeployAttempts) {
-          console.warn("Site created but deployment failed after all attempts:", deployError);
+          console.warn(
+            "Site created but deployment failed after all attempts:",
+            deployError,
+          );
         } else {
           // Wait a bit before retrying
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise((resolve) => setTimeout(resolve, 2000));
         }
       }
     }
@@ -274,7 +287,7 @@ async function createNetlifyProject(data: {
             title: "Auto Deploy Hook",
             branch: "main",
           }),
-        }
+        },
       );
 
       if (webhookResponse.ok) {
@@ -431,7 +444,7 @@ async function testEnvironmentVariables() {
   }
 }
 
-async function deploySite(data: { siteId?: string, subdomain?: string }) {
+async function deploySite(data: { siteId?: string; subdomain?: string }) {
   try {
     let siteId = data.siteId;
 
@@ -446,9 +459,10 @@ async function deploySite(data: { siteId?: string, subdomain?: string }) {
 
       if (listResponse.ok) {
         const sites = await listResponse.json();
-        const targetSite = sites.find((site: any) =>
-          site.name === data.subdomain ||
-          site.custom_domain === `${data.subdomain}.swellfocusgrid.com`
+        const targetSite = sites.find(
+          (site: any) =>
+            site.name === data.subdomain ||
+            site.custom_domain === `${data.subdomain}.swellfocusgrid.com`,
         );
 
         if (targetSite) {
@@ -459,7 +473,7 @@ async function deploySite(data: { siteId?: string, subdomain?: string }) {
             statusCode: 404,
             body: JSON.stringify({
               success: false,
-              error: "Site not found for subdomain"
+              error: "Site not found for subdomain",
             }),
           };
         }
@@ -471,7 +485,7 @@ async function deploySite(data: { siteId?: string, subdomain?: string }) {
         statusCode: 400,
         body: JSON.stringify({
           success: false,
-          error: "Site ID or subdomain required"
+          error: "Site ID or subdomain required",
         }),
       };
     }
@@ -489,7 +503,7 @@ async function deploySite(data: { siteId?: string, subdomain?: string }) {
         body: JSON.stringify({
           clear_cache: true,
         }),
-      }
+      },
     );
 
     if (deployResponse.ok) {
