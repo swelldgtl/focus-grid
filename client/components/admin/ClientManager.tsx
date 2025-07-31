@@ -127,6 +127,36 @@ export default function ClientManager() {
   });
   const { toast } = useToast();
 
+  // Test environment variables
+  const testEnvironmentVariables = async () => {
+    try {
+      const response = await fetch("/.netlify/functions/netlify-automation", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "test-env",
+        }),
+      });
+
+      const result = await response.json();
+      console.log("Environment test result:", result);
+
+      toast({
+        title: "Environment Test",
+        description: `Netlify Token: ${result.hasNetlifyToken ? 'Found' : 'Missing'}, GitHub Repo: ${result.githubRepo || 'Missing'}`,
+      });
+    } catch (error) {
+      console.error("Environment test failed:", error);
+      toast({
+        title: "Environment Test Failed",
+        description: "Could not test environment variables",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Check if subdomain is available in Netlify
   const checkDomainAvailability = async (subdomain: string) => {
     if (!subdomain || !newClient.createNetlifyProject) {
