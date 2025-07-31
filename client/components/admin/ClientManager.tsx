@@ -436,27 +436,23 @@ export default function ClientManager() {
       }
 
       // Step 2: Create Netlify project if requested
-      let netlifyResult: NetlifyProjectCreationResult | null = null;
       if (newClient.createNetlifyProject) {
-        setDeploymentStatus({
-          step: "netlify",
-          message: "Creating Netlify project...",
-        });
-
-        netlifyResult = await createNetlifyProject({
+        const netlifyResult = await createNetlifyProject({
           clientId: newClientData.id,
           clientName: newClient.name,
           subdomain: newClient.subdomain,
           databaseUrl: process.env.DATABASE_URL || "",
         });
 
-        if (!netlifyResult.success) {
-          // Client was created but Netlify failed - still show success but with warning
-          toast({
-            title: "Client Created with Warning",
-            description: `Client created successfully, but Netlify project creation failed: ${netlifyResult.error}`,
-            variant: "destructive",
+        if (netlifyResult.success) {
+          // Store Netlify project info and show deploy option
+          setCreatedNetlifyProject({
+            siteId: netlifyResult.siteId,
+            primaryUrl: netlifyResult.primaryUrl,
+            clientName: newClient.name,
           });
+        } else {
+          throw new Error(netlifyResult.error || "Failed to create Netlify project");
         }
       }
 
