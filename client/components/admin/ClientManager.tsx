@@ -984,6 +984,7 @@ export default function ClientManager() {
                     !newClient.slug ||
                     !newClient.subdomain ||
                     creating ||
+                    (newClient.createNetlifyProject && !domainValidated) ||
                     (newClient.createNetlifyProject && domainChecking) ||
                     (newClient.createNetlifyProject &&
                       domainAvailable === false)
