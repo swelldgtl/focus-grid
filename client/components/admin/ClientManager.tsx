@@ -559,9 +559,8 @@ export default function ClientManager() {
       } else if (result.success) {
         toast({
           title: "Deployment Started",
-          description: `Repository connected and deployment started for ${createdNetlifyProject.clientName}. Check Netlify dashboard for progress.`,
+          description: `Repository connected and deployment started. Check Netlify dashboard for progress.`,
         });
-        completeClientCreation();
       } else {
         throw new Error(result.error || "Failed to deploy project");
       }
