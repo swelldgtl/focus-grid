@@ -177,28 +177,71 @@ async function createNetlifyProject(data: {
 
     console.log("Environment variables set for site:", site.id);
 
-    // Trigger a deployment
-    try {
-      const deployResponse = await fetch(
-        `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-          },
-          body: JSON.stringify({}),
-        },
-      );
+    // Try to set up repository connection if GITHUB_REPO is configured
+    if (process.env.GITHUB_REPO) {
+      try {
+        console.log("Setting up repository connection...");
 
-      if (deployResponse.ok) {
-        console.log("Deployment triggered for site:", site.id);
-      } else {
-        console.warn("Site created but deployment failed");
+        const repoSetupResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              repo: {
+                provider: "github",
+                repo: process.env.GITHUB_REPO,
+                branch: "main",
+                dir: "/",
+                cmd: "npm run build",
+                publish_dir: "dist/spa",
+              },
+              build_settings: {
+                cmd: "npm run build",
+                publish_dir: "dist/spa",
+              }
+            }),
+          }
+        );
+
+        if (repoSetupResponse.ok) {
+          console.log("Repository connection configured successfully");
+
+          // Try to trigger deployment
+          try {
+            const deployResponse = await fetch(
+              `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+                },
+                body: JSON.stringify({}),
+              }
+            );
+
+            if (deployResponse.ok) {
+              console.log("Deployment triggered successfully");
+            } else {
+              console.warn("Repository connected but deployment trigger failed");
+            }
+          } catch (deployError) {
+            console.warn("Repository connected but deployment failed:", deployError);
+          }
+        } else {
+          const repoError = await repoSetupResponse.text();
+          console.warn("Failed to connect repository:", repoError);
+        }
+      } catch (repoError) {
+        console.warn("Repository setup failed:", repoError);
+        // Continue - site is created even if repo setup fails
       }
-    } catch (deployError) {
-      console.warn("Site created but deployment failed:", deployError);
-      // Continue - the site is created even if deployment fails
+    } else {
+      console.log("No GITHUB_REPO configured - site created without repository connection");
     }
 
     return {
