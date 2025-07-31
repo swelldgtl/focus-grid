@@ -883,18 +883,26 @@ export default function ClientManager() {
                   <p className="text-xs text-muted-foreground">
                     Auto-generated from name, but can be customized
                   </p>
+                  {newClient.createNetlifyProject && !domainValidated && (
+                    <p className="text-xs text-yellow-600 flex items-center gap-1 mt-1">
+                      <AlertCircle className="h-3 w-3" />
+                      Domain not checked yet - click "Check Domain Availability"
+                    </p>
+                  )}
                   {newClient.createNetlifyProject &&
+                    domainValidated &&
                     domainAvailable === true && (
                       <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
                         <CheckCircle className="h-3 w-3" />
-                        Subdomain is available
+                        ✓ Subdomain is available and ready to use
                       </p>
                     )}
                   {newClient.createNetlifyProject &&
+                    domainValidated &&
                     domainAvailable === false && (
                       <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
                         <XCircle className="h-3 w-3" />
-                        Subdomain is already taken
+                        ✗ Subdomain is already taken - choose a different one
                       </p>
                     )}
                 </div>
