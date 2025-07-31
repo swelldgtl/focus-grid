@@ -504,6 +504,106 @@ async function checkDomainAvailability(data: { subdomain: string }) {
   }
 }
 
+async function triggerFileBasedDeployment(siteId: string, clientData: any) {
+  try {
+    console.log("Attempting file-based deployment for site:", siteId);
+
+    // Create a simple HTML page for the site while build is set up
+    const deployFiles = {
+      "index.html": `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${clientData.clientName} - Focus Grid</title>
+    <style>
+        body {
+            font-family: system-ui, sans-serif;
+            margin: 0;
+            padding: 2rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .container { max-width: 600px; }
+        h1 { font-size: 2.5rem; margin-bottom: 1rem; }
+        p { font-size: 1.1rem; opacity: 0.9; line-height: 1.6; }
+        .status {
+            background: rgba(255,255,255,0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to ${clientData.clientName}</h1>
+        <p>Your Focus Grid site is being set up and will be available shortly.</p>
+        <div class="status">
+            <strong>Status:</strong> Site created successfully<br>
+            <strong>Subdomain:</strong> ${clientData.subdomain}.swellfocusgrid.com<br>
+            <strong>Next Step:</strong> Deployment configuration in progress
+        </div>
+    </div>
+</body>
+</html>`,
+      "_redirects": `# Redirect all requests to main app when ready
+/*    /index.html   200`
+    };
+
+    // Create form data for file upload
+    const formData = new FormData();
+
+    // Add files to form data
+    Object.entries(deployFiles).forEach(([filename, content]) => {
+      const blob = new Blob([content], { type: 'text/html' });
+      formData.append(filename, blob, filename);
+    });
+
+    // Deploy files
+    const deployResponse = await fetch(
+      `https://api.netlify.com/api/v1/sites/${siteId}/deploys`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+        },
+        body: formData,
+      }
+    );
+
+    if (deployResponse.ok) {
+      const deployResult = await deployResponse.json();
+      console.log("File-based deployment successful:", deployResult.id);
+
+      return {
+        success: true,
+        method: "file-upload",
+        deployId: deployResult.id,
+        url: deployResult.url,
+      };
+    } else {
+      const errorText = await deployResponse.text();
+      console.error("File-based deployment failed:", errorText);
+      return {
+        success: false,
+        error: errorText,
+      };
+    }
+  } catch (error) {
+    console.error("Error in file-based deployment:", error);
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
 async function deleteNetlifyProject(data: { subdomain: string }) {
   try {
     console.log("Deleting Netlify project for subdomain:", data.subdomain);
