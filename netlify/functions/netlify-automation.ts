@@ -193,8 +193,31 @@ async function createNetlifyProject(data: {
       }
     }
 
-    // Step 5: Trigger initial deployment
+    // Step 5: Create build hook and trigger initial deployment
     try {
+      console.log("Creating build hook for automatic deployments...");
+
+      // Create a build hook for webhook-based deployments
+      const buildHookResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/build_hooks`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+          },
+          body: JSON.stringify({
+            title: "Auto Deploy Hook",
+            branch: "main",
+          }),
+        },
+      );
+
+      if (buildHookResponse.ok) {
+        const buildHook = await buildHookResponse.json();
+        console.log("✅ Build hook created:", buildHook.url);
+      }
+
       console.log("Triggering initial deployment...");
       const deployResponse = await fetch(
         `https://api.netlify.com/api/v1/sites/${site.id}/builds`,
@@ -214,12 +237,32 @@ async function createNetlifyProject(data: {
         const deployResult = await deployResponse.json();
         console.log("✅ Deployment triggered:", deployResult.id);
       } else {
-        console.warn(
-          "Deployment trigger failed - site created but needs manual deployment",
+        const deployError = await deployResponse.text();
+        console.warn("Deployment trigger failed:", deployError);
+
+        // Try alternative deployment trigger
+        console.log("Attempting alternative deployment method...");
+        const altDeployResponse = await fetch(
+          `https://api.netlify.com/api/v1/sites/${site.id}/deploys`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+            },
+            body: JSON.stringify({
+              branch: "main",
+            }),
+          },
         );
+
+        if (altDeployResponse.ok) {
+          const altResult = await altDeployResponse.json();
+          console.log("✅ Alternative deployment triggered:", altResult.id);
+        }
       }
     } catch (deployError) {
-      console.warn("Deployment trigger error:", deployError);
+      console.warn("Deployment setup error:", deployError);
     }
 
     return {
