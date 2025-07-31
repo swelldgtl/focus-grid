@@ -81,6 +81,13 @@ export default function ClientManager() {
     clientName: string;
   } | null>(null);
   const [deployingProject, setDeployingProject] = useState(false);
+  const [showDeploymentModal, setShowDeploymentModal] = useState(false);
+  const [deploymentInfo, setDeploymentInfo] = useState<{
+    siteName: string;
+    subdomain: string;
+    clientId: string;
+    primaryUrl: string;
+  } | null>(null);
   const [newClient, setNewClient] = useState({
     name: "",
     slug: "",
