@@ -1135,20 +1135,16 @@ GITHUB_REPO=swelldgtl/focus-grid
                 <Button
                   variant="outline"
                   onClick={() => {
-                    if (createdNetlifyProject) {
-                      completeClientCreation();
-                    } else {
-                      setIsCreateDialogOpen(false);
-                      setNewClient({
-                        name: "",
-                        slug: "",
-                        subdomain: "",
-                        createNetlifyProject: true,
-                      });
-                      setErrors({ name: "", slug: "", subdomain: "" });
-                    }
+                    setIsCreateDialogOpen(false);
+                    setNewClient({
+                      name: "",
+                      slug: "",
+                      subdomain: "",
+                      createNetlifyProject: true,
+                    });
+                    setErrors({ name: "", slug: "", subdomain: "" });
                   }}
-                  disabled={creating || deployingProject}
+                  disabled={creating}
                 >
                   Cancel
                 </Button>
