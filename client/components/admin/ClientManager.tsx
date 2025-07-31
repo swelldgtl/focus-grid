@@ -1083,10 +1083,48 @@ export default function ClientManager() {
                       {createdNetlifyProject.primaryUrl}
                     </span>
                   </p>
+
+                  {/* Environment Variables Section */}
+                  <div className="mt-4 mb-4 p-3 bg-white border rounded">
+                    <h4 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                      <Settings2 className="h-4 w-4" />
+                      Environment Variables to Add in Netlify:
+                    </h4>
+                    <div className="space-y-2 text-sm font-mono">
+                      <div className="grid grid-cols-1 gap-1">
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">CLIENT_ID=</span>
+                          <span className="select-all">{clients.find(c => c.name === newClient.name)?.id || 'TO_BE_UPDATED'}</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">DATABASE_URL=</span>
+                          <span className="select-all">{process.env.DATABASE_URL || 'postgresql://...'}</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">NEXT_PUBLIC_CLIENT_NAME=</span>
+                          <span className="select-all">{newClient.name}</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">NEXT_PUBLIC_CLIENT_SUBDOMAIN=</span>
+                          <span className="select-all">{newClient.subdomain}</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">NETLIFY_ACCESS_TOKEN=</span>
+                          <span className="select-all">nfp_m56qdRWHHx5MjyzdqrxajMtUBwyhF4776c65</span>
+                        </div>
+                        <div className="bg-gray-50 p-2 rounded">
+                          <span className="font-semibold text-blue-600">GITHUB_REPO=</span>
+                          <span className="select-all">swelldgtl/focus-grid</span>
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-2">
+                      💡 Click on any value to select it for copying
+                    </p>
+                  </div>
+
                   <p className="text-sm text-gray-600 mb-4">
-                    Your Netlify project has been created and configured. Click
-                    the button below to connect the GitHub repository and start
-                    the deployment.
+                    Copy the environment variables above into your Netlify site settings, then click below to open Netlify and complete the setup.
                   </p>
                   <Button
                     onClick={handleDeployProject}
@@ -1096,12 +1134,12 @@ export default function ClientManager() {
                     {deployingProject ? (
                       <>
                         <Loader2 className="h-4 w-4 animate-spin" />
-                        Deploying...
+                        Opening Netlify...
                       </>
                     ) : (
                       <>
                         <Play className="h-4 w-4" />
-                        Deploy Project in Netlify
+                        Open Netlify Dashboard & Setup Instructions
                       </>
                     )}
                   </Button>
