@@ -1210,23 +1210,29 @@ GITHUB_REPO=swelldgtl/focus-grid
                 </p>
               </div>
 
-              {/* Environment Variables Download */}
+              {/* Environment Variables Copy Section */}
               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
                 <h3 className="font-semibold text-blue-800 mb-3 flex items-center gap-2">
                   <Database className="h-4 w-4" />
-                  Step 1: Download Environment Variables
+                  Step 1: Copy Environment Variables
                 </h3>
                 <p className="text-sm text-blue-700 mb-3">
-                  All required environment variables are ready for download:
+                  Copy these environment variables and add them individually in Netlify:
                 </p>
-                <Button
-                  onClick={generateEnvFile}
-                  variant="outline"
-                  className="mb-3 flex items-center gap-2 border-blue-300 text-blue-700 hover:bg-blue-100"
-                >
-                  <Database className="h-4 w-4" />
-                  Download {deploymentInfo.subdomain}-env-variables.env
-                </Button>
+                <textarea
+                  readOnly
+                  className="w-full h-32 p-3 text-xs font-mono bg-white border rounded resize-none select-all"
+                  value={`CLIENT_ID=${deploymentInfo.clientId}
+DATABASE_URL=${process.env.DATABASE_URL || "postgresql://neondb_owner:npg_mfqu8lM7oDzj@ep-polished-dew-adh5wbkv-pooler.c-2.us-east-1.aws.neon.tech/neondb?sslmode=require"}
+NEXT_PUBLIC_CLIENT_NAME=${clients.find((c) => c.id === deploymentInfo.clientId)?.name || deploymentInfo.siteName}
+NEXT_PUBLIC_CLIENT_SUBDOMAIN=${deploymentInfo.subdomain}
+NETLIFY_ACCESS_TOKEN=nfp_m56qdRWHHx5MjyzdqrxajMtUBwyhF4776c65
+GITHUB_REPO=swelldgtl/focus-grid`}
+                  onClick={(e) => e.currentTarget.select()}
+                />
+                <p className="text-xs text-blue-600 mt-2">
+                  💡 Click anywhere in the text area to select all variables for copying
+                </p>
               </div>
 
               {/* Setup Instructions */}
