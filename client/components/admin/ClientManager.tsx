@@ -163,7 +163,8 @@ export default function ClientManager() {
     if (!newClient.subdomain || !newClient.createNetlifyProject) {
       toast({
         title: "Cannot Check Domain",
-        description: "Please enter a subdomain and enable Netlify project creation.",
+        description:
+          "Please enter a subdomain and enable Netlify project creation.",
         variant: "destructive",
       });
       return;
@@ -194,7 +195,8 @@ export default function ClientManager() {
 
         toast({
           title: "Domain Check Failed",
-          description: "Unable to verify domain availability. Please try again.",
+          description:
+            "Unable to verify domain availability. Please try again.",
           variant: "destructive",
         });
 
@@ -893,16 +895,16 @@ export default function ClientManager() {
                     domainValidated &&
                     domainAvailable === true && (
                       <p className="text-xs text-green-600 flex items-center gap-1 mt-1">
-                        <CheckCircle className="h-3 w-3" />
-                        ✓ Subdomain is available and ready to use
+                        <CheckCircle className="h-3 w-3" />✓ Subdomain is
+                        available and ready to use
                       </p>
                     )}
                   {newClient.createNetlifyProject &&
                     domainValidated &&
                     domainAvailable === false && (
                       <p className="text-xs text-red-600 flex items-center gap-1 mt-1">
-                        <XCircle className="h-3 w-3" />
-                        ✗ Subdomain is already taken - choose a different one
+                        <XCircle className="h-3 w-3" />✗ Subdomain is already
+                        taken - choose a different one
                       </p>
                     )}
                 </div>
