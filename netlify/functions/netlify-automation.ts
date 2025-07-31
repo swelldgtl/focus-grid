@@ -38,6 +38,8 @@ export const handler: Handler = async (event, context) => {
         return await deleteNetlifyProject(data);
       case "check-domain":
         return await checkDomainAvailability(data);
+      case "test-env":
+        return await testEnvironmentVariables();
       default:
         return {
           statusCode: 400,
