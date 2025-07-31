@@ -1214,7 +1214,8 @@ GITHUB_REPO=swelldgtl/focus-grid
                   Step 1: Copy Environment Variables
                 </h3>
                 <p className="text-sm text-blue-700 mb-3">
-                  Copy these environment variables and add them individually in Netlify:
+                  Copy these environment variables and add them individually in
+                  Netlify:
                 </p>
                 <textarea
                   readOnly
@@ -1228,7 +1229,8 @@ GITHUB_REPO=swelldgtl/focus-grid`}
                   onClick={(e) => e.currentTarget.select()}
                 />
                 <p className="text-xs text-blue-600 mt-2">
-                  💡 Click anywhere in the text area to select all variables for copying
+                  💡 Click anywhere in the text area to select all variables for
+                  copying
                 </p>
               </div>
 
