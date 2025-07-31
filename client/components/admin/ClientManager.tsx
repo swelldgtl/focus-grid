@@ -448,10 +448,29 @@ export default function ClientManager() {
       setDeploymentStatus(null);
       setIsCreateDialogOpen(false);
 
-      const successMessage =
-        newClient.createNetlifyProject && netlifyResult?.success
-          ? `Client "${newClientData.name}" created with Netlify project at ${netlifyResult.primaryUrl}`
-          : `Client "${newClientData.name}" created successfully`;
+      let successMessage = `Client "${newClientData.name}" created successfully`;
+
+      if (newClient.createNetlifyProject && netlifyResult?.success) {
+        if (netlifyResult.manualSetupRequired) {
+          successMessage = `Client "${newClientData.name}" created with Netlify project. Manual repository connection required.`;
+
+          // Show detailed setup instructions
+          toast({
+            title: "Manual Setup Required",
+            description: "Site created successfully. Check console for setup instructions.",
+          });
+
+          console.log("=== NETLIFY SETUP INSTRUCTIONS ===");
+          console.log("Site created:", netlifyResult.primaryUrl);
+          console.log("Setup steps:");
+          netlifyResult.setupInstructions.steps.forEach((step: string) => {
+            console.log(step);
+          });
+          console.log("=== END SETUP INSTRUCTIONS ===");
+        } else {
+          successMessage = `Client "${newClientData.name}" created with Netlify project at ${netlifyResult.primaryUrl}`;
+        }
+      }
 
       toast({
         title: "Success",
