@@ -1082,18 +1082,22 @@ export default function ClientManager() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setIsCreateDialogOpen(false);
-                    setNewClient({
-                      name: "",
-                      slug: "",
-                      subdomain: "",
-                      createNetlifyProject: true,
-                    });
-                    setErrors({ name: "", slug: "", subdomain: "" });
+                    if (createdNetlifyProject) {
+                      completeClientCreation();
+                    } else {
+                      setIsCreateDialogOpen(false);
+                      setNewClient({
+                        name: "",
+                        slug: "",
+                        subdomain: "",
+                        createNetlifyProject: true,
+                      });
+                      setErrors({ name: "", slug: "", subdomain: "" });
+                    }
                   }}
-                  disabled={creating}
+                  disabled={creating || deployingProject}
                 >
-                  Cancel
+                  {createdNetlifyProject ? "Skip Deployment" : "Cancel"}
                 </Button>
                 <Button
                   onClick={handleCreateClient}
