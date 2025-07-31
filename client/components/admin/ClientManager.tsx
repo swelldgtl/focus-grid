@@ -459,6 +459,7 @@ export default function ClientManager() {
             subdomain: newClient.subdomain,
             clientId: newClientData.id,
             primaryUrl: netlifyResult.primaryUrl,
+            siteId: netlifyResult.siteId,
           });
 
           // Close create modal and open deployment modal
