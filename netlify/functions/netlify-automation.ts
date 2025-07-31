@@ -150,52 +150,88 @@ async function createNetlifyProject(data: {
     let envVarsSet = 0;
     let envVarsFailed = 0;
 
-    for (const [key, value] of Object.entries(envVars)) {
-      try {
-        console.log(`Setting environment variable: ${key}`);
+    // Try bulk environment variable setting first (newer API)
+    try {
+      console.log("Attempting bulk environment variable setting...");
 
-        const envResponse = await fetch(
-          `https://api.netlify.com/api/v1/sites/${site.id}/env/${key}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
-            },
-            body: JSON.stringify({
-              key: key,
-              values: [
-                {
-                  value: value,
-                  context: "all",
-                },
-              ],
-            }),
+      const envVarArray = Object.entries(envVars).map(([key, value]) => ({
+        key,
+        values: [{ value, context: "all" }],
+      }));
+
+      const bulkResponse = await fetch(
+        `https://api.netlify.com/api/v1/sites/${site.id}/env`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
           },
-        );
-
-        console.log(
-          `Environment variable ${key} response status: ${envResponse.status}`,
-        );
-
-        if (envResponse.ok) {
-          console.log(`✅ Successfully set environment variable: ${key}`);
-          envVarsSet++;
-        } else {
-          const errorText = await envResponse.text();
-          console.error(`❌ Failed to set environment variable ${key}:`, {
-            status: envResponse.status,
-            error: errorText,
-          });
-          envVarsFailed++;
+          body: JSON.stringify(envVarArray),
         }
-      } catch (envError) {
-        console.error(
-          `❌ Exception setting environment variable ${key}:`,
-          envError,
-        );
-        envVarsFailed++;
+      );
+
+      console.log(`Bulk env var response status: ${bulkResponse.status}`);
+
+      if (bulkResponse.ok) {
+        console.log("✅ Bulk environment variables set successfully");
+        envVarsSet = Object.keys(envVars).length;
+      } else {
+        const bulkError = await bulkResponse.text();
+        console.warn("❌ Bulk method failed, trying individual method:", bulkError);
+
+        // Fall back to individual setting
+        for (const [key, value] of Object.entries(envVars)) {
+          try {
+            console.log(`Setting environment variable individually: ${key}`);
+
+            const envResponse = await fetch(
+              `https://api.netlify.com/api/v1/sites/${site.id}/env/${key}`,
+              {
+                method: "PUT",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${process.env.NETLIFY_ACCESS_TOKEN}`,
+                },
+                body: JSON.stringify({
+                  key: key,
+                  values: [
+                    {
+                      value: value,
+                      context: "all",
+                    },
+                  ],
+                }),
+              },
+            );
+
+            console.log(
+              `Environment variable ${key} response status: ${envResponse.status}`,
+            );
+
+            if (envResponse.ok) {
+              console.log(`✅ Successfully set environment variable: ${key}`);
+              envVarsSet++;
+            } else {
+              const errorText = await envResponse.text();
+              console.error(`❌ Failed to set environment variable ${key}:`, {
+                status: envResponse.status,
+                error: errorText,
+              });
+              envVarsFailed++;
+            }
+          } catch (envError) {
+            console.error(
+              `❌ Exception setting environment variable ${key}:`,
+              envError,
+            );
+            envVarsFailed++;
+          }
+        }
       }
+    } catch (bulkError) {
+      console.error("❌ Bulk environment variable setting failed:", bulkError);
+      envVarsFailed = Object.keys(envVars).length;
     }
 
     console.log(`=== ENVIRONMENT VARIABLES SUMMARY ===`);
