@@ -47,6 +47,7 @@ import {
   Globe,
   Rocket,
   Settings2,
+  Play,
 } from "lucide-react";
 import {
   getClients,
