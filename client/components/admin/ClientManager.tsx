@@ -262,6 +262,37 @@ export default function ClientManager() {
   const handleCreateClient = async () => {
     if (!validateForm()) return;
 
+    // Additional check: If Netlify project creation is enabled and domain is not available, block submission
+    if (newClient.createNetlifyProject && domainAvailable === false) {
+      toast({
+        title: "Cannot Create Client",
+        description: "The subdomain is already taken. Please choose a different subdomain.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Additional check: If domain checking is still in progress, block submission
+    if (newClient.createNetlifyProject && domainChecking) {
+      toast({
+        title: "Please Wait",
+        description: "Domain availability is still being checked. Please wait a moment.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Additional check: If we don't know domain availability yet, check it first
+    if (newClient.createNetlifyProject && domainAvailable === null && newClient.subdomain) {
+      toast({
+        title: "Checking Domain",
+        description: "Please wait while we verify domain availability.",
+        variant: "destructive",
+      });
+      await checkDomainAvailability(newClient.subdomain);
+      return; // Don't proceed with creation yet
+    }
+
     setCreating(true);
     setDeploymentStatus({
       step: "client",
