@@ -378,6 +378,13 @@ export default function Index() {
     null,
   );
   const [editingAgendaOwnerValue, setEditingAgendaOwnerValue] = useState("");
+
+  // Agenda modal state
+  const [agendaModalOpen, setAgendaModalOpen] = useState(false);
+  const [editingAgendaItem, setEditingAgendaItem] = useState<AgendaItem | null>(null);
+  const [modalAgendaTitle, setModalAgendaTitle] = useState("");
+  const [modalAgendaRichDescription, setModalAgendaRichDescription] = useState("");
+
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
     field: string;
