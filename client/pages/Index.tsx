@@ -208,15 +208,44 @@ export default function Index() {
 
   // Load action items from database
   const loadActionItems = async () => {
-    if (!clientConfig?.clientId) return;
+    if (!clientConfig?.clientId) {
+      console.log("No client ID available - skipping action items load");
+      return;
+    }
 
     try {
       setActionItemsLoading(true);
+      console.log("Loading action items for client:", clientConfig.clientId);
+
       const apiActionItems = await getActionItems(clientConfig.clientId);
-      const convertedItems = apiActionItems.map(convertApiActionItem);
-      setActionItems(convertedItems);
+
+      if (apiActionItems.length > 0) {
+        const convertedItems = apiActionItems.map(convertApiActionItem);
+        setActionItems(convertedItems);
+        console.log("Loaded", apiActionItems.length, "action items from API");
+      } else {
+        console.log("No action items found, using default items");
+        // Use default items if no API items found
+        setActionItems([
+          {
+            id: "1",
+            title: "Review Q4 performance metrics",
+            status: "on-track",
+          },
+          {
+            id: "2",
+            title: "Update client documentation",
+            status: "on-track",
+          },
+          {
+            id: "3",
+            title: "Prepare monthly newsletter",
+            status: "off-track",
+          },
+        ]);
+      }
     } catch (error) {
-      console.error("Failed to load action items:", error);
+      console.warn("Action items API unavailable, using fallback data:", error);
       // Fallback to default items if API fails
       setActionItems([
         {
