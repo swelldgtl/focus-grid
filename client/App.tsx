@@ -21,17 +21,18 @@ const originalConsoleWarn = console.warn;
 const originalConsoleError = console.error;
 
 // Store original React development warning handler
-const originalReactDOMWarn = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__?.onCommitFiberRoot;
+const originalReactDOMWarn = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__
+  ?.onCommitFiberRoot;
 
 // Suppress all React Quill related warnings and errors
 const suppressReactQuillWarnings = (...args: any[]) => {
-  const message = String(args[0] || '');
+  const message = String(args[0] || "");
   return (
-    message.includes('findDOMNode is deprecated') ||
-    message.includes('ReactQuill') ||
-    message.includes('react-quill') ||
-    message.includes('Warning: findDOMNode') ||
-    message.includes('ReactQuill2')
+    message.includes("findDOMNode is deprecated") ||
+    message.includes("ReactQuill") ||
+    message.includes("react-quill") ||
+    message.includes("Warning: findDOMNode") ||
+    message.includes("ReactQuill2")
   );
 };
 
@@ -50,7 +51,7 @@ console.error = (...args) => {
 };
 
 // Also suppress React development mode warnings
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   const originalWindowError = window.onerror;
   window.onerror = (message, source, lineno, colno, error) => {
     if (suppressReactQuillWarnings(message)) {

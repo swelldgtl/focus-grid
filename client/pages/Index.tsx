@@ -5,8 +5,8 @@ import {
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
 import { format } from "date-fns";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 import { showSaveToast } from "@/lib/toast-utils";
 import {
@@ -151,7 +151,11 @@ interface GoalRecord {
 
 export default function Index() {
   // Load client configuration and feature flags
-  const { config: clientConfig, loading: configLoading, error: configError } = useClientConfig();
+  const {
+    config: clientConfig,
+    loading: configLoading,
+    error: configError,
+  } = useClientConfig();
 
   // Handle critical configuration errors
   if (configError && !clientConfig) {
@@ -414,9 +418,12 @@ export default function Index() {
 
   // Agenda modal state
   const [agendaModalOpen, setAgendaModalOpen] = useState(false);
-  const [editingAgendaItem, setEditingAgendaItem] = useState<AgendaItem | null>(null);
+  const [editingAgendaItem, setEditingAgendaItem] = useState<AgendaItem | null>(
+    null,
+  );
   const [modalAgendaTitle, setModalAgendaTitle] = useState("");
-  const [modalAgendaRichDescription, setModalAgendaRichDescription] = useState("");
+  const [modalAgendaRichDescription, setModalAgendaRichDescription] =
+    useState("");
 
   const [editingCell, setEditingCell] = useState<{
     goalId: string;
@@ -1280,7 +1287,9 @@ export default function Index() {
     setEditingAgendaItem(item);
     setModalAgendaTitle(item.title);
     // Migrate existing description to rich description if needed
-    setModalAgendaRichDescription(item.richDescription || item.description || "");
+    setModalAgendaRichDescription(
+      item.richDescription || item.description || "",
+    );
     setAgendaModalOpen(true);
   };
 
@@ -1315,22 +1324,20 @@ export default function Index() {
   // React Quill configuration with indent/dedent for list functionality
   const quillModules = {
     toolbar: [
-      ['bold', 'italic'],
-      ['link'],
-      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-      [{ 'indent': '-1' }, { 'indent': '+1' }],
+      ["bold", "italic"],
+      ["link"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ indent: "-1" }, { indent: "+1" }],
     ],
   };
 
-  const quillFormats = [
-    'bold', 'italic', 'link', 'list', 'bullet', 'indent',
-  ];
+  const quillFormats = ["bold", "italic", "link", "list", "bullet", "indent"];
 
   // Function to strip HTML tags and return plain text
   const stripHtmlTags = (html: string): string => {
-    const tempDiv = document.createElement('div');
+    const tempDiv = document.createElement("div");
     tempDiv.innerHTML = html;
-    return tempDiv.textContent || tempDiv.innerText || '';
+    return tempDiv.textContent || tempDiv.innerText || "";
   };
 
   const toggleFocusMode = (moduleId: string) => {
@@ -1546,9 +1553,13 @@ export default function Index() {
         {import.meta.env.DEV && configError && (
           <Alert className="border-orange-500 bg-orange-50">
             <AlertDescription>
-              <strong>Development Notice:</strong> Client configuration API failed: {configError}
+              <strong>Development Notice:</strong> Client configuration API
+              failed: {configError}
               <br />
-              <small>Using fallback configuration. This message only appears in development.</small>
+              <small>
+                Using fallback configuration. This message only appears in
+                development.
+              </small>
             </AlertDescription>
           </Alert>
         )}
@@ -2335,27 +2346,39 @@ export default function Index() {
                       {(item.richDescription || item.description) && (
                         <p className="text-xs text-muted-foreground mt-1 truncate">
                           {(() => {
-                            const content = item.richDescription || item.description || '';
+                            const content =
+                              item.richDescription || item.description || "";
 
                             // First check for HTML structure breaks (paragraphs, lists, line breaks)
-                            const htmlBreakRegex = /<\/p>|<br\s*\/?>|<ul>|<ol>|<li>/i;
-                            const firstHtmlBreak = content.search(htmlBreakRegex);
+                            const htmlBreakRegex =
+                              /<\/p>|<br\s*\/?>|<ul>|<ol>|<li>/i;
+                            const firstHtmlBreak =
+                              content.search(htmlBreakRegex);
 
                             if (firstHtmlBreak !== -1) {
                               // Get content up to first structural break and convert to plain text
-                              const beforeBreak = content.substring(0, firstHtmlBreak);
-                              const plainText = stripHtmlTags(beforeBreak).trim();
-                              return plainText + (plainText ? '...' : '');
+                              const beforeBreak = content.substring(
+                                0,
+                                firstHtmlBreak,
+                              );
+                              const plainText =
+                                stripHtmlTags(beforeBreak).trim();
+                              return plainText + (plainText ? "..." : "");
                             } else {
                               // No HTML breaks found, check for plain text line breaks
                               const plainText = stripHtmlTags(content);
-                              const firstLineBreak = plainText.indexOf('\n');
+                              const firstLineBreak = plainText.indexOf("\n");
                               if (firstLineBreak !== -1) {
-                                return plainText.substring(0, firstLineBreak) + '...';
+                                return (
+                                  plainText.substring(0, firstLineBreak) + "..."
+                                );
                               } else {
                                 // Fallback to 60 character limit
                                 const truncated = plainText.substring(0, 60);
-                                return truncated + (plainText.length > 60 ? '...' : '');
+                                return (
+                                  truncated +
+                                  (plainText.length > 60 ? "..." : "")
+                                );
                               }
                             }
                           })()}
@@ -2618,8 +2641,6 @@ export default function Index() {
                 />
               </div>
             </div>
-
-
           </div>
 
           <DialogFooter>
@@ -2627,7 +2648,10 @@ export default function Index() {
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button onClick={saveAgendaModal} className="bg-green-600 text-white hover:bg-green-700">
+            <Button
+              onClick={saveAgendaModal}
+              className="bg-green-600 text-white hover:bg-green-700"
+            >
               <Save className="h-4 w-4 mr-2" />
               Save Changes
             </Button>
