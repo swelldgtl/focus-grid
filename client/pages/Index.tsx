@@ -1349,6 +1349,19 @@ export default function Index() {
     },
   };
 
+  // Sync editor state when modal opens or content changes
+  useEffect(() => {
+    if (agendaModalOpen && modalAgendaRichDescription) {
+      const contentBlock = htmlToDraft(modalAgendaRichDescription);
+      if (contentBlock) {
+        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+        setEditorState(EditorState.createWithContent(contentState));
+      }
+    } else if (agendaModalOpen) {
+      setEditorState(EditorState.createEmpty());
+    }
+  }, [agendaModalOpen, modalAgendaRichDescription]);
+
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
       if (prev === moduleId) {
