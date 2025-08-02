@@ -18,12 +18,26 @@ initializeFetchWrapper();
 
 // Suppress React Quill findDOMNode deprecation warnings while keeping other warnings
 const originalConsoleWarn = console.warn;
+const originalConsoleError = console.error;
+
 console.warn = (...args) => {
   const message = args[0];
-  if (typeof message === 'string' && message.includes('findDOMNode is deprecated')) {
-    return; // Suppress this specific React Quill warning
+  if (typeof message === 'string' &&
+      (message.includes('findDOMNode is deprecated') ||
+       message.includes('ReactQuill'))) {
+    return; // Suppress React Quill warnings
   }
   originalConsoleWarn.apply(console, args);
+};
+
+console.error = (...args) => {
+  const message = args[0];
+  if (typeof message === 'string' &&
+      (message.includes('findDOMNode is deprecated') ||
+       message.includes('ReactQuill'))) {
+    return; // Suppress React Quill errors too
+  }
+  originalConsoleError.apply(console, args);
 };
 
 const queryClient = new QueryClient();
