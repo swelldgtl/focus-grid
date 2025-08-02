@@ -2581,14 +2581,13 @@ export default function Index() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
               <div className="border rounded-md agenda-editor-container">
-                <RichTextEditor
+                <ReactQuill
                   value={modalAgendaRichDescription}
-                  onChange={handleEditorChange}
+                  onChange={setModalAgendaRichDescription}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  theme="snow"
                   placeholder="Enter a detailed description for this agenda item..."
-                  style={{
-                    minHeight: '250px',
-                    fontFamily: 'inherit',
-                  }}
                 />
               </div>
             </div>
