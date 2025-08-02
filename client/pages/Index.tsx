@@ -1559,6 +1559,17 @@ export default function Index() {
           </div>
         </div>
 
+        {/* Development error display */}
+        {import.meta.env.DEV && configError && (
+          <Alert className="border-orange-500 bg-orange-50">
+            <AlertDescription>
+              <strong>Development Notice:</strong> Client configuration API failed: {configError}
+              <br />
+              <small>Using fallback configuration. This message only appears in development.</small>
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Long-Term Goals */}
         <LongTermGoalsFeature>
           <Card
