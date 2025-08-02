@@ -2580,93 +2580,17 @@ export default function Index() {
             {/* WYSIWYG Editor */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
-
-              {/* Formatting Toolbar */}
-              <div className="flex items-center gap-2 p-2 border rounded-t-md bg-muted/50">
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("bold")}
-                  className="h-8 w-8 p-0"
-                  title="Bold"
-                >
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("italic")}
-                  className="h-8 w-8 p-0"
-                  title="Italic"
-                >
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("underline")}
-                  className="h-8 w-8 p-0"
-                  title="Underline"
-                >
-                  <Underline className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("link")}
-                  className="h-8 w-8 p-0"
-                  title="Add Link"
-                >
-                  <Link className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("bulletList")}
-                  className="h-8 w-8 p-0"
-                  title="Bullet List"
-                >
-                  <ListIcon className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => formatText("numberList")}
-                  className="h-8 w-8 p-0"
-                  title="Numbered List"
-                >
-                  <ListOrdered className="h-4 w-4" />
-                </Button>
+              <div className="border rounded-md">
+                <ReactQuill
+                  value={modalAgendaRichDescription}
+                  onChange={setModalAgendaRichDescription}
+                  modules={quillModules}
+                  formats={quillFormats}
+                  style={{ minHeight: '300px' }}
+                  theme="snow"
+                  placeholder="Enter a detailed description for this agenda item..."
+                />
               </div>
-
-              {/* WYSIWYG Editor */}
-              <div
-                data-agenda-editor
-                contentEditable={true}
-                suppressContentEditableWarning={true}
-                onInput={handleEditorInput}
-                onPaste={(e) => {
-                  e.preventDefault();
-                  const text = e.clipboardData?.getData('text/plain');
-                  if (text) {
-                    document.execCommand('insertText', false, text);
-                  }
-                }}
-                className="min-h-[300px] p-3 border border-t-0 rounded-b-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-                style={{
-                  maxHeight: '300px',
-                  overflowY: 'auto',
-                  lineHeight: '1.5',
-                  whiteSpace: 'pre-wrap'
-                }}
-                dangerouslySetInnerHTML={{ __html: modalAgendaRichDescription }}
-              />
             </div>
 
 
