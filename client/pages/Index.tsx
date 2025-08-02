@@ -1325,6 +1325,13 @@ export default function Index() {
     'bold', 'italic', 'link', 'list', 'bullet',
   ];
 
+  // Function to strip HTML tags and return plain text
+  const stripHtmlTags = (html: string): string => {
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    return tempDiv.textContent || tempDiv.innerText || '';
+  };
+
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
       if (prev === moduleId) {
