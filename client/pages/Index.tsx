@@ -1317,108 +1317,61 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  const insertHtmlAtCursor = (html: string) => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (!editor) return;
-
-    editor.focus();
-    const selection = window.getSelection();
-
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      range.deleteContents();
-
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      const fragment = document.createDocumentFragment();
-
-      while (temp.firstChild) {
-        fragment.appendChild(temp.firstChild);
-      }
-
-      range.insertNode(fragment);
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else {
-      // If no selection, append to end
-      editor.innerHTML += html;
-    }
-
-    setModalAgendaRichDescription(editor.innerHTML);
-  };
-
-  const wrapSelectedText = (openTag: string, closeTag: string) => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (!editor) return;
-
-    editor.focus();
-    const selection = window.getSelection();
-
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-
-      if (selectedText) {
-        const html = `${openTag}${selectedText}${closeTag}`;
-        range.deleteContents();
-
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        const fragment = document.createDocumentFragment();
-
-        while (temp.firstChild) {
-          fragment.appendChild(temp.firstChild);
-        }
-
-        range.insertNode(fragment);
-        range.collapse(false);
-        selection.removeAllRanges();
-        selection.addRange(range);
-      } else {
-        // No text selected, insert placeholder
-        insertHtmlAtCursor(`${openTag}Type here${closeTag}`);
-      }
-    } else {
-      // No selection, append to end
-      insertHtmlAtCursor(`${openTag}Type here${closeTag}`);
-    }
-
-    setModalAgendaRichDescription(editor.innerHTML);
-  };
-
   const formatText = (command: string) => {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
-    switch (command) {
-      case "bold":
-        wrapSelectedText('<strong>', '</strong>');
-        break;
-      case "italic":
-        wrapSelectedText('<em>', '</em>');
-        break;
-      case "underline":
-        wrapSelectedText('<u>', '</u>');
-        break;
-      case "link":
-        const url = prompt('Enter URL:');
-        if (url && url.trim()) {
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0 && selection.toString()) {
-            wrapSelectedText(`<a href="${url.trim()}" target="_blank">`, '</a>');
-          } else {
-            insertHtmlAtCursor(`<a href="${url.trim()}" target="_blank">Link text</a>`);
+    editor.focus();
+
+    try {
+      switch (command) {
+        case "bold":
+          if (document.queryCommandSupported('bold')) {
+            document.execCommand('bold', false, null);
           }
-        }
-        break;
-      case "bulletList":
-        insertHtmlAtCursor('<ul><li>List item 1</li><li>List item 2</li></ul>');
-        break;
-      case "numberList":
-        insertHtmlAtCursor('<ol><li>List item 1</li><li>List item 2</li></ol>');
-        break;
+          break;
+        case "italic":
+          if (document.queryCommandSupported('italic')) {
+            document.execCommand('italic', false, null);
+          }
+          break;
+        case "underline":
+          if (document.queryCommandSupported('underline')) {
+            document.execCommand('underline', false, null);
+          }
+          break;
+        case "link":
+          const selection = window.getSelection();
+          if (selection && selection.rangeCount > 0) {
+            const url = prompt('Enter URL:');
+            if (url && url.trim()) {
+              if (document.queryCommandSupported('createLink')) {
+                document.execCommand('createLink', false, url.trim());
+              }
+            }
+          } else {
+            alert('Please select some text first to create a link.');
+          }
+          break;
+        case "bulletList":
+          if (document.queryCommandSupported('insertUnorderedList')) {
+            document.execCommand('insertUnorderedList', false, null);
+          }
+          break;
+        case "numberList":
+          if (document.queryCommandSupported('insertOrderedList')) {
+            document.execCommand('insertOrderedList', false, null);
+          }
+          break;
+      }
+    } catch (e) {
+      console.warn('Command not supported:', command, e);
     }
+
+    // Update state after a brief delay to ensure DOM changes are captured
+    setTimeout(() => {
+      setModalAgendaRichDescription(editor.innerHTML);
+    }, 50);
   };
 
   const handleEditorInput = () => {
