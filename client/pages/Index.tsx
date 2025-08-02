@@ -1312,17 +1312,13 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // Quill editor configuration
-  const quillModules = {
-    toolbar: [
-      ['bold', 'italic'],
-      ['link'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-    ],
-  };
-
-  const quillFormats = [
-    'bold', 'italic', 'link', 'list', 'bullet',
+  // MDEditor configuration - hide unwanted toolbar items
+  const mdEditorCommands = [
+    'bold',
+    'italic',
+    'link',
+    'unordered-list',
+    'ordered-list',
   ];
 
   const toggleFocusMode = (moduleId: string) => {
