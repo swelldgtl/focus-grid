@@ -100,6 +100,9 @@ import {
   Edit3,
   Save,
   X,
+  Link,
+  ListIcon,
+  ListOrdered,
 } from "lucide-react";
 
 interface Task {
@@ -1315,39 +1318,44 @@ export default function Index() {
   };
 
   const formatText = (command: string) => {
-    const textarea = document.querySelector('[data-agenda-textarea]') as HTMLTextAreaElement;
-    if (!textarea) return;
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (!editor) return;
 
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = modalAgendaRichDescription.substring(start, end);
+    editor.focus();
 
-    let formattedText = "";
     switch (command) {
       case "bold":
-        formattedText = `**${selectedText}**`;
+        document.execCommand('bold', false);
         break;
       case "italic":
-        formattedText = `*${selectedText}*`;
+        document.execCommand('italic', false);
         break;
       case "underline":
-        formattedText = `__${selectedText}__`;
+        document.execCommand('underline', false);
+        break;
+      case "link":
+        const url = prompt('Enter URL:');
+        if (url) {
+          document.execCommand('createLink', false, url);
+        }
+        break;
+      case "bulletList":
+        document.execCommand('insertUnorderedList', false);
+        break;
+      case "numberList":
+        document.execCommand('insertOrderedList', false);
         break;
     }
 
-    const newText =
-      modalAgendaRichDescription.substring(0, start) +
-      formattedText +
-      modalAgendaRichDescription.substring(end);
+    // Update the state with the new HTML content
+    setModalAgendaRichDescription(editor.innerHTML);
+  };
 
-    setModalAgendaRichDescription(newText);
-
-    // Restore cursor position
-    setTimeout(() => {
-      textarea.selectionStart = start;
-      textarea.selectionEnd = start + formattedText.length;
-      textarea.focus();
-    }, 0);
+  const handleEditorChange = () => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (editor) {
+      setModalAgendaRichDescription(editor.innerHTML);
+    }
   };
 
   const toggleFocusMode = (moduleId: string) => {
@@ -2587,13 +2595,9 @@ export default function Index() {
       <Dialog open={agendaModalOpen} onOpenChange={setAgendaModalOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Edit3 className="h-5 w-5" />
-              Edit Agenda Item
+            <DialogTitle>
+              Agenda Item
             </DialogTitle>
-            <DialogDescription>
-              Edit the title and description for this agenda item
-            </DialogDescription>
           </DialogHeader>
 
           <div className="flex-1 space-y-4 overflow-auto">
@@ -2604,7 +2608,7 @@ export default function Index() {
                 value={modalAgendaTitle}
                 onChange={(e) => setModalAgendaTitle(e.target.value)}
                 placeholder="Enter agenda item title..."
-                className="text-base"
+                className="text-base focus:ring-black focus:border-black"
               />
             </div>
 
@@ -2644,50 +2648,56 @@ export default function Index() {
                 >
                   <Underline className="h-4 w-4" />
                 </Button>
-                <div className="text-xs text-muted-foreground ml-4">
-                  Use **bold**, *italic*, __underline__ for formatting
-                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("link")}
+                  className="h-8 w-8 p-0"
+                  title="Add Link"
+                >
+                  <Link className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("bulletList")}
+                  className="h-8 w-8 p-0"
+                  title="Bullet List"
+                >
+                  <ListIcon className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("numberList")}
+                  className="h-8 w-8 p-0"
+                  title="Numbered List"
+                >
+                  <ListOrdered className="h-4 w-4" />
+                </Button>
               </div>
 
-              {/* Text Area */}
-              <Textarea
-                data-agenda-textarea
-                value={modalAgendaRichDescription}
-                onChange={(e) => setModalAgendaRichDescription(e.target.value)}
-                placeholder="Enter a detailed description for this agenda item..."
-                className="min-h-[300px] resize-none border-t-0 rounded-t-none"
+              {/* WYSIWYG Editor */}
+              <div
+                data-agenda-editor
+                contentEditable
+                suppressContentEditableWarning={true}
+                onInput={handleEditorChange}
+                onBlur={handleEditorChange}
+                dangerouslySetInnerHTML={{ __html: modalAgendaRichDescription }}
+                className="min-h-[300px] p-3 border border-t-0 rounded-b-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                style={{
+                  maxHeight: '300px',
+                  overflowY: 'auto',
+                  lineHeight: '1.5'
+                }}
               />
             </div>
 
-            {/* Preview */}
-            {modalAgendaRichDescription && (
-              <div className="space-y-2">
-                <label className="text-sm font-medium">Preview</label>
-                <div className="p-4 border rounded-md bg-muted/20 text-sm">
-                  {modalAgendaRichDescription
-                    .split('\n').map((line, index) => (
-                      <p key={index} className="mb-2 last:mb-0">
-                        {line
-                          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-                          .replace(/\*([^*]+)\*/g, '<em>$1</em>')
-                          .replace(/__([^_]+)__/g, '<u>$1</u>')
-                          .split(/(<[^>]+>)/)
-                          .map((part, i) => {
-                            if (part.startsWith('<strong>')) {
-                              return <strong key={i}>{part.replace(/<\/?strong>/g, '')}</strong>;
-                            } else if (part.startsWith('<em>')) {
-                              return <em key={i}>{part.replace(/<\/?em>/g, '')}</em>;
-                            } else if (part.startsWith('<u>')) {
-                              return <u key={i}>{part.replace(/<\/?u>/g, '')}</u>;
-                            }
-                            return part;
-                          })}
-                      </p>
-                    ))
-                  }
-                </div>
-              </div>
-            )}
+
           </div>
 
           <DialogFooter>
@@ -2695,7 +2705,7 @@ export default function Index() {
               <X className="h-4 w-4 mr-2" />
               Cancel
             </Button>
-            <Button onClick={saveAgendaModal}>
+            <Button onClick={saveAgendaModal} className="bg-green-600 text-white hover:bg-green-700">
               <Save className="h-4 w-4 mr-2" />
               Save Changes
             </Button>
