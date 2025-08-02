@@ -5,8 +5,8 @@ import {
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
 import { format } from "date-fns";
-import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import MDEditor from '@uiw/react-md-editor';
+import '@uiw/react-md-editor/markdown-editor.css';
 
 import { showSaveToast } from "@/lib/toast-utils";
 import {
