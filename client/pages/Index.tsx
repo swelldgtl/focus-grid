@@ -2333,12 +2333,12 @@ export default function Index() {
                       </h4>
                       {(item.richDescription || item.description) && (
                         <p className="text-xs text-muted-foreground mt-1 truncate">
-                          {(item.richDescription || item.description)
-                            ?.replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold formatting
-                            ?.replace(/\*([^*]+)\*/g, '$1')      // Remove italic formatting
-                            ?.replace(/__([^_]+)__/g, '$1')      // Remove underline formatting
-                            ?.substring(0, 60)}
-                          {((item.richDescription || item.description)?.length || 0) > 60 && '...'}
+                          {(() => {
+                            const content = item.richDescription || item.description || '';
+                            const plainText = stripHtmlTags(content);
+                            const truncated = plainText.substring(0, 60);
+                            return truncated + (plainText.length > 60 ? '...' : '');
+                          })()}
                         </p>
                       )}
                     </div>
