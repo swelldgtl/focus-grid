@@ -2336,8 +2336,17 @@ export default function Index() {
                           {(() => {
                             const content = item.richDescription || item.description || '';
                             const plainText = stripHtmlTags(content);
-                            const truncated = plainText.substring(0, 60);
-                            return truncated + (plainText.length > 60 ? '...' : '');
+
+                            // Check for first line break
+                            const firstLineBreak = plainText.indexOf('\n');
+                            if (firstLineBreak !== -1) {
+                              // Truncate at first line break
+                              return plainText.substring(0, firstLineBreak) + '...';
+                            } else {
+                              // Fallback to 60 character limit if no line breaks
+                              const truncated = plainText.substring(0, 60);
+                              return truncated + (plainText.length > 60 ? '...' : '');
+                            }
                           })()}
                         </p>
                       )}
