@@ -1315,17 +1315,38 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // TinyMCE configuration
-  const tinymceConfig = {
-    height: 300,
-    menubar: false,
-    plugins: ['lists', 'link'],
-    toolbar: 'bold italic | link | bullist numlist',
-    content_style: 'body { font-family: inherit; font-size: 16px; line-height: 1.5; }',
-    skin: 'oxide',
-    branding: false,
-    elementpath: false,
-    statusbar: false,
+  // Draft.js editor state
+  const [editorState, setEditorState] = useState(() => {
+    if (modalAgendaRichDescription) {
+      const contentBlock = htmlToDraft(modalAgendaRichDescription);
+      if (contentBlock) {
+        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
+        return EditorState.createWithContent(contentState);
+      }
+    }
+    return EditorState.createEmpty();
+  });
+
+  // Update HTML when editor state changes
+  const onEditorStateChange = (state: EditorState) => {
+    setEditorState(state);
+    const htmlContent = draftToHtml(convertToRaw(state.getCurrentContent()));
+    setModalAgendaRichDescription(htmlContent);
+  };
+
+  // Draft.js toolbar configuration
+  const toolbarConfig = {
+    options: ['inline', 'list', 'link'],
+    inline: {
+      options: ['bold', 'italic'],
+    },
+    list: {
+      options: ['unordered', 'ordered'],
+    },
+    link: {
+      showOpenOptionOnHover: true,
+      defaultTargetOption: '_blank',
+    },
   };
 
   const toggleFocusMode = (moduleId: string) => {
