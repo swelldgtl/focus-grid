@@ -1312,17 +1312,18 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // React Quill configuration with only the features you want
+  // React Quill configuration with indent/dedent for list functionality
   const quillModules = {
     toolbar: [
       ['bold', 'italic'],
       ['link'],
       [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+      [{ 'indent': '-1' }, { 'indent': '+1' }],
     ],
   };
 
   const quillFormats = [
-    'bold', 'italic', 'link', 'list', 'bullet',
+    'bold', 'italic', 'link', 'list', 'bullet', 'indent',
   ];
 
   // Function to strip HTML tags and return plain text
