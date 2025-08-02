@@ -1321,31 +1321,50 @@ export default function Index() {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
+    // Ensure editor is focused and editable
     editor.focus();
 
-    switch (command) {
-      case "bold":
-        document.execCommand('bold', false, null);
-        break;
-      case "italic":
-        document.execCommand('italic', false, null);
-        break;
-      case "underline":
-        document.execCommand('underline', false, null);
-        break;
-      case "link":
-        const url = prompt('Enter URL:');
-        if (url) {
-          document.execCommand('createLink', false, url);
-        }
-        break;
-      case "bulletList":
-        document.execCommand('insertUnorderedList', false, null);
-        break;
-      case "numberList":
-        document.execCommand('insertOrderedList', false, null);
-        break;
-    }
+    // Small delay to ensure focus is complete
+    setTimeout(() => {
+      switch (command) {
+        case "bold":
+          document.execCommand('bold', false);
+          break;
+        case "italic":
+          document.execCommand('italic', false);
+          break;
+        case "underline":
+          document.execCommand('underline', false);
+          break;
+        case "link":
+          // Save selection before prompt
+          const selection = window.getSelection();
+          const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+          const url = prompt('Enter URL:');
+          if (url && url.trim()) {
+            // Restore selection and create link
+            if (range && selection) {
+              selection.removeAllRanges();
+              selection.addRange(range);
+            }
+            editor.focus();
+            document.execCommand('createLink', false, url.trim());
+          }
+          break;
+        case "bulletList":
+          document.execCommand('insertUnorderedList', false);
+          break;
+        case "numberList":
+          document.execCommand('insertOrderedList', false);
+          break;
+      }
+
+      // Update state after command execution
+      setTimeout(() => {
+        setModalAgendaRichDescription(editor.innerHTML);
+      }, 10);
+    }, 10);
   };
 
   const handleEditorInput = () => {
