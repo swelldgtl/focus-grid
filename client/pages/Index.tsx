@@ -2572,17 +2572,13 @@ export default function Index() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
               <div className="border rounded-md agenda-editor-container">
-                <Editor
-                  editorState={editorState}
-                  onEditorStateChange={onEditorStateChange}
-                  toolbar={toolbarConfig}
+                <RichTextEditor
+                  value={modalAgendaRichDescription}
+                  onChange={handleEditorChange}
                   placeholder="Enter a detailed description for this agenda item..."
-                  editorStyle={{
+                  style={{
                     minHeight: '250px',
-                    padding: '12px',
-                    fontSize: '16px',
                     fontFamily: 'inherit',
-                    lineHeight: '1.5'
                   }}
                 />
               </div>
