@@ -2580,7 +2580,7 @@ export default function Index() {
             {/* WYSIWYG Editor */}
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
-              <div className="border rounded-md">
+              <div className="border rounded-md agenda-editor-container">
                 <ReactQuill
                   value={modalAgendaRichDescription}
                   onChange={setModalAgendaRichDescription}
@@ -2588,23 +2588,8 @@ export default function Index() {
                   formats={quillFormats}
                   theme="snow"
                   placeholder="Enter a detailed description for this agenda item..."
-                  style={{
-                    fontSize: '16px',
-                    fontFamily: 'inherit'
-                  }}
                 />
               </div>
-              <style jsx>{`
-                .ql-editor {
-                  min-height: 250px !important;
-                  font-size: 16px !important;
-                  font-family: inherit !important;
-                  line-height: 1.5 !important;
-                }
-                .ql-container {
-                  font-family: inherit !important;
-                }
-              `}</style>
             </div>
 
 
