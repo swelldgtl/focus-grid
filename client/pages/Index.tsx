@@ -153,7 +153,13 @@ interface GoalRecord {
 
 export default function Index() {
   // Load client configuration and feature flags
-  const { config: clientConfig, loading: configLoading } = useClientConfig();
+  const { config: clientConfig, loading: configLoading, error: configError } = useClientConfig();
+
+  // Handle critical configuration errors
+  if (configError && !clientConfig) {
+    console.warn("Client configuration failed to load:", configError);
+    // Continue with null config - fallbacks should handle this
+  }
 
   // Get expected client based on current context to prevent wrong client flashing
   const getExpectedClientName = () => {
