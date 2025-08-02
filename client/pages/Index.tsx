@@ -1311,14 +1311,18 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // MDEditor configuration - hide unwanted toolbar items
-  const mdEditorCommands = [
-    'bold',
-    'italic',
-    'link',
-    'unordered-list',
-    'ordered-list',
-  ];
+  // TinyMCE configuration
+  const tinymceConfig = {
+    height: 300,
+    menubar: false,
+    plugins: ['lists', 'link'],
+    toolbar: 'bold italic | link | bullist numlist',
+    content_style: 'body { font-family: inherit; font-size: 16px; line-height: 1.5; }',
+    skin: 'oxide',
+    branding: false,
+    elementpath: false,
+    statusbar: false,
+  };
 
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
