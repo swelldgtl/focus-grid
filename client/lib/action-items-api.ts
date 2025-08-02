@@ -25,14 +25,33 @@ export interface UpdateActionItemData {
 // Get all action items for a client
 export async function getActionItems(clientId: string): Promise<ActionItem[]> {
   try {
-    const response = await fetch(`/api/clients/${clientId}/action-items`);
+    const response = await fetch(`/api/clients/${clientId}/action-items`, {
+      // Add timeout and better error handling
+      signal: AbortSignal.timeout(10000), // 10 second timeout
+    });
+
     if (!response.ok) {
+      if (response.status === 404) {
+        console.warn(`No action items found for client ${clientId}`);
+        return [];
+      }
       throw new Error(`HTTP error! status: ${response.status}`);
     }
+
     const data = await response.json();
     return data.actionItems || [];
   } catch (error) {
-    console.error("Error fetching action items:", error);
+    if (error instanceof Error) {
+      if (error.name === 'TimeoutError') {
+        console.warn("Action items request timed out - using fallback");
+      } else if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        console.warn("Network error fetching action items - API may be unavailable");
+      } else {
+        console.error("Error fetching action items:", error.message);
+      }
+    } else {
+      console.error("Unknown error fetching action items:", error);
+    }
     return [];
   }
 }
