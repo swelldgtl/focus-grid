@@ -1,4 +1,5 @@
 // Action Items API functions
+import { safeFetch } from './fetch-wrapper';
 
 export interface ActionItem {
   id: string;
