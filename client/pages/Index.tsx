@@ -5,7 +5,8 @@ import {
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
 import { format } from "date-fns";
-import RichTextEditor from 'react-simple-wysiwyg';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
 import { showSaveToast } from "@/lib/toast-utils";
 import {
