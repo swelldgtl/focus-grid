@@ -2711,11 +2711,6 @@ export default function Index() {
                   overflowY: 'auto',
                   lineHeight: '1.5'
                 }}
-                ref={(el) => {
-                  if (el && modalAgendaRichDescription !== el.innerHTML) {
-                    el.innerHTML = modalAgendaRichDescription;
-                  }
-                }}
               />
             </div>
 
