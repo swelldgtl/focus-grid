@@ -1321,6 +1321,10 @@ export default function Index() {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
+    // Save current selection/cursor position
+    const selection = window.getSelection();
+    const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
     editor.focus();
 
     switch (command) {
@@ -1340,19 +1344,19 @@ export default function Index() {
         }
         break;
       case "bulletList":
-        document.execCommand('insertUnorderedList', false);
+        document.execCommand('insertUnorderedList', false, null);
         break;
       case "numberList":
-        document.execCommand('insertOrderedList', false);
+        document.execCommand('insertOrderedList', false, null);
         break;
     }
 
-    // Update the state with the new HTML content
-    setModalAgendaRichDescription(editor.innerHTML);
+    // Don't update state immediately to avoid cursor jumping
+    // Let the onInput event handle it naturally
   };
 
-  const handleEditorChange = () => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+  const handleEditorChange = (e: React.FormEvent<HTMLDivElement>) => {
+    const editor = e.currentTarget;
     if (editor) {
       setModalAgendaRichDescription(editor.innerHTML);
     }
@@ -2594,10 +2598,8 @@ export default function Index() {
       {/* Agenda Item Edit Modal */}
       <Dialog open={agendaModalOpen} onOpenChange={setAgendaModalOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader>
-            <DialogTitle>
-              Agenda Item
-            </DialogTitle>
+          <DialogHeader className="sr-only">
+            <DialogTitle></DialogTitle>
           </DialogHeader>
 
           <div className="flex-1 space-y-4 overflow-auto">
@@ -2608,7 +2610,7 @@ export default function Index() {
                 value={modalAgendaTitle}
                 onChange={(e) => setModalAgendaTitle(e.target.value)}
                 placeholder="Enter agenda item title..."
-                className="text-base focus:ring-black focus:border-black"
+                className="text-base focus:ring-2 focus:ring-black focus:border-black"
               />
             </div>
 
@@ -2686,7 +2688,6 @@ export default function Index() {
                 contentEditable
                 suppressContentEditableWarning={true}
                 onInput={handleEditorChange}
-                onBlur={handleEditorChange}
                 dangerouslySetInnerHTML={{ __html: modalAgendaRichDescription }}
                 className="min-h-[300px] p-3 border border-t-0 rounded-b-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                 style={{
