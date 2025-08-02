@@ -1321,21 +1321,17 @@ export default function Index() {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
-    // Save current selection/cursor position
-    const selection = window.getSelection();
-    const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
     editor.focus();
 
     switch (command) {
       case "bold":
-        document.execCommand('bold', false);
+        document.execCommand('bold', false, null);
         break;
       case "italic":
-        document.execCommand('italic', false);
+        document.execCommand('italic', false, null);
         break;
       case "underline":
-        document.execCommand('underline', false);
+        document.execCommand('underline', false, null);
         break;
       case "link":
         const url = prompt('Enter URL:');
@@ -1350,13 +1346,10 @@ export default function Index() {
         document.execCommand('insertOrderedList', false, null);
         break;
     }
-
-    // Don't update state immediately to avoid cursor jumping
-    // Let the onInput event handle it naturally
   };
 
-  const handleEditorChange = (e: React.FormEvent<HTMLDivElement>) => {
-    const editor = e.currentTarget;
+  const handleEditorInput = () => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (editor) {
       setModalAgendaRichDescription(editor.innerHTML);
     }
@@ -2598,9 +2591,7 @@ export default function Index() {
       {/* Agenda Item Edit Modal */}
       <Dialog open={agendaModalOpen} onOpenChange={setAgendaModalOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
-          <DialogHeader className="sr-only">
-            <DialogTitle></DialogTitle>
-          </DialogHeader>
+
 
           <div className="flex-1 space-y-4 overflow-auto">
             {/* Title Input */}
@@ -2610,7 +2601,7 @@ export default function Index() {
                 value={modalAgendaTitle}
                 onChange={(e) => setModalAgendaTitle(e.target.value)}
                 placeholder="Enter agenda item title..."
-                className="text-base focus:ring-2 focus:ring-black focus:border-black"
+                className="text-base focus-visible:ring-black focus-visible:border-black focus:ring-black focus:border-black"
               />
             </div>
 
@@ -2687,13 +2678,17 @@ export default function Index() {
                 data-agenda-editor
                 contentEditable
                 suppressContentEditableWarning={true}
-                onInput={handleEditorChange}
-                dangerouslySetInnerHTML={{ __html: modalAgendaRichDescription }}
+                onInput={handleEditorInput}
                 className="min-h-[300px] p-3 border border-t-0 rounded-b-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                 style={{
                   maxHeight: '300px',
                   overflowY: 'auto',
                   lineHeight: '1.5'
+                }}
+                ref={(el) => {
+                  if (el && modalAgendaRichDescription !== el.innerHTML) {
+                    el.innerHTML = modalAgendaRichDescription;
+                  }
                 }}
               />
             </div>
