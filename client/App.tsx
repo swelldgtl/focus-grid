@@ -22,9 +22,11 @@ const originalConsoleError = console.error;
 
 console.warn = (...args) => {
   const message = args[0];
-  if (typeof message === 'string' &&
-      (message.includes('findDOMNode is deprecated') ||
-       message.includes('ReactQuill'))) {
+  if (
+    typeof message === "string" &&
+    (message.includes("findDOMNode is deprecated") ||
+      message.includes("ReactQuill"))
+  ) {
     return; // Suppress React Quill warnings
   }
   originalConsoleWarn.apply(console, args);
@@ -32,9 +34,11 @@ console.warn = (...args) => {
 
 console.error = (...args) => {
   const message = args[0];
-  if (typeof message === 'string' &&
-      (message.includes('findDOMNode is deprecated') ||
-       message.includes('ReactQuill'))) {
+  if (
+    typeof message === "string" &&
+    (message.includes("findDOMNode is deprecated") ||
+      message.includes("ReactQuill"))
+  ) {
     return; // Suppress React Quill errors too
   }
   originalConsoleError.apply(console, args);
