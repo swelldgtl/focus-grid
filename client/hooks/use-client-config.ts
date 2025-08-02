@@ -36,6 +36,9 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
   const [error, setError] = useState<string | null>(null);
 
   const fetchConfig = async () => {
+    // Define targetClientId at function scope so it's available in catch block
+    let targetClientId: string | null = null;
+
     try {
       setLoading(true);
       setError(null);
@@ -63,7 +66,7 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       }
 
       // Priority order: URL param > subdomain > provided clientId
-      const targetClientId = urlClientId || subdomainClientId || clientId;
+      targetClientId = urlClientId || subdomainClientId || clientId;
 
       const queryParams = targetClientId ? `?clientId=${targetClientId}` : "";
       const url = `/api/config${queryParams}`;
@@ -95,17 +98,19 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
         err instanceof Error
           ? err.message
           : "Failed to load client configuration";
-      setError(errorMessage);
       console.error("Error loading client config:", err);
 
       // Try fallback configuration
       const fallbackConfig = targetClientId
         ? getFallbackConfig(targetClientId)
         : getDefaultFallbackConfig();
+
       if (fallbackConfig) {
         console.log("Using fallback configuration for client:", targetClientId);
         setConfig(fallbackConfig);
-        setError(errorMessage + " (using fallback)");
+        setError(null); // Clear error since we have fallback working
+      } else {
+        setError(errorMessage);
       }
     } finally {
       setLoading(false);
