@@ -73,7 +73,10 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
       const url = `/api/config${queryParams}`;
       console.log("Fetching config from:", url, "for client:", targetClientId);
 
-      const response = await fetch(url);
+      const response = await safeFetch(url, {
+        timeout: 8000,
+        retries: 2,
+      });
       console.log("Config response status:", response.status);
 
       if (!response.ok) {
