@@ -2619,10 +2619,17 @@ export default function Index() {
               <label className="text-sm font-medium">Description</label>
               <div className="border rounded-md agenda-editor-container">
                 <Editor
-                  apiKey="no-api-key"
-                  value={modalAgendaRichDescription}
-                  onEditorChange={setModalAgendaRichDescription}
-                  init={tinymceConfig}
+                  editorState={editorState}
+                  onEditorStateChange={onEditorStateChange}
+                  toolbar={toolbarConfig}
+                  placeholder="Enter a detailed description for this agenda item..."
+                  editorStyle={{
+                    minHeight: '250px',
+                    padding: '12px',
+                    fontSize: '16px',
+                    fontFamily: 'inherit',
+                    lineHeight: '1.5'
+                  }}
                 />
               </div>
             </div>
