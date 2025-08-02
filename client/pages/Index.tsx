@@ -1312,10 +1312,18 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // Simple WYSIWYG editor change handler
-  const handleEditorChange = (e: any) => {
-    setModalAgendaRichDescription(e.target.value);
+  // React Quill configuration with only the features you want
+  const quillModules = {
+    toolbar: [
+      ['bold', 'italic'],
+      ['link'],
+      [{ 'list': 'ordered' }, { 'list': 'bullet' }],
+    ],
   };
+
+  const quillFormats = [
+    'bold', 'italic', 'link', 'list', 'bullet',
+  ];
 
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
