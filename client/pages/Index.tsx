@@ -109,7 +109,8 @@ interface LongTermGoal {
 interface AgendaItem {
   id: string;
   title: string;
-  description?: string;
+  description?: string; // Will migrate existing plain text descriptions
+  richDescription?: string; // New rich text content
   owner?: string;
   completed?: boolean;
 }
