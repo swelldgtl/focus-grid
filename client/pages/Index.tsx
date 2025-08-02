@@ -2335,17 +2335,27 @@ export default function Index() {
                         <p className="text-xs text-muted-foreground mt-1 truncate">
                           {(() => {
                             const content = item.richDescription || item.description || '';
-                            const plainText = stripHtmlTags(content);
 
-                            // Check for first line break
-                            const firstLineBreak = plainText.indexOf('\n');
-                            if (firstLineBreak !== -1) {
-                              // Truncate at first line break
-                              return plainText.substring(0, firstLineBreak) + '...';
+                            // First check for HTML structure breaks (paragraphs, lists, line breaks)
+                            const htmlBreakRegex = /<\/p>|<br\s*\/?>|<ul>|<ol>|<li>/i;
+                            const firstHtmlBreak = content.search(htmlBreakRegex);
+
+                            if (firstHtmlBreak !== -1) {
+                              // Get content up to first structural break and convert to plain text
+                              const beforeBreak = content.substring(0, firstHtmlBreak);
+                              const plainText = stripHtmlTags(beforeBreak).trim();
+                              return plainText + (plainText ? '...' : '');
                             } else {
-                              // Fallback to 60 character limit if no line breaks
-                              const truncated = plainText.substring(0, 60);
-                              return truncated + (plainText.length > 60 ? '...' : '');
+                              // No HTML breaks found, check for plain text line breaks
+                              const plainText = stripHtmlTags(content);
+                              const firstLineBreak = plainText.indexOf('\n');
+                              if (firstLineBreak !== -1) {
+                                return plainText.substring(0, firstLineBreak) + '...';
+                              } else {
+                                // Fallback to 60 character limit
+                                const truncated = plainText.substring(0, 60);
+                                return truncated + (plainText.length > 60 ? '...' : '');
+                              }
                             }
                           })()}
                         </p>
