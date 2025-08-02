@@ -16,33 +16,52 @@ import NotFound from "./pages/NotFound";
 // Initialize fetch wrapper to handle FullStory and other interception issues
 initializeFetchWrapper();
 
-// Suppress React Quill findDOMNode deprecation warnings while keeping other warnings
+// Comprehensive React Quill warning suppression
 const originalConsoleWarn = console.warn;
 const originalConsoleError = console.error;
 
+// Store original React development warning handler
+const originalReactDOMWarn = (window as any).__REACT_DEVTOOLS_GLOBAL_HOOK__?.onCommitFiberRoot;
+
+// Suppress all React Quill related warnings and errors
+const suppressReactQuillWarnings = (...args: any[]) => {
+  const message = String(args[0] || '');
+  return (
+    message.includes('findDOMNode is deprecated') ||
+    message.includes('ReactQuill') ||
+    message.includes('react-quill') ||
+    message.includes('Warning: findDOMNode') ||
+    message.includes('ReactQuill2')
+  );
+};
+
 console.warn = (...args) => {
-  const message = args[0];
-  if (
-    typeof message === "string" &&
-    (message.includes("findDOMNode is deprecated") ||
-      message.includes("ReactQuill"))
-  ) {
+  if (suppressReactQuillWarnings(...args)) {
     return; // Suppress React Quill warnings
   }
   originalConsoleWarn.apply(console, args);
 };
 
 console.error = (...args) => {
-  const message = args[0];
-  if (
-    typeof message === "string" &&
-    (message.includes("findDOMNode is deprecated") ||
-      message.includes("ReactQuill"))
-  ) {
-    return; // Suppress React Quill errors too
+  if (suppressReactQuillWarnings(...args)) {
+    return; // Suppress React Quill errors
   }
   originalConsoleError.apply(console, args);
 };
+
+// Also suppress React development mode warnings
+if (typeof window !== 'undefined') {
+  const originalWindowError = window.onerror;
+  window.onerror = (message, source, lineno, colno, error) => {
+    if (suppressReactQuillWarnings(message)) {
+      return true; // Prevent default error handling
+    }
+    if (originalWindowError) {
+      return originalWindowError(message, source, lineno, colno, error);
+    }
+    return false;
+  };
+}
 
 const queryClient = new QueryClient();
 
