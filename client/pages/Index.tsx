@@ -1242,6 +1242,79 @@ export default function Index() {
     showSaveToast();
   };
 
+  // Agenda modal functions
+  const openAgendaModal = (item: AgendaItem) => {
+    setEditingAgendaItem(item);
+    setModalAgendaTitle(item.title);
+    // Migrate existing description to rich description if needed
+    setModalAgendaRichDescription(item.richDescription || item.description || "");
+    setAgendaModalOpen(true);
+  };
+
+  const closeAgendaModal = () => {
+    setAgendaModalOpen(false);
+    setEditingAgendaItem(null);
+    setModalAgendaTitle("");
+    setModalAgendaRichDescription("");
+  };
+
+  const saveAgendaModal = () => {
+    if (!editingAgendaItem) return;
+
+    setAgendaItems((prev) =>
+      prev.map((item) =>
+        item.id === editingAgendaItem.id
+          ? {
+              ...item,
+              title: modalAgendaTitle,
+              richDescription: modalAgendaRichDescription,
+              // Keep old description for migration purposes, but use richDescription going forward
+              description: modalAgendaRichDescription,
+            }
+          : item,
+      ),
+    );
+
+    showSaveToast();
+    closeAgendaModal();
+  };
+
+  const formatText = (command: string) => {
+    const textarea = document.querySelector('[data-agenda-textarea]') as HTMLTextAreaElement;
+    if (!textarea) return;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = modalAgendaRichDescription.substring(start, end);
+
+    let formattedText = "";
+    switch (command) {
+      case "bold":
+        formattedText = `**${selectedText}**`;
+        break;
+      case "italic":
+        formattedText = `*${selectedText}*`;
+        break;
+      case "underline":
+        formattedText = `__${selectedText}__`;
+        break;
+    }
+
+    const newText =
+      modalAgendaRichDescription.substring(0, start) +
+      formattedText +
+      modalAgendaRichDescription.substring(end);
+
+    setModalAgendaRichDescription(newText);
+
+    // Restore cursor position
+    setTimeout(() => {
+      textarea.selectionStart = start;
+      textarea.selectionEnd = start + formattedText.length;
+      textarea.focus();
+    }, 0);
+  };
+
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
       if (prev === moduleId) {
