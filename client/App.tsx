@@ -16,6 +16,16 @@ import NotFound from "./pages/NotFound";
 // Initialize fetch wrapper to handle FullStory and other interception issues
 initializeFetchWrapper();
 
+// Suppress React Quill findDOMNode deprecation warnings while keeping other warnings
+const originalConsoleWarn = console.warn;
+console.warn = (...args) => {
+  const message = args[0];
+  if (typeof message === 'string' && message.includes('findDOMNode is deprecated')) {
+    return; // Suppress this specific React Quill warning
+  }
+  originalConsoleWarn.apply(console, args);
+};
+
 const queryClient = new QueryClient();
 
 const App = () => (
