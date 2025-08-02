@@ -1311,38 +1311,9 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  // Draft.js editor state
-  const [editorState, setEditorState] = useState(() => {
-    if (modalAgendaRichDescription) {
-      const contentBlock = htmlToDraft(modalAgendaRichDescription);
-      if (contentBlock) {
-        const contentState = ContentState.createFromBlockArray(contentBlock.contentBlocks);
-        return EditorState.createWithContent(contentState);
-      }
-    }
-    return EditorState.createEmpty();
-  });
-
-  // Update HTML when editor state changes
-  const onEditorStateChange = (state: EditorState) => {
-    setEditorState(state);
-    const htmlContent = draftToHtml(convertToRaw(state.getCurrentContent()));
-    setModalAgendaRichDescription(htmlContent);
-  };
-
-  // Draft.js toolbar configuration
-  const toolbarConfig = {
-    options: ['inline', 'list', 'link'],
-    inline: {
-      options: ['bold', 'italic'],
-    },
-    list: {
-      options: ['unordered', 'ordered'],
-    },
-    link: {
-      showOpenOptionOnHover: true,
-      defaultTargetOption: '_blank',
-    },
+  // Simple WYSIWYG editor change handler
+  const handleEditorChange = (e: any) => {
+    setModalAgendaRichDescription(e.target.value);
   };
 
   // Sync editor state when modal opens or content changes
