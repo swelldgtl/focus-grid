@@ -2577,13 +2577,17 @@ export default function Index() {
             <div className="space-y-2">
               <label className="text-sm font-medium">Description</label>
               <div className="border rounded-md agenda-editor-container">
-                <ReactQuill
+                <MDEditor
                   value={modalAgendaRichDescription}
-                  onChange={setModalAgendaRichDescription}
-                  modules={quillModules}
-                  formats={quillFormats}
-                  theme="snow"
-                  placeholder="Enter a detailed description for this agenda item..."
+                  onChange={(value) => setModalAgendaRichDescription(value || '')}
+                  preview="edit"
+                  hideToolbar={false}
+                  visibleDragBar={false}
+                  textareaProps={{
+                    placeholder: 'Enter a detailed description for this agenda item...',
+                    style: { fontSize: 16, fontFamily: 'inherit', minHeight: 250 },
+                  }}
+                  height={300}
                 />
               </div>
             </div>
