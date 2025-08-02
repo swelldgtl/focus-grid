@@ -2617,7 +2617,9 @@ export default function Index() {
       {/* Agenda Item Edit Modal */}
       <Dialog open={agendaModalOpen} onOpenChange={setAgendaModalOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
-
+          <DialogHeader>
+            <DialogTitle className="sr-only">Edit Agenda Item</DialogTitle>
+          </DialogHeader>
 
           <div className="flex-1 space-y-4 overflow-auto">
             {/* Title Input */}
