@@ -1317,61 +1317,95 @@ export default function Index() {
     closeAgendaModal();
   };
 
+  const insertAtCursor = (html: string) => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (!editor) return;
+
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      const fragment = document.createDocumentFragment();
+
+      while (temp.firstChild) {
+        fragment.appendChild(temp.firstChild);
+      }
+
+      range.insertNode(fragment);
+
+      // Move cursor to end of inserted content
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      // No cursor position, append to end
+      editor.innerHTML += html;
+    }
+
+    setModalAgendaRichDescription(editor.innerHTML);
+    editor.focus();
+  };
+
+  const wrapSelection = (startTag: string, endTag: string) => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (!editor) return;
+
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+
+      if (selectedText) {
+        const html = `${startTag}${selectedText}${endTag}`;
+        range.deleteContents();
+        insertAtCursor(html);
+      } else {
+        // No text selected, insert tags with placeholder
+        insertAtCursor(`${startTag}Text here${endTag}`);
+      }
+    } else {
+      // No selection, append to end
+      insertAtCursor(`${startTag}Text here${endTag}`);
+    }
+  };
+
   const formatText = (command: string) => {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
     editor.focus();
 
-    try {
-      switch (command) {
-        case "bold":
-          if (document.queryCommandSupported('bold')) {
-            document.execCommand('bold', false, null);
-          }
-          break;
-        case "italic":
-          if (document.queryCommandSupported('italic')) {
-            document.execCommand('italic', false, null);
-          }
-          break;
-        case "underline":
-          if (document.queryCommandSupported('underline')) {
-            document.execCommand('underline', false, null);
-          }
-          break;
-        case "link":
+    switch (command) {
+      case "bold":
+        wrapSelection('<strong>', '</strong>');
+        break;
+      case "italic":
+        wrapSelection('<em>', '</em>');
+        break;
+      case "underline":
+        wrapSelection('<u>', '</u>');
+        break;
+      case "link":
+        const url = prompt('Enter URL:');
+        if (url && url.trim()) {
           const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0) {
-            const url = prompt('Enter URL:');
-            if (url && url.trim()) {
-              if (document.queryCommandSupported('createLink')) {
-                document.execCommand('createLink', false, url.trim());
-              }
-            }
+          if (selection && selection.rangeCount > 0 && selection.toString()) {
+            wrapSelection(`<a href="${url.trim()}" target="_blank" style="color: blue; text-decoration: underline;">`, '</a>');
           } else {
-            alert('Please select some text first to create a link.');
+            insertAtCursor(`<a href="${url.trim()}" target="_blank" style="color: blue; text-decoration: underline;">Click here</a>`);
           }
-          break;
-        case "bulletList":
-          if (document.queryCommandSupported('insertUnorderedList')) {
-            document.execCommand('insertUnorderedList', false, null);
-          }
-          break;
-        case "numberList":
-          if (document.queryCommandSupported('insertOrderedList')) {
-            document.execCommand('insertOrderedList', false, null);
-          }
-          break;
-      }
-    } catch (e) {
-      console.warn('Command not supported:', command, e);
+        }
+        break;
+      case "bulletList":
+        insertAtCursor('<ul><li>First item</li></ul>');
+        break;
+      case "numberList":
+        insertAtCursor('<ol><li>First item</li></ol>');
+        break;
     }
-
-    // Update state after a brief delay to ensure DOM changes are captured
-    setTimeout(() => {
-      setModalAgendaRichDescription(editor.innerHTML);
-    }, 50);
   };
 
   const handleEditorInput = () => {
