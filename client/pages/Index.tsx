@@ -2292,55 +2292,25 @@ export default function Index() {
                       {index + 1}
                     </div>
                     <div className="flex-1">
-                      {editingAgendaTitle === item.id ? (
-                        <Input
-                          value={editingAgendaTitleValue}
-                          onChange={(e) =>
-                            setEditingAgendaTitleValue(e.target.value)
-                          }
-                          onBlur={handleAgendaTitleSave}
-                          onKeyDown={handleAgendaTitleKeyDown}
-                          className="font-medium"
-                          autoFocus
-                        />
-                      ) : (
-                        <h4
-                          className={`font-medium cursor-pointer hover:text-blue-600 transition-colors ${
-                            item.completed
-                              ? "line-through text-muted-foreground"
-                              : ""
-                          }`}
-                          onClick={() =>
-                            handleAgendaTitleClick(item.id, item.title)
-                          }
-                        >
-                          {item.title}
-                        </h4>
-                      )}
-                      {editingAgendaDescription === item.id ? (
-                        <Input
-                          value={editingAgendaDescriptionValue}
-                          onChange={(e) =>
-                            setEditingAgendaDescriptionValue(e.target.value)
-                          }
-                          onBlur={handleAgendaDescriptionSave}
-                          onKeyDown={handleAgendaDescriptionKeyDown}
-                          className="text-sm mt-1"
-                          autoFocus
-                        />
-                      ) : (
-                        <p
-                          className={`text-sm text-muted-foreground mt-1 cursor-pointer hover:text-foreground transition-colors ${
-                            item.completed ? "line-through" : ""
-                          }`}
-                          onClick={() =>
-                            handleAgendaDescriptionClick(
-                              item.id,
-                              item.description || "",
-                            )
-                          }
-                        >
-                          {item.description || "Add description..."}
+                      <h4
+                        className={`font-medium cursor-pointer hover:text-blue-600 transition-colors ${
+                          item.completed
+                            ? "line-through text-muted-foreground"
+                            : ""
+                        }`}
+                        onClick={() => openAgendaModal(item)}
+                        title="Click to edit agenda item"
+                      >
+                        {item.title}
+                      </h4>
+                      {(item.richDescription || item.description) && (
+                        <p className="text-xs text-muted-foreground mt-1 truncate">
+                          {(item.richDescription || item.description)
+                            ?.replace(/\*\*([^*]+)\*\*/g, '$1')  // Remove bold formatting
+                            ?.replace(/\*([^*]+)\*/g, '$1')      // Remove italic formatting
+                            ?.replace(/__([^_]+)__/g, '$1')      // Remove underline formatting
+                            ?.substring(0, 60)}
+                          {((item.richDescription || item.description)?.length || 0) > 60 && '...'}
                         </p>
                       )}
                     </div>
