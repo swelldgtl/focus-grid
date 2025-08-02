@@ -138,20 +138,25 @@
   }
 }
 
-/* React-Quill Editor Styling */
-.agenda-editor-container .ql-editor {
-  min-height: 250px !important;
+/* MDEditor Styling */
+.agenda-editor-container .w-md-editor {
+  background-color: transparent !important;
+}
+
+.agenda-editor-container .w-md-editor-text-textarea,
+.agenda-editor-container .w-md-editor-text-input,
+.agenda-editor-container .w-md-editor-text-area {
   font-size: 16px !important;
   font-family: inherit !important;
   line-height: 1.5 !important;
+  min-height: 250px !important;
 }
 
-.agenda-editor-container .ql-container {
-  font-family: inherit !important;
-  font-size: 16px !important;
+.agenda-editor-container .w-md-editor-toolbar {
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  background-color: hsl(var(--muted)) !important;
 }
 
-.agenda-editor-container .ql-editor.ql-blank::before {
-  font-size: 16px !important;
-  font-family: inherit !important;
+.agenda-editor-container .w-md-editor-toolbar-divider {
+  display: none !important;
 }
