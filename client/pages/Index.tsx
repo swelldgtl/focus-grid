@@ -2730,15 +2730,24 @@ export default function Index() {
               {/* WYSIWYG Editor */}
               <div
                 data-agenda-editor
-                contentEditable
+                contentEditable={true}
                 suppressContentEditableWarning={true}
                 onInput={handleEditorInput}
+                onPaste={(e) => {
+                  e.preventDefault();
+                  const text = e.clipboardData?.getData('text/plain');
+                  if (text) {
+                    document.execCommand('insertText', false, text);
+                  }
+                }}
                 className="min-h-[300px] p-3 border border-t-0 rounded-b-md focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                 style={{
                   maxHeight: '300px',
                   overflowY: 'auto',
-                  lineHeight: '1.5'
+                  lineHeight: '1.5',
+                  whiteSpace: 'pre-wrap'
                 }}
+                dangerouslySetInnerHTML={{ __html: modalAgendaRichDescription }}
               />
             </div>
 
