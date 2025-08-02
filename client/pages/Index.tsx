@@ -1355,6 +1355,32 @@ export default function Index() {
     }
   };
 
+  // Initialize contentEditable content without causing cursor jumps
+  useEffect(() => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (editor && editor.innerHTML !== modalAgendaRichDescription) {
+      const selection = window.getSelection();
+      const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+      editor.innerHTML = modalAgendaRichDescription;
+
+      // Restore cursor position if possible
+      if (range && selection) {
+        try {
+          selection.removeAllRanges();
+          selection.addRange(range);
+        } catch (e) {
+          // If range is invalid, place cursor at end
+          const newRange = document.createRange();
+          newRange.selectNodeContents(editor);
+          newRange.collapse(false);
+          selection.removeAllRanges();
+          selection.addRange(newRange);
+        }
+      }
+    }
+  }, [agendaModalOpen]);
+
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
       if (prev === moduleId) {
