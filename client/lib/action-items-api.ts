@@ -26,9 +26,9 @@ export interface UpdateActionItemData {
 // Get all action items for a client
 export async function getActionItems(clientId: string): Promise<ActionItem[]> {
   try {
-    const response = await fetch(`/api/clients/${clientId}/action-items`, {
-      // Add timeout and better error handling
-      signal: AbortSignal.timeout(10000), // 10 second timeout
+    const response = await safeFetch(`/api/clients/${clientId}/action-items`, {
+      timeout: 10000,
+      retries: 2,
     });
 
     if (!response.ok) {
