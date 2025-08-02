@@ -2536,6 +2536,126 @@ export default function Index() {
           </div>
         </div>
       </footer>
+
+      {/* Agenda Item Edit Modal */}
+      <Dialog open={agendaModalOpen} onOpenChange={setAgendaModalOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Edit3 className="h-5 w-5" />
+              Edit Agenda Item
+            </DialogTitle>
+            <DialogDescription>
+              Edit the title and description for this agenda item
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 space-y-4 overflow-auto">
+            {/* Title Input */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Title</label>
+              <Input
+                value={modalAgendaTitle}
+                onChange={(e) => setModalAgendaTitle(e.target.value)}
+                placeholder="Enter agenda item title..."
+                className="text-base"
+              />
+            </div>
+
+            {/* WYSIWYG Editor */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Description</label>
+
+              {/* Formatting Toolbar */}
+              <div className="flex items-center gap-2 p-2 border rounded-t-md bg-muted/50">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("bold")}
+                  className="h-8 w-8 p-0"
+                  title="Bold"
+                >
+                  <Bold className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("italic")}
+                  className="h-8 w-8 p-0"
+                  title="Italic"
+                >
+                  <Italic className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => formatText("underline")}
+                  className="h-8 w-8 p-0"
+                  title="Underline"
+                >
+                  <Underline className="h-4 w-4" />
+                </Button>
+                <div className="text-xs text-muted-foreground ml-4">
+                  Use **bold**, *italic*, __underline__ for formatting
+                </div>
+              </div>
+
+              {/* Text Area */}
+              <Textarea
+                data-agenda-textarea
+                value={modalAgendaRichDescription}
+                onChange={(e) => setModalAgendaRichDescription(e.target.value)}
+                placeholder="Enter a detailed description for this agenda item..."
+                className="min-h-[300px] resize-none border-t-0 rounded-t-none"
+              />
+            </div>
+
+            {/* Preview */}
+            {modalAgendaRichDescription && (
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Preview</label>
+                <div className="p-4 border rounded-md bg-muted/20 text-sm">
+                  {modalAgendaRichDescription
+                    .split('\n').map((line, index) => (
+                      <p key={index} className="mb-2 last:mb-0">
+                        {line
+                          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+                          .replace(/__([^_]+)__/g, '<u>$1</u>')
+                          .split(/(<[^>]+>)/)
+                          .map((part, i) => {
+                            if (part.startsWith('<strong>')) {
+                              return <strong key={i}>{part.replace(/<\/?strong>/g, '')}</strong>;
+                            } else if (part.startsWith('<em>')) {
+                              return <em key={i}>{part.replace(/<\/?em>/g, '')}</em>;
+                            } else if (part.startsWith('<u>')) {
+                              return <u key={i}>{part.replace(/<\/?u>/g, '')}</u>;
+                            }
+                            return part;
+                          })}
+                      </p>
+                    ))
+                  }
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter>
+            <Button variant="outline" onClick={closeAgendaModal}>
+              <X className="h-4 w-4 mr-2" />
+              Cancel
+            </Button>
+            <Button onClick={saveAgendaModal}>
+              <Save className="h-4 w-4 mr-2" />
+              Save Changes
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
