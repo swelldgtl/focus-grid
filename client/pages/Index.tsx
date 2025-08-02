@@ -96,15 +96,8 @@ import {
   ChevronDown,
   ChevronRight,
   CalendarDays,
-  Bold,
-  Italic,
-  Underline,
-  Edit3,
   Save,
   X,
-  Link,
-  ListIcon,
-  ListOrdered,
 } from "lucide-react";
 
 interface Task {
