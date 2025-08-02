@@ -137,3 +137,21 @@
     }
   }
 }
+
+/* React-Quill Editor Styling */
+.agenda-editor-container .ql-editor {
+  min-height: 250px !important;
+  font-size: 16px !important;
+  font-family: inherit !important;
+  line-height: 1.5 !important;
+}
+
+.agenda-editor-container .ql-container {
+  font-family: inherit !important;
+  font-size: 16px !important;
+}
+
+.agenda-editor-container .ql-editor.ql-blank::before {
+  font-size: 16px !important;
+  font-family: inherit !important;
+}
