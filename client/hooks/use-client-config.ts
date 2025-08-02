@@ -3,6 +3,7 @@ import {
   getFallbackConfig,
   getDefaultFallbackConfig,
 } from "@/lib/fallback-configs";
+import { safeFetch } from "@/lib/fetch-wrapper";
 
 export interface ClientConfig {
   clientId: string;
