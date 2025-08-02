@@ -1317,54 +1317,108 @@ export default function Index() {
     closeAgendaModal();
   };
 
+  const insertHtmlAtCursor = (html: string) => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (!editor) return;
+
+    editor.focus();
+    const selection = window.getSelection();
+
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      range.deleteContents();
+
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      const fragment = document.createDocumentFragment();
+
+      while (temp.firstChild) {
+        fragment.appendChild(temp.firstChild);
+      }
+
+      range.insertNode(fragment);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    } else {
+      // If no selection, append to end
+      editor.innerHTML += html;
+    }
+
+    setModalAgendaRichDescription(editor.innerHTML);
+  };
+
+  const wrapSelectedText = (openTag: string, closeTag: string) => {
+    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
+    if (!editor) return;
+
+    editor.focus();
+    const selection = window.getSelection();
+
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+
+      if (selectedText) {
+        const html = `${openTag}${selectedText}${closeTag}`;
+        range.deleteContents();
+
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        const fragment = document.createDocumentFragment();
+
+        while (temp.firstChild) {
+          fragment.appendChild(temp.firstChild);
+        }
+
+        range.insertNode(fragment);
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+      } else {
+        // No text selected, insert placeholder
+        insertHtmlAtCursor(`${openTag}Type here${closeTag}`);
+      }
+    } else {
+      // No selection, append to end
+      insertHtmlAtCursor(`${openTag}Type here${closeTag}`);
+    }
+
+    setModalAgendaRichDescription(editor.innerHTML);
+  };
+
   const formatText = (command: string) => {
     const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
     if (!editor) return;
 
-    // Ensure editor is focused and editable
-    editor.focus();
-
-    // Small delay to ensure focus is complete
-    setTimeout(() => {
-      switch (command) {
-        case "bold":
-          document.execCommand('bold', false);
-          break;
-        case "italic":
-          document.execCommand('italic', false);
-          break;
-        case "underline":
-          document.execCommand('underline', false);
-          break;
-        case "link":
-          // Save selection before prompt
+    switch (command) {
+      case "bold":
+        wrapSelectedText('<strong>', '</strong>');
+        break;
+      case "italic":
+        wrapSelectedText('<em>', '</em>');
+        break;
+      case "underline":
+        wrapSelectedText('<u>', '</u>');
+        break;
+      case "link":
+        const url = prompt('Enter URL:');
+        if (url && url.trim()) {
           const selection = window.getSelection();
-          const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
-          const url = prompt('Enter URL:');
-          if (url && url.trim()) {
-            // Restore selection and create link
-            if (range && selection) {
-              selection.removeAllRanges();
-              selection.addRange(range);
-            }
-            editor.focus();
-            document.execCommand('createLink', false, url.trim());
+          if (selection && selection.rangeCount > 0 && selection.toString()) {
+            wrapSelectedText(`<a href="${url.trim()}" target="_blank">`, '</a>');
+          } else {
+            insertHtmlAtCursor(`<a href="${url.trim()}" target="_blank">Link text</a>`);
           }
-          break;
-        case "bulletList":
-          document.execCommand('insertUnorderedList', false);
-          break;
-        case "numberList":
-          document.execCommand('insertOrderedList', false);
-          break;
-      }
-
-      // Update state after command execution
-      setTimeout(() => {
-        setModalAgendaRichDescription(editor.innerHTML);
-      }, 10);
-    }, 10);
+        }
+        break;
+      case "bulletList":
+        insertHtmlAtCursor('<ul><li>List item 1</li><li>List item 2</li></ul>');
+        break;
+      case "numberList":
+        insertHtmlAtCursor('<ol><li>List item 1</li><li>List item 2</li></ol>');
+        break;
+    }
   };
 
   const handleEditorInput = () => {
