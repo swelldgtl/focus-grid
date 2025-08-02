@@ -2586,11 +2586,25 @@ export default function Index() {
                   onChange={setModalAgendaRichDescription}
                   modules={quillModules}
                   formats={quillFormats}
-                  style={{ minHeight: '300px' }}
                   theme="snow"
                   placeholder="Enter a detailed description for this agenda item..."
+                  style={{
+                    fontSize: '16px',
+                    fontFamily: 'inherit'
+                  }}
                 />
               </div>
+              <style jsx>{`
+                .ql-editor {
+                  min-height: 250px !important;
+                  font-size: 16px !important;
+                  font-family: inherit !important;
+                  line-height: 1.5 !important;
+                }
+                .ql-container {
+                  font-family: inherit !important;
+                }
+              `}</style>
             </div>
 
 
