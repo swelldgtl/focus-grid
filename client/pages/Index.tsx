@@ -5,8 +5,7 @@ import {
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
 import { format } from "date-fns";
-import MDEditor from '@uiw/react-md-editor';
-import '@uiw/react-md-editor/markdown-editor.css';
+import { Editor } from '@tinymce/tinymce-react';
 
 import { showSaveToast } from "@/lib/toast-utils";
 import {
