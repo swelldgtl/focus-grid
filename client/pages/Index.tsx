@@ -5,7 +5,11 @@ import {
 } from "@/hooks/use-persistent-state";
 import { STORAGE_KEYS } from "@/lib/storage";
 import { format } from "date-fns";
-import { Editor } from '@tinymce/tinymce-react';
+import { Editor } from 'react-draft-wysiwyg';
+import { EditorState, ContentState, convertToRaw } from 'draft-js';
+import draftToHtml from 'draftjs-to-html';
+import htmlToDraft from 'html-to-draftjs';
+import 'react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 import { showSaveToast } from "@/lib/toast-utils";
 import {
