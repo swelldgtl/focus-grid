@@ -1312,129 +1312,18 @@ export default function Index() {
     closeAgendaModal();
   };
 
-  const insertAtCursor = (html: string) => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (!editor) return;
-
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      range.deleteContents();
-
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      const fragment = document.createDocumentFragment();
-
-      while (temp.firstChild) {
-        fragment.appendChild(temp.firstChild);
-      }
-
-      range.insertNode(fragment);
-
-      // Move cursor to end of inserted content
-      range.collapse(false);
-      selection.removeAllRanges();
-      selection.addRange(range);
-    } else {
-      // No cursor position, append to end
-      editor.innerHTML += html;
-    }
-
-    setModalAgendaRichDescription(editor.innerHTML);
-    editor.focus();
+  // Quill editor configuration
+  const quillModules = {
+    toolbar: [
+      ['bold', 'italic'],
+      ['link'],
+      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+    ],
   };
 
-  const wrapSelection = (startTag: string, endTag: string) => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (!editor) return;
-
-    const selection = window.getSelection();
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const selectedText = range.toString();
-
-      if (selectedText) {
-        const html = `${startTag}${selectedText}${endTag}`;
-        range.deleteContents();
-        insertAtCursor(html);
-      } else {
-        // No text selected, insert tags with placeholder
-        insertAtCursor(`${startTag}Text here${endTag}`);
-      }
-    } else {
-      // No selection, append to end
-      insertAtCursor(`${startTag}Text here${endTag}`);
-    }
-  };
-
-  const formatText = (command: string) => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (!editor) return;
-
-    editor.focus();
-
-    switch (command) {
-      case "bold":
-        wrapSelection('<strong>', '</strong>');
-        break;
-      case "italic":
-        wrapSelection('<em>', '</em>');
-        break;
-      case "underline":
-        wrapSelection('<u>', '</u>');
-        break;
-      case "link":
-        const url = prompt('Enter URL:');
-        if (url && url.trim()) {
-          const selection = window.getSelection();
-          if (selection && selection.rangeCount > 0 && selection.toString()) {
-            wrapSelection(`<a href="${url.trim()}" target="_blank" style="color: blue; text-decoration: underline;">`, '</a>');
-          } else {
-            insertAtCursor(`<a href="${url.trim()}" target="_blank" style="color: blue; text-decoration: underline;">Click here</a>`);
-          }
-        }
-        break;
-      case "bulletList":
-        insertAtCursor('<ul><li>First item</li></ul>');
-        break;
-      case "numberList":
-        insertAtCursor('<ol><li>First item</li></ol>');
-        break;
-    }
-  };
-
-  const handleEditorInput = () => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (editor) {
-      setModalAgendaRichDescription(editor.innerHTML);
-    }
-  };
-
-  // Initialize contentEditable content without causing cursor jumps
-  useEffect(() => {
-    const editor = document.querySelector('[data-agenda-editor]') as HTMLDivElement;
-    if (editor && editor.innerHTML !== modalAgendaRichDescription) {
-      const selection = window.getSelection();
-      const range = selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
-
-      editor.innerHTML = modalAgendaRichDescription;
-
-      // Restore cursor position if possible
-      if (range && selection) {
-        try {
-          selection.removeAllRanges();
-          selection.addRange(range);
-        } catch (e) {
-          // If range is invalid, place cursor at end
-          const newRange = document.createRange();
-          newRange.selectNodeContents(editor);
-          newRange.collapse(false);
-          selection.removeAllRanges();
-          selection.addRange(newRange);
-        }
-      }
-    }
-  }, [agendaModalOpen]);
+  const quillFormats = [
+    'bold', 'italic', 'link', 'list', 'bullet',
+  ];
 
   const toggleFocusMode = (moduleId: string) => {
     setActiveFocusModule((prev) => {
