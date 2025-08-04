@@ -100,18 +100,7 @@ export default function FeatureManager() {
     try {
       setLoading(true);
       const clientsData = await getClients();
-      // Add default features for display if not present
-      const clientsWithFeatures = clientsData.map((client) => ({
-        ...client,
-        features: client.features || {
-          long_term_goals: true,
-          action_plan: true,
-          blockers_issues: true,
-          agenda: true,
-          goals_progress: true,
-        },
-      }));
-      setClients(clientsWithFeatures);
+      setClients(clientsData);
     } catch (error) {
       console.error("Error loading clients:", error);
     } finally {
