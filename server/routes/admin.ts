@@ -25,7 +25,7 @@ interface FeatureDefaults {
   action_plan: boolean;
   blockers_issues: boolean;
   agenda: boolean;
-  focus_mode: boolean;
+  goals_progress: boolean;
 }
 
 // Mock storage for demo purposes - in production, this would be stored in database
@@ -59,7 +59,7 @@ let featureDefaults: FeatureDefaults = {
   action_plan: true,
   blockers_issues: true,
   agenda: true,
-  focus_mode: true
+  goals_progress: true
 };
 
 export const handleGetSystemConfig: RequestHandler = async (req, res) => {
@@ -145,7 +145,7 @@ export const handleUpdateFeatureDefaults: RequestHandler = async (req, res) => {
     const updates = req.body as Partial<FeatureDefaults>;
     
     // Validate that all provided features are valid
-    const validFeatures = ['long_term_goals', 'action_plan', 'blockers_issues', 'agenda', 'focus_mode'];
+    const validFeatures = ['long_term_goals', 'action_plan', 'blockers_issues', 'agenda', 'goals_progress'];
     for (const key of Object.keys(updates)) {
       if (!validFeatures.includes(key)) {
         return res.status(400).json({
