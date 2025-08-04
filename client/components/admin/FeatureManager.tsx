@@ -170,29 +170,50 @@ export default function FeatureManager() {
   const handleSaveChanges = async () => {
     setSaving(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    // Apply changes to clients state
-    setClients((prev) =>
-      prev.map((client) => {
-        const changes = pendingChanges[client.id];
-        if (changes) {
-          return {
-            ...client,
-            features: {
-              ...client.features,
-              ...changes,
-            },
-          };
+    try {
+      // Save changes to database for each client that has pending changes
+      const savePromises = Object.entries(pendingChanges).map(
+        async ([clientId, changes]) => {
+          if (Object.keys(changes).length > 0) {
+            const success = await updateClientFeatures(clientId, changes);
+            if (!success) {
+              throw new Error(`Failed to update features for client ${clientId}`);
+            }
+          }
         }
-        return client;
-      }),
-    );
+      );
 
-    // Clear pending changes
-    setPendingChanges({});
-    setSaving(false);
+      await Promise.all(savePromises);
+
+      // Apply changes to clients state
+      setClients((prev) =>
+        prev.map((client) => {
+          const changes = pendingChanges[client.id];
+          if (changes) {
+            return {
+              ...client,
+              features: {
+                ...client.features,
+                ...changes,
+              },
+            };
+          }
+          return client;
+        }),
+      );
+
+      // Clear pending changes
+      setPendingChanges({});
+
+      // Show success message
+      console.log("Features updated successfully");
+    } catch (error) {
+      console.error("Error saving feature changes:", error);
+      // You might want to show an error toast here
+      alert("Failed to save some feature changes. Please try again.");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleDiscardChanges = () => {
