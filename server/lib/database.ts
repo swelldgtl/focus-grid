@@ -61,7 +61,7 @@ export const AVAILABLE_FEATURES = {
   ACTION_PLAN: "action_plan",
   BLOCKERS_ISSUES: "blockers_issues",
   AGENDA: "agenda",
-  FOCUS_MODE: "focus_mode",
+  GOALS_PROGRESS: "goals_progress",
 } as const;
 
 export type FeatureName =
