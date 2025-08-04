@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getClients, updateClientFeatures, type Client } from "@/lib/client-api";
+import {
+  getClients,
+  updateClientFeatures,
+  type Client,
+} from "@/lib/client-api";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -177,10 +181,12 @@ export default function FeatureManager() {
           if (Object.keys(changes).length > 0) {
             const success = await updateClientFeatures(clientId, changes);
             if (!success) {
-              throw new Error(`Failed to update features for client ${clientId}`);
+              throw new Error(
+                `Failed to update features for client ${clientId}`,
+              );
             }
           }
-        }
+        },
       );
 
       await Promise.all(savePromises);
@@ -206,7 +212,7 @@ export default function FeatureManager() {
       setPendingChanges({});
 
       // Notify client applications that features have been updated
-      localStorage.setItem('admin-feature-update', Date.now().toString());
+      localStorage.setItem("admin-feature-update", Date.now().toString());
 
       // Show success message
       console.log("Features updated successfully");

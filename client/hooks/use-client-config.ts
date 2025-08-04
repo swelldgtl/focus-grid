@@ -128,14 +128,14 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
   // Listen for storage events to refresh config when admin changes features
   useEffect(() => {
     const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === 'admin-feature-update') {
-        console.log('Admin feature update detected, refreshing config...');
+      if (e.key === "admin-feature-update") {
+        console.log("Admin feature update detected, refreshing config...");
         fetchConfig();
       }
     };
 
-    window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
   useEffect(() => {

@@ -881,7 +881,7 @@ GITHUB_REPO=swelldgtl/focus-grid
         setClientToEdit(null);
 
         // Notify client applications that features have been updated
-        localStorage.setItem('admin-feature-update', Date.now().toString());
+        localStorage.setItem("admin-feature-update", Date.now().toString());
 
         toast({
           title: "Success",
