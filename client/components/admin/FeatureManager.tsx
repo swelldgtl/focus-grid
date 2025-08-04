@@ -205,6 +205,9 @@ export default function FeatureManager() {
       // Clear pending changes
       setPendingChanges({});
 
+      // Notify client applications that features have been updated
+      localStorage.setItem('admin-feature-update', Date.now().toString());
+
       // Show success message
       console.log("Features updated successfully");
     } catch (error) {
