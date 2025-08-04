@@ -104,7 +104,7 @@ export default function FeatureManager() {
           action_plan: true,
           blockers_issues: true,
           agenda: true,
-          focus_mode: true,
+          goals_progress: true,
         },
       }));
       setClients(clientsWithFeatures);
