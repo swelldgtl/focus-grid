@@ -136,8 +136,8 @@ export const handleCreateClient: RequestHandler = async (req, res) => {
     );
     await updateClientFeature(
       newClient.id,
-      AVAILABLE_FEATURES.FOCUS_MODE,
-      featureDefaults.focus_mode,
+      AVAILABLE_FEATURES.GOALS_PROGRESS,
+      featureDefaults.goals_progress,
     );
 
     return res.status(201).json({ client: newClient });
@@ -234,7 +234,7 @@ export const handleUpdateClientFeatures: RequestHandler = async (req, res) => {
         action_plan: AVAILABLE_FEATURES.ACTION_PLAN,
         blockers_issues: AVAILABLE_FEATURES.BLOCKERS_ISSUES,
         agenda: AVAILABLE_FEATURES.AGENDA,
-        focus_mode: AVAILABLE_FEATURES.FOCUS_MODE,
+        goals_progress: AVAILABLE_FEATURES.GOALS_PROGRESS,
       };
 
       for (const [featureKey, enabled] of Object.entries(features)) {
