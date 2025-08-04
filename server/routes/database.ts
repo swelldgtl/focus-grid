@@ -69,9 +69,29 @@ export const handleClientConfig: RequestHandler = async (req, res) => {
 
 export const handleGetClients: RequestHandler = async (req, res) => {
   try {
-    const { getClients } = await import("../lib/database");
+    const { getClients, getClientFeatures, AVAILABLE_FEATURES } = await import("../lib/database");
     const clients = await getClients();
-    return res.status(200).json({ clients });
+
+    // Get features for each client
+    const clientsWithFeatures = await Promise.all(
+      clients.map(async (client) => {
+        const features = await getClientFeatures(client.id);
+
+        // Convert features array to object with proper feature names
+        const featuresConfig: Record<string, boolean> = {};
+        Object.values(AVAILABLE_FEATURES).forEach((feature) => {
+          const featureData = features.find((f) => f.feature_name === feature);
+          featuresConfig[feature] = featureData?.enabled ?? true; // Default to enabled
+        });
+
+        return {
+          ...client,
+          features: featuresConfig
+        };
+      })
+    );
+
+    return res.status(200).json({ clients: clientsWithFeatures });
   } catch (error) {
     console.error("Get clients error:", error);
     return res.status(500).json({
