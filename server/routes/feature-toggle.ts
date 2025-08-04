@@ -59,7 +59,7 @@ export const handleGetFeatures: RequestHandler = async (req, res) => {
         action_plan: "Action Plan module with status tracking",
         blockers_issues: "Blockers & Issues module for tracking impediments",
         agenda: "Agenda module for meeting items",
-        focus_mode: "Focus mode with timers and module dimming",
+        goals_progress: "Goals & Progress tracking and analytics module",
       },
     });
   } catch (error) {
