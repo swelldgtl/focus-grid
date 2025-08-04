@@ -1718,10 +1718,11 @@ export default function Index() {
           </Card>
         </LongTermGoalsFeature>
 
-        {/* Goals & Progress (always enabled - core functionality) */}
-        <Card
-          className={`transition-all duration-500 ${getInactiveModuleClasses("goals")}`}
-        >
+        {/* Goals & Progress */}
+        <GoalsProgressFeature>
+          <Card
+            className={`transition-all duration-500 ${getInactiveModuleClasses("goals")}`}
+          >
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
@@ -1929,7 +1930,8 @@ export default function Index() {
               </Button>
             </div>
           </CardContent>
-        </Card>
+          </Card>
+        </GoalsProgressFeature>
 
         {/* Action Plan */}
         <ActionPlanFeature>
