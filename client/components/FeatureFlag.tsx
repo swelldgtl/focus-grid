@@ -95,7 +95,11 @@ export function GoalsProgressFeature({
   clientId,
 }: Omit<FeatureFlagProps, "feature">) {
   return (
-    <FeatureFlag feature="goals_progress" fallback={fallback} clientId={clientId}>
+    <FeatureFlag
+      feature="goals_progress"
+      fallback={fallback}
+      clientId={clientId}
+    >
       {children}
     </FeatureFlag>
   );

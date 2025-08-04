@@ -1723,213 +1723,213 @@ export default function Index() {
           <Card
             className={`transition-all duration-500 ${getInactiveModuleClasses("goals")}`}
           >
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Target className="h-5 w-5 text-gray-600" />
-                  Goals & Progress
-                </CardTitle>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-gray-600" />
+                    Goals & Progress
+                  </CardTitle>
+                </div>
+                <div className="flex items-center gap-3">
+                  {activeFocusModule === "goals" && (
+                    <div className="text-sm font-mono text-muted-foreground">
+                      {formatTime(timers["goals"]?.seconds || 0)}
+                    </div>
+                  )}
+                  <Button
+                    onClick={() => toggleFocusMode("goals")}
+                    variant="ghost"
+                    size="sm"
+                    className={`h-10 w-10 p-0 transition-colors ${
+                      activeFocusModule === "goals"
+                        ? "text-primary bg-primary/10 hover:bg-primary/20"
+                        : "text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <Grid3X3 className="h-8 w-8" />
+                  </Button>
+                </div>
               </div>
-              <div className="flex items-center gap-3">
-                {activeFocusModule === "goals" && (
-                  <div className="text-sm font-mono text-muted-foreground">
-                    {formatTime(timers["goals"]?.seconds || 0)}
-                  </div>
-                )}
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12"></TableHead>
+                    <TableHead>Goal</TableHead>
+                    <TableHead>Target Metric</TableHead>
+                    <TableHead>
+                      {editingTimeHeader === "month1" ? (
+                        <Input
+                          value={editingTimeHeaderValue}
+                          onChange={(e) =>
+                            setEditingTimeHeaderValue(e.target.value)
+                          }
+                          onBlur={handleTimeHeaderSave}
+                          onKeyDown={handleTimeHeaderKeyDown}
+                          className="font-semibold h-8"
+                          autoFocus
+                        />
+                      ) : (
+                        <span
+                          className="cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleTimeHeaderClick("month1", timeHeaders.month1)
+                          }
+                        >
+                          {timeHeaders.month1}
+                        </span>
+                      )}
+                    </TableHead>
+                    <TableHead>
+                      {editingTimeHeader === "month2" ? (
+                        <Input
+                          value={editingTimeHeaderValue}
+                          onChange={(e) =>
+                            setEditingTimeHeaderValue(e.target.value)
+                          }
+                          onBlur={handleTimeHeaderSave}
+                          onKeyDown={handleTimeHeaderKeyDown}
+                          className="font-semibold h-8"
+                          autoFocus
+                        />
+                      ) : (
+                        <span
+                          className="cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleTimeHeaderClick("month2", timeHeaders.month2)
+                          }
+                        >
+                          {timeHeaders.month2}
+                        </span>
+                      )}
+                    </TableHead>
+                    <TableHead>
+                      {editingTimeHeader === "month3" ? (
+                        <Input
+                          value={editingTimeHeaderValue}
+                          onChange={(e) =>
+                            setEditingTimeHeaderValue(e.target.value)
+                          }
+                          onBlur={handleTimeHeaderSave}
+                          onKeyDown={handleTimeHeaderKeyDown}
+                          className="font-semibold h-8"
+                          autoFocus
+                        />
+                      ) : (
+                        <span
+                          className="cursor-pointer hover:text-blue-600 transition-colors"
+                          onClick={() =>
+                            handleTimeHeaderClick("month3", timeHeaders.month3)
+                          }
+                        >
+                          {timeHeaders.month3}
+                        </span>
+                      )}
+                    </TableHead>
+                    <TableHead className="text-center w-24">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {goalsData.map((goal, index) => (
+                    <TableRow
+                      key={goal.id}
+                      className={`cursor-move ${index % 2 === 1 ? "bg-muted/30" : ""}`}
+                      draggable
+                      onDragStart={(e) => handleGoalDragStart(e, goal.id)}
+                      onDragOver={(e) => e.preventDefault()}
+                      onDrop={(e) => handleGoalDrop(e, index)}
+                    >
+                      <TableCell className="text-center">
+                        <GripVertical className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors mx-auto" />
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {renderEditableCell(
+                          goal.id,
+                          "goal",
+                          goal.goal,
+                          "font-medium",
+                        )}
+                      </TableCell>
+                      <TableCell className="font-medium">
+                        {renderEditableCell(
+                          goal.id,
+                          "targetMetric",
+                          goal.targetMetric,
+                          "font-medium",
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {renderEditableCell(goal.id, "month1", goal.month1)}
+                      </TableCell>
+                      <TableCell>
+                        {renderEditableCell(goal.id, "month2", goal.month2)}
+                      </TableCell>
+                      <TableCell>
+                        {renderEditableCell(goal.id, "month3", goal.month3)}
+                      </TableCell>
+                      <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-1">
+                          <Button
+                            onClick={() =>
+                              handleGoalToAgendaClick(goal.id, goal.goal)
+                            }
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
+                            title="Add to Agenda"
+                          >
+                            <Send className="h-4 w-4" />
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
+                                title="Delete Goal"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Delete Goal</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Are you sure you want to delete "{goal.goal}"?
+                                  This action cannot be undone.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                <AlertDialogAction
+                                  onClick={() => removeGoal(goal.id)}
+                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                >
+                                  Delete
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+              <div className="px-6 pb-6">
                 <Button
-                  onClick={() => toggleFocusMode("goals")}
-                  variant="ghost"
+                  onClick={addNewGoal}
+                  variant="outline"
                   size="sm"
-                  className={`h-10 w-10 p-0 transition-colors ${
-                    activeFocusModule === "goals"
-                      ? "text-primary bg-primary/10 hover:bg-primary/20"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
+                  className="flex items-center gap-2 mt-6"
                 >
-                  <Grid3X3 className="h-8 w-8" />
+                  <Plus className="h-4 w-4" />
+                  Add New
                 </Button>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead>Goal</TableHead>
-                  <TableHead>Target Metric</TableHead>
-                  <TableHead>
-                    {editingTimeHeader === "month1" ? (
-                      <Input
-                        value={editingTimeHeaderValue}
-                        onChange={(e) =>
-                          setEditingTimeHeaderValue(e.target.value)
-                        }
-                        onBlur={handleTimeHeaderSave}
-                        onKeyDown={handleTimeHeaderKeyDown}
-                        className="font-semibold h-8"
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className="cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() =>
-                          handleTimeHeaderClick("month1", timeHeaders.month1)
-                        }
-                      >
-                        {timeHeaders.month1}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead>
-                    {editingTimeHeader === "month2" ? (
-                      <Input
-                        value={editingTimeHeaderValue}
-                        onChange={(e) =>
-                          setEditingTimeHeaderValue(e.target.value)
-                        }
-                        onBlur={handleTimeHeaderSave}
-                        onKeyDown={handleTimeHeaderKeyDown}
-                        className="font-semibold h-8"
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className="cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() =>
-                          handleTimeHeaderClick("month2", timeHeaders.month2)
-                        }
-                      >
-                        {timeHeaders.month2}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead>
-                    {editingTimeHeader === "month3" ? (
-                      <Input
-                        value={editingTimeHeaderValue}
-                        onChange={(e) =>
-                          setEditingTimeHeaderValue(e.target.value)
-                        }
-                        onBlur={handleTimeHeaderSave}
-                        onKeyDown={handleTimeHeaderKeyDown}
-                        className="font-semibold h-8"
-                        autoFocus
-                      />
-                    ) : (
-                      <span
-                        className="cursor-pointer hover:text-blue-600 transition-colors"
-                        onClick={() =>
-                          handleTimeHeaderClick("month3", timeHeaders.month3)
-                        }
-                      >
-                        {timeHeaders.month3}
-                      </span>
-                    )}
-                  </TableHead>
-                  <TableHead className="text-center w-24">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {goalsData.map((goal, index) => (
-                  <TableRow
-                    key={goal.id}
-                    className={`cursor-move ${index % 2 === 1 ? "bg-muted/30" : ""}`}
-                    draggable
-                    onDragStart={(e) => handleGoalDragStart(e, goal.id)}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => handleGoalDrop(e, index)}
-                  >
-                    <TableCell className="text-center">
-                      <GripVertical className="h-4 w-4 text-muted-foreground hover:text-foreground transition-colors mx-auto" />
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {renderEditableCell(
-                        goal.id,
-                        "goal",
-                        goal.goal,
-                        "font-medium",
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium">
-                      {renderEditableCell(
-                        goal.id,
-                        "targetMetric",
-                        goal.targetMetric,
-                        "font-medium",
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {renderEditableCell(goal.id, "month1", goal.month1)}
-                    </TableCell>
-                    <TableCell>
-                      {renderEditableCell(goal.id, "month2", goal.month2)}
-                    </TableCell>
-                    <TableCell>
-                      {renderEditableCell(goal.id, "month3", goal.month3)}
-                    </TableCell>
-                    <TableCell className="text-center">
-                      <div className="flex items-center justify-center gap-1">
-                        <Button
-                          onClick={() =>
-                            handleGoalToAgendaClick(goal.id, goal.goal)
-                          }
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 w-8 p-0 text-muted-foreground hover:text-green-600"
-                          title="Add to Agenda"
-                        >
-                          <Send className="h-4 w-4" />
-                        </Button>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="h-8 w-8 p-0 text-muted-foreground hover:text-destructive"
-                              title="Delete Goal"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Delete Goal</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Are you sure you want to delete "{goal.goal}"?
-                                This action cannot be undone.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                onClick={() => removeGoal(goal.id)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-            <div className="px-6 pb-6">
-              <Button
-                onClick={addNewGoal}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-2 mt-6"
-              >
-                <Plus className="h-4 w-4" />
-                Add New
-              </Button>
-            </div>
-          </CardContent>
+            </CardContent>
           </Card>
         </GoalsProgressFeature>
 
