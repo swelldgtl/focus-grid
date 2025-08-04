@@ -26,7 +26,7 @@ export const FALLBACK_CLIENTS: Record<string, ClientConfig> = {
       action_plan: true,
       blockers_issues: false, // Disabled for Blue Label
       agenda: true,
-      focus_mode: true,
+      goals_progress: true,
     },
     branding: {
       primaryColor: "#1E40AF", // Blue theme
