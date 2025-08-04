@@ -40,7 +40,7 @@ interface Client {
     action_plan: boolean;
     blockers_issues: boolean;
     agenda: boolean;
-    focus_mode: boolean;
+    goals_progress: boolean;
   };
 }
 
