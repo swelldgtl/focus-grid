@@ -14,7 +14,7 @@ import {
   ActionPlanFeature,
   BlockersIssuesFeature,
   AgendaFeature,
-  FocusModeFeature,
+  GoalsProgressFeature,
 } from "@/components/FeatureFlag";
 import { useClientConfig } from "@/hooks/use-client-config";
 import {
