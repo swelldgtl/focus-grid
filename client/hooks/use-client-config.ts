@@ -125,6 +125,19 @@ export function useClientConfig(clientId?: string): UseClientConfigResult {
     fetchConfig();
   };
 
+  // Listen for storage events to refresh config when admin changes features
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'admin-feature-update') {
+        console.log('Admin feature update detected, refreshing config...');
+        fetchConfig();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
+
   useEffect(() => {
     // Detect client from multiple sources with priority order
     const urlParams = new URLSearchParams(window.location.search);
