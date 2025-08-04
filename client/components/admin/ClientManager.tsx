@@ -105,7 +105,7 @@ export default function ClientManager() {
     action_plan: true,
     blockers_issues: true,
     agenda: true,
-    focus_mode: true,
+    goals_progress: true,
   });
   const [errors, setErrors] = useState({
     name: "",
@@ -318,7 +318,7 @@ export default function ClientManager() {
           action_plan: true,
           blockers_issues: true,
           agenda: true,
-          focus_mode: true,
+          goals_progress: true,
         },
       }));
       setClients(clientsWithFeatures);
@@ -491,7 +491,7 @@ export default function ClientManager() {
           action_plan: true,
           blockers_issues: true,
           agenda: true,
-          focus_mode: true,
+          goals_progress: true,
         },
       };
       setClients((prev) => [clientWithFeatures, ...prev]);
@@ -794,7 +794,7 @@ GITHUB_REPO=swelldgtl/focus-grid
       action_plan: client.features?.action_plan ?? true,
       blockers_issues: client.features?.blockers_issues ?? true,
       agenda: client.features?.agenda ?? true,
-      focus_mode: client.features?.focus_mode ?? true,
+      goals_progress: client.features?.goals_progress ?? true,
     });
     setEditErrors({ name: "", slug: "", subdomain: "" });
     setIsEditDialogOpen(true);
@@ -1472,15 +1472,15 @@ GITHUB_REPO=swelldgtl/focus-grid`}
 
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
-                    <div className="font-medium">Focus Mode</div>
+                    <div className="font-medium">Goals & Progress</div>
                     <div className="text-sm text-muted-foreground">
-                      Distraction-free interface
+                      Goals tracking and progress analytics
                     </div>
                   </div>
                   <Switch
-                    checked={editFeatures.focus_mode}
+                    checked={editFeatures.goals_progress}
                     onCheckedChange={(checked) =>
-                      handleEditFeatureToggle("focus_mode", checked)
+                      handleEditFeatureToggle("goals_progress", checked)
                     }
                   />
                 </div>
@@ -1758,7 +1758,7 @@ GITHUB_REPO=swelldgtl/focus-grid`}
                           ) : (
                             <XCircle className="h-3 w-3 text-gray-400" />
                           )}
-                          {client.features?.focus_mode ? (
+                          {client.features?.goals_progress ? (
                             <CheckCircle className="h-3 w-3 text-green-600" />
                           ) : (
                             <XCircle className="h-3 w-3 text-gray-400" />
