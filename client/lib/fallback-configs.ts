@@ -41,7 +41,7 @@ export const FALLBACK_CLIENTS: Record<string, ClientConfig> = {
       action_plan: true,
       blockers_issues: true,
       agenda: true,
-      focus_mode: true,
+      goals_progress: true,
     },
     branding: {
       primaryColor: "#059669", // Green theme
