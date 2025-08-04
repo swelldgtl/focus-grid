@@ -72,9 +72,9 @@ const FEATURES: FeatureConfig[] = [
     description: "Meeting agenda and note-taking functionality",
   },
   {
-    key: "focus_mode",
-    name: "Focus Mode",
-    description: "Distraction-free interface for enhanced productivity",
+    key: "goals_progress",
+    name: "Goals & Progress",
+    description: "Goals tracking and progress analytics module",
   },
 ];
 
