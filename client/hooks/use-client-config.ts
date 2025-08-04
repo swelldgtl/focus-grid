@@ -190,8 +190,8 @@ export function useFeatureFlag(
 ): boolean {
   const { config } = useClientConfig(clientId);
 
-  // Default to true if config is not loaded yet (prevents flickering)
-  return config?.features[featureName] ?? true;
+  // Default to false if config is not loaded yet
+  return config?.features[featureName] ?? false;
 }
 
 /**
