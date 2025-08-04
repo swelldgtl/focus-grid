@@ -69,7 +69,9 @@ export const handleClientConfig: RequestHandler = async (req, res) => {
 
 export const handleGetClients: RequestHandler = async (req, res) => {
   try {
-    const { getClients, getClientFeatures, AVAILABLE_FEATURES } = await import("../lib/database");
+    const { getClients, getClientFeatures, AVAILABLE_FEATURES } = await import(
+      "../lib/database"
+    );
     const clients = await getClients();
 
     // Get features for each client
@@ -86,9 +88,9 @@ export const handleGetClients: RequestHandler = async (req, res) => {
 
         return {
           ...client,
-          features: featuresConfig
+          features: featuresConfig,
         };
-      })
+      }),
     );
 
     return res.status(200).json({ clients: clientsWithFeatures });
