@@ -89,13 +89,13 @@ export function AgendaFeature({
   );
 }
 
-export function FocusModeFeature({
+export function GoalsProgressFeature({
   children,
   fallback,
   clientId,
 }: Omit<FeatureFlagProps, "feature">) {
   return (
-    <FeatureFlag feature="focus_mode" fallback={fallback} clientId={clientId}>
+    <FeatureFlag feature="goals_progress" fallback={fallback} clientId={clientId}>
       {children}
     </FeatureFlag>
   );
