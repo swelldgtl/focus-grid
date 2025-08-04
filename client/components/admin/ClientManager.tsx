@@ -472,18 +472,8 @@ export default function ClientManager() {
         }
       }
 
-      // Add to local state with default features
-      const clientWithFeatures = {
-        ...newClientData,
-        features: {
-          long_term_goals: true,
-          action_plan: true,
-          blockers_issues: true,
-          agenda: true,
-          goals_progress: true,
-        },
-      };
-      setClients((prev) => [clientWithFeatures, ...prev]);
+      // Reload clients to get the client with actual features from database
+      await loadClients();
 
       if (!newClient.createNetlifyProject) {
         // If no Netlify project, complete the flow
